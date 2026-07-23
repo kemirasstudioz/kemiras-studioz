@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kemiras Studioz — Event Photography & Videography</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="kem-data.js"></script>
+<script src="https://elfsightcdn.com/platform.js" async></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:#100e0c;color:#f4efe7;font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased}
+  ::selection{background:#c9a96a;color:#100e0c}
+  input,select,textarea,button{font-family:inherit}
+  input::placeholder,textarea::placeholder{color:#8c8478}
+  @keyframes heroFade{0%{opacity:0}6%{opacity:1}22%{opacity:1}30%{opacity:0}100%{opacity:0}}
+  @keyframes marqueeLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes marqueeRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+  @keyframes scrollCue{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(8px);opacity:1}}
+  @keyframes slowZoom{from{background-size:108%}to{background-size:122%}}
+  @keyframes revealUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+
+<div style="--accent: {{ accent }}; position:relative; min-height:100vh; overflow-x:hidden; background:#100e0c">
+
+  <sc-if value="{{ grain }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed; inset:0; z-index:9999; pointer-events:none; opacity:0.06; mix-blend-mode:overlay; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%222%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E')"></div>
+  </sc-if>
+
+  <!-- NAV -->
+  <nav style="position:fixed; top:0; left:0; right:0; z-index:1000; display:flex; align-items:center; justify-content:space-between; padding:18px clamp(20px,5vw,48px); background:rgba(16,14,12,0.55); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid rgba(244,239,231,0.08)">
+    <a href="#home" style="text-decoration:none; display:flex; align-items:baseline; gap:9px">
+      <span style="font-family:'Cormorant Garamond',serif; font-size:25px; font-weight:500; color:#f4efe7; letter-spacing:0.5px">Kemiras</span>
+      <span style="font-size:11px; font-weight:500; letter-spacing:4px; color:var(--accent,#c9a96a)">STUDIOZ</span>
+    </a>
+
+    <sc-if value="{{ showDesktopNav }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; align-items:center; gap:clamp(18px,2.4vw,38px)">
+        <a href="#services" style="text-decoration:none; color:#cfc7ba; font-size:13px; letter-spacing:1.5px; font-weight:400; transition:color .3s" style-hover="color:var(--accent,#c9a96a)">SERVICES</a>
+        <a href="#gallery" style="text-decoration:none; color:#cfc7ba; font-size:13px; letter-spacing:1.5px; font-weight:400; transition:color .3s" style-hover="color:var(--accent,#c9a96a)">GALLERY</a>
+        <a href="#films" style="text-decoration:none; color:#cfc7ba; font-size:13px; letter-spacing:1.5px; font-weight:400; transition:color .3s" style-hover="color:var(--accent,#c9a96a)">FILMS</a>
+        <a href="#stories" style="text-decoration:none; color:#cfc7ba; font-size:13px; letter-spacing:1.5px; font-weight:400; transition:color .3s" style-hover="color:var(--accent,#c9a96a)">STORIES</a>
+        <a href="#about" style="text-decoration:none; color:#cfc7ba; font-size:13px; letter-spacing:1.5px; font-weight:400; transition:color .3s" style-hover="color:var(--accent,#c9a96a)">ABOUT</a>
+        <a href="#contact" style="text-decoration:none; color:#100e0c; background:var(--accent,#c9a96a); padding:11px 24px; border-radius:2px; font-size:12px; letter-spacing:1.8px; font-weight:600; transition:transform .3s, box-shadow .3s" style-hover="transform:translateY(-2px); box-shadow:0 10px 24px rgba(201,169,106,0.35)">BOOK NOW</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleMenu }}" aria-label="Menu" style="background:none; border:none; cursor:pointer; display:flex; flex-direction:column; gap:5px; padding:6px">
+        <span style="width:26px; height:1.5px; background:#f4efe7; display:block"></span>
+        <span style="width:26px; height:1.5px; background:#f4efe7; display:block"></span>
+        <span style="width:18px; height:1.5px; background:var(--accent,#c9a96a); display:block; align-self:flex-end"></span>
+      </button>
+    </sc-if>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:1500; background:rgba(13,11,10,0.97); backdrop-filter:blur(8px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px">
+      <button onClick="{{ closeMenu }}" style="position:absolute; top:26px; right:42px; background:none; border:none; color:#f4efe7; font-size:34px; cursor:pointer; line-height:1; font-family:'Cormorant Garamond',serif">&times;</button>
+      <a href="#services" onClick="{{ closeMenu }}" style="text-decoration:none; color:#f4efe7; font-family:'Cormorant Garamond',serif; font-size:34px">Services</a>
+      <a href="#gallery" onClick="{{ closeMenu }}" style="text-decoration:none; color:#f4efe7; font-family:'Cormorant Garamond',serif; font-size:34px">Gallery</a>
+      <a href="#films" onClick="{{ closeMenu }}" style="text-decoration:none; color:#f4efe7; font-family:'Cormorant Garamond',serif; font-size:34px">Films</a>
+      <a href="#stories" onClick="{{ closeMenu }}" style="text-decoration:none; color:#f4efe7; font-family:'Cormorant Garamond',serif; font-size:34px">Stories</a>
+      <a href="#about" onClick="{{ closeMenu }}" style="text-decoration:none; color:#f4efe7; font-family:'Cormorant Garamond',serif; font-size:34px">About</a>
+      <a href="#contact" onClick="{{ closeMenu }}" style="text-decoration:none; color:var(--accent,#c9a96a); font-family:'Cormorant Garamond',serif; font-size:34px">Book Now</a>
+    </div>
+  </sc-if>
+
+  <!-- HERO -->
+  <header id="home" style="position:relative; height:100vh; min-height:660px; overflow:hidden; display:flex; align-items:center; justify-content:center">
+    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/22481158/e282baa5efacfc8a1aef61f56275938b-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:-2s"></div>
+    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:7s"></div>
+    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:14s"></div>
+    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/22481158/49c7f2c93fe736293df25684cb5780f7-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:21s"></div>
+    <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(16,14,12,0.62) 0%, rgba(16,14,12,0.30) 38%, rgba(16,14,12,0.55) 72%, rgba(16,14,12,0.96) 100%)"></div>
+
+    <div style="position:relative; z-index:2; text-align:center; padding:0 28px; max-width:1000px">
+      <div style="display:inline-flex; align-items:center; gap:14px; margin-bottom:30px; opacity:0.9">
+        <span style="width:34px; height:1px; background:var(--accent,#c9a96a)"></span>
+        <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a); font-weight:400">EVENT PHOTOGRAPHY &amp; VIDEOGRAPHY</span>
+        <span style="width:34px; height:1px; background:var(--accent,#c9a96a)"></span>
+      </div>
+      <h1 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(46px,8vw,104px); line-height:0.98; margin:0; letter-spacing:-1px">Photography<br><span style="font-style:italic; font-weight:400">is</span> Poetry</h1>
+      <p style="max-width:560px; margin:30px auto 0; font-size:17px; line-height:1.7; color:#e6ddcf; font-weight:300">From intimate celebrations to grand events, we turn your moments into cinematic stories you'll treasure for a lifetime.</p>
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:40px">
+        <a href="#contact" style="text-decoration:none; color:#100e0c; background:var(--accent,#c9a96a); padding:16px 34px; border-radius:2px; font-size:12px; letter-spacing:2px; font-weight:600; transition:transform .3s, box-shadow .3s" style-hover="transform:translateY(-3px); box-shadow:0 14px 30px rgba(201,169,106,0.4)">BOOK A SESSION</a>
+        <a href="#gallery" style="text-decoration:none; color:#f4efe7; background:rgba(244,239,231,0.06); border:1px solid rgba(244,239,231,0.3); padding:16px 34px; border-radius:2px; font-size:12px; letter-spacing:2px; font-weight:500; transition:background .3s, border-color .3s" style-hover="background:rgba(244,239,231,0.14); border-color:var(--accent,#c9a96a)">VIEW GALLERY</a>
+      </div>
+    </div>
+
+    <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:8px">
+      <span style="font-size:10px; letter-spacing:3px; color:#cfc7ba">SCROLL</span>
+      <span style="width:1px; height:34px; background:linear-gradient(#c9a96a, transparent); animation:scrollCue 2s ease-in-out infinite"></span>
+    </div>
+  </header>
+
+  <!-- STATEMENT -->
+  <section style="padding:clamp(72px,11vw,120px) 24px; text-align:center; background:#100e0c">
+    <div style="max-width:920px; margin:0 auto; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both" data-reveal>
+      <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">KEMIRAS STUDIOZ</span>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(30px,4.4vw,56px); line-height:1.18; margin:26px 0 0; letter-spacing:-0.5px">Capture moments. Create memories.<br><span style="font-style:italic; color:var(--accent,#c9a96a)">Make them yours.</span></h2>
+      <p style="max-width:620px; margin:30px auto 0; font-size:17px; line-height:1.8; color:#b6ad9f; font-weight:300">We don't just take pictures — we capture emotions that last forever. Every click tells a story; every frame becomes a memory worth holding onto.</p>
+    </div>
+  </section>
+
+  <!-- GALLERY SLIDESHOWS -->
+  <section id="gallery" style="padding:90px 0 100px; background:#0c0a09; overflow:hidden">
+    <div style="text-align:center; margin-bottom:56px; padding:0 28px; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both" data-reveal>
+      <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">THE PORTFOLIO</span>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(34px,4.6vw,58px); margin:14px 0 0; letter-spacing:-0.5px">A glimpse into our frames</h2>
+    </div>
+
+    <sc-for list="{{ galleryGroupSections }}" as="sec" hint-placeholder-count="4">
+      <div style="margin-bottom:24px">
+        <div style="display:flex; gap:16px; width:max-content; animation:marqueeLeft 60s linear infinite">
+          <sc-for list="{{ sec.photos }}" as="gp" hint-placeholder-count="6">
+            <div style="height:clamp(180px,30vw,260px); width:220px; flex:none; border-radius:2px; background-image:url('{{ gp.url }}'); background-size:{{ gp.size }}; background-position:{{ gp.pos }}"></div>
+          </sc-for>
+          <sc-for list="{{ sec.photos }}" as="gp" hint-placeholder-count="6">
+            <div style="height:clamp(180px,30vw,260px); width:220px; flex:none; border-radius:2px; background-image:url('{{ gp.url }}'); background-size:{{ gp.size }}; background-position:{{ gp.pos }}"></div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" style="padding:30px clamp(20px,5vw,48px) clamp(80px,11vw,120px); background:#100e0c">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px; max-width:1320px; margin:0 auto 50px; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both" data-reveal>
+      <div>
+        <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">WHAT WE CAPTURE</span>
+        <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(34px,4.6vw,58px); margin:14px 0 0; letter-spacing:-0.5px">Every milestone, beautifully told</h2>
+      </div>
+      <p style="max-width:340px; font-size:15px; line-height:1.7; color:#b6ad9f; font-weight:300; margin:0">Stunning visuals and cinematic storytelling for the events that matter most.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap:18px; max-width:1320px; margin:0 auto">
+
+      <sc-for list="{{ serviceCards }}" as="s" hint-placeholder-count="6">
+
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <a href="#contact" style="text-decoration:none; color:#f4efe7; position:relative; aspect-ratio:4/5; border-radius:3px; overflow:hidden; display:flex; align-items:flex-end; background-image:linear-gradient(to top, rgba(13,11,10,0.92) 6%, rgba(13,11,10,0.15) 55%), url('{{ s.img }}'); background-size:112%; background-position:center; transition:background-size .9s ease, transform .6s ease; animation:fadeIn 1s ease both" style-hover="background-size:122%; transform:translateY(-6px)">
+            <div style="padding:26px; position:relative; z-index:2">
+              <span style="font-size:11px; letter-spacing:3px; color:var(--accent,#c9a96a)">{{ s.num }}</span>
+              <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:27px; margin:8px 0 6px; color:#f4efe7">{{ s.title }}</h3>
+              <p style="font-size:13.5px; line-height:1.6; color:#cfc7ba; font-weight:300; margin:0">{{ s.desc }}</p>
+            </div>
+          </a>
+        </sc-if>
+
+        <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+          <a href="#contact" style="text-decoration:none; display:flex; flex-direction:column; border-radius:4px; overflow:hidden; background:#15120e; border:1px solid rgba(244,239,231,0.08); animation:fadeIn 1s ease both">
+            <div style="width:100%; aspect-ratio:16/11; background-image:url('{{ s.img }}'); background-size:{{ s.mZoom }}; background-position:{{ s.mPos }}; background-repeat:no-repeat; background-color:#0c0a09"></div>
+            <div style="padding:18px 20px 22px">
+              <span style="font-size:11px; letter-spacing:3px; color:var(--accent,#c9a96a)">{{ s.num }}</span>
+              <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:25px; margin:7px 0 6px; color:#f4efe7">{{ s.title }}</h3>
+              <p style="font-size:14px; line-height:1.6; color:#b6ad9f; font-weight:300; margin:0">{{ s.desc }}</p>
+            </div>
+          </a>
+        </sc-if>
+
+      </sc-for>
+
+    </div>
+  </section>
+
+  <!-- FILMS -->
+  <section id="films" style="padding:clamp(80px,11vw,110px) clamp(20px,5vw,48px); background:#100e0c">
+    <div data-reveal style="text-align:center; margin-bottom:52px; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both">
+      <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">FILMS &amp; REELS</span>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(34px,4.6vw,58px); margin:14px 0 0; letter-spacing:-0.5px">Stories in motion</h2>
+      <p style="max-width:520px; margin:18px auto 0; font-size:16px; line-height:1.7; color:#b6ad9f; font-weight:300">Cinematic films and highlight reels from the moments we've had the honour to capture.</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap:18px; max-width:1320px; margin:0 auto">
+      <sc-for list="{{ videoCards }}" as="card" hint-placeholder-count="6">
+        <button onClick="{{ card.onClick }}" style="text-align:left; cursor:pointer; border:1px solid rgba(244,239,231,0.08); background:#15120e; padding:0; border-radius:4px; overflow:hidden; display:flex; flex-direction:column; transition:transform .5s ease, border-color .4s ease; animation:fadeIn 1s ease both" style-hover="transform:translateY(-6px); border-color:var(--accent,#c9a96a)">
+          <div style="position:relative; aspect-ratio:16/9; background-image:linear-gradient(to top, rgba(13,11,10,0.55), rgba(13,11,10,0.08) 55%), url('{{ card.poster }}'); background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center">
+            <span style="width:66px; height:66px; border-radius:50%; background:rgba(16,14,12,0.5); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); border:1px solid rgba(244,239,231,0.45); display:flex; align-items:center; justify-content:center">
+              <span style="width:0; height:0; border-left:15px solid var(--accent,#c9a96a); border-top:9px solid transparent; border-bottom:9px solid transparent; margin-left:4px"></span>
+            </span>
+            <span style="position:absolute; top:13px; right:13px; font-size:11px; letter-spacing:1px; color:#f4efe7; background:rgba(16,14,12,0.62); padding:4px 9px; border-radius:2px">{{ card.duration }}</span>
+          </div>
+          <div style="padding:20px 22px">
+            <span style="font-size:11px; letter-spacing:2.5px; color:var(--accent,#c9a96a)">{{ card.category }}</span>
+            <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:24px; margin:7px 0 0; color:#f4efe7">{{ card.title }}</h3>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="stories" style="padding:clamp(84px,12vw,130px) 24px; background:#100e0c; position:relative">
+    <sc-if value="{{ hasGoogleWidget }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:1040px; margin:0 auto; text-align:center; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both" data-reveal>
+        <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">KIND WORDS</span>
+        <div class="{{ widgetClass }}" data-elfsight-app-lazy style="margin-top:30px"></div>
+      </div>
+    </sc-if>
+    <div style="max-width:840px; margin:0 auto; text-align:center; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both; display:{{ customQuoteDisplay }}" data-reveal>
+      <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">KIND WORDS</span>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:90px; line-height:0.5; color:var(--accent,#c9a96a); opacity:0.4; margin:34px 0 6px; height:34px">&ldquo;</div>
+      <div style="display:flex; justify-content:center; gap:3px; margin-bottom:14px; font-size:19px; letter-spacing:3px"><span style="color:var(--accent,#c9a96a)">{{ quoteStarsFull }}</span><span style="color:rgba(244,239,231,0.22)">{{ quoteStarsEmpty }}</span></div>
+      <p style="font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(24px,3.2vw,38px); line-height:1.4; margin:0; min-height:160px; color:#f4efe7">{{ quoteText }}</p>
+      <div style="margin-top:24px">
+        <div style="font-size:15px; letter-spacing:1px; color:#f4efe7; font-weight:500">{{ quoteAuthor }}</div>
+        <div style="font-size:12px; letter-spacing:2px; color:var(--accent,#c9a96a); margin-top:5px">{{ quoteRole }}</div>
+        <div style="font-size:10px; letter-spacing:2px; color:#7c766a; margin-top:10px">REVIEWED ON GOOGLE</div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:center; gap:22px; margin-top:38px">
+        <button onClick="{{ prevQuote }}" aria-label="Previous" style="background:none; border:1px solid rgba(244,239,231,0.25); color:#f4efe7; width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:16px; transition:border-color .3s, color .3s" style-hover="border-color:var(--accent,#c9a96a); color:var(--accent,#c9a96a)">&larr;</button>
+        <div style="display:flex; gap:8px; align-items:center">
+          <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="4">
+            <button onClick="{{ dot.onClick }}" style="height:8px; width:{{ dot.w }}; border-radius:4px; border:none; cursor:pointer; padding:0; background:{{ dot.bg }}; transition:width .4s ease, background .4s ease"></button>
+          </sc-for>
+        </div>
+        <button onClick="{{ nextQuote }}" aria-label="Next" style="background:none; border:1px solid rgba(244,239,231,0.25); color:#f4efe7; width:44px; height:44px; border-radius:50%; cursor:pointer; font-size:16px; transition:border-color .3s, color .3s" style-hover="border-color:var(--accent,#c9a96a); color:var(--accent,#c9a96a)">&rarr;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT / SPECIALIZATION -->
+  <section id="about" style="position:relative; padding:clamp(84px,12vw,140px) 24px 0; overflow:hidden; background:#0c0a09">
+    <div style="max-width:760px; margin:0 auto; text-align:center; animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both" data-reveal>
+      <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">ABOUT THE STUDIO</span>
+      <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(32px,4.6vw,56px); line-height:1.2; margin:22px 0 0; letter-spacing:-0.5px">Your moments deserve more than ordinary — they deserve <span style="font-style:italic; color:var(--accent,#c9a96a)">extraordinary.</span></h2>
+      <p style="max-width:600px; margin:28px auto 0; font-size:17px; line-height:1.8; color:#cfc7ba; font-weight:300">Trusted, unrushed, and endlessly creative — Kemiras Studioz blends honest emotion with cinematic craft. No restrictions, no rush, just memories made to last.</p>
+    </div>
+
+    <div style="max-width:1180px; margin:clamp(56px,8vw,84px) auto 0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap:clamp(40px,6vw,80px); text-align:center" data-reveal>
+      <div>
+        <span style="font-size:11px; letter-spacing:3px; color:var(--accent,#c9a96a)">SPECIALIZATION</span>
+        <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(26px,3vw,34px); margin:12px 0 0; color:#f4efe7">Photography</h3>
+        <p style="max-width:340px; margin:12px auto 0; font-size:14.5px; line-height:1.7; color:#cfc7ba; font-weight:300">Editorial-grade portraits and candid storytelling — every frame lit, composed, and retouched to feel timeless, not templated.</p>
+      </div>
+      <div>
+        <span style="font-size:11px; letter-spacing:3px; color:var(--accent,#c9a96a)">SPECIALIZATION</span>
+        <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(26px,3vw,34px); margin:12px 0 0; color:#f4efe7">Videography</h3>
+        <p style="max-width:340px; margin:12px auto 0; font-size:14.5px; line-height:1.7; color:#cfc7ba; font-weight:300">Cinematic films built around real emotion — steady, unobtrusive coverage cut into a story you'll want to rewatch for years.</p>
+      </div>
+    </div>
+
+    <div style="max-width:760px; margin:clamp(56px,8vw,84px) auto 0; text-align:center; padding-bottom:clamp(84px,12vw,140px)" data-reveal>
+      <a href="#contact" style="display:inline-block; text-decoration:none; color:#100e0c; background:var(--accent,#c9a96a); padding:16px 38px; border-radius:2px; font-size:12px; letter-spacing:2px; font-weight:600; transition:transform .3s, box-shadow .3s" style-hover="transform:translateY(-3px); box-shadow:0 14px 30px rgba(201,169,106,0.4)">START YOUR STORY</a>
+    </div>
+  </section>
+
+  <!-- CONTACT / INQUIRY -->
+  <section id="contact" style="padding:clamp(76px,11vw,120px) clamp(20px,5vw,28px); background:#0c0a09">
+    <div style="max-width:1180px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap:clamp(36px,5vw,60px); align-items:center">
+
+      <div data-reveal style="animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both">
+        <span style="font-size:12px; letter-spacing:5px; color:var(--accent,#c9a96a)">LET'S CONNECT</span>
+        <h2 style="font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(36px,4.8vw,60px); margin:16px 0 0; line-height:1.1; letter-spacing:-0.5px">Let's create something timeless</h2>
+        <p style="max-width:420px; margin:24px 0 0; font-size:16px; line-height:1.8; color:#b6ad9f; font-weight:300">Tell us about your event and we'll be in touch within 24 hours to craft the perfect package for your day.</p>
+        <div style="display:flex; flex-direction:column; gap:16px; margin-top:36px">
+          <a href="https://wa.me/2017441097" target="_blank" style="text-decoration:none; display:flex; align-items:center; gap:14px; color:#e6ddcf; font-size:15px" style-hover="color:var(--accent,#c9a96a)">
+            <span style="width:38px; height:38px; border:1px solid rgba(244,239,231,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; letter-spacing:1px; color:var(--accent,#c9a96a)">WA</span>
+            <span>+1 201 744 1097 · WhatsApp</span>
+          </a>
+          <a href="https://www.instagram.com/kemirasstudioz" target="_blank" style="text-decoration:none; display:flex; align-items:center; gap:14px; color:#e6ddcf; font-size:15px" style-hover="color:var(--accent,#c9a96a)">
+            <span style="width:38px; height:38px; border:1px solid rgba(244,239,231,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; letter-spacing:1px; color:var(--accent,#c9a96a)">IG</span>
+            <span>@kemirasstudioz · Instagram</span>
+          </a>
+        </div>
+      </div>
+
+      <div data-reveal style="animation:revealUp .9s cubic-bezier(.22,.61,.36,1) both">
+        <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ onSubmit }}" style="background:#15120e; border:1px solid rgba(244,239,231,0.08); border-radius:4px; padding:38px">
+            <div style="display:flex; flex-direction:column; gap:22px">
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <label style="font-size:11px; letter-spacing:2px; color:#8c8478">YOUR NAME</label>
+                <input ref="{{ setNameRef }}" required type="text" placeholder="Full name" style="background:transparent; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <label style="font-size:11px; letter-spacing:2px; color:#8c8478">EMAIL</label>
+                <input ref="{{ setEmailRef }}" required type="email" placeholder="you@email.com" style="background:transparent; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <label style="font-size:11px; letter-spacing:2px; color:#8c8478">PHONE</label>
+                <input ref="{{ setPhoneRef }}" type="tel" placeholder="(201) 555-0100" style="background:transparent; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+              </div>
+              <div style="display:flex; gap:22px; flex-wrap:wrap">
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:160px">
+                  <label style="font-size:11px; letter-spacing:2px; color:#8c8478">BOOKING DATE</label>
+                  <input ref="{{ setDateRef }}" type="date" style="background:transparent; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s; color-scheme:dark" style-focus="border-color:var(--accent,#c9a96a)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:160px">
+                  <label style="font-size:11px; letter-spacing:2px; color:#8c8478">EVENT TYPE</label>
+                  <select ref="{{ setEventRef }}" required style="background:#15120e; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+                    <option value="">Select an occasion</option>
+                    <option>Wedding</option>
+                    <option>Engagement</option>
+                    <option>Baby Shower</option>
+                    <option>Maternity Shoot</option>
+                    <option>Sweet 16th</option>
+                    <option>Birthday Party</option>
+                    <option>Anniversary</option>
+                    <option>Reception</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:flex; gap:22px; flex-wrap:wrap">
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:160px">
+                  <label style="font-size:11px; letter-spacing:2px; color:#8c8478">SERVICE TYPE</label>
+                  <select ref="{{ setServiceRef }}" style="background:#15120e; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+                    <option>Photography</option>
+                    <option>Videography</option>
+                    <option>Photography &amp; Videography</option>
+                  </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:130px">
+                  <label style="font-size:11px; letter-spacing:2px; color:#8c8478">LIVE STREAM</label>
+                  <select ref="{{ setLiveRef }}" style="background:#15120e; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+                    <option>No</option>
+                    <option>Yes</option>
+                  </select>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px; flex:1; min-width:130px">
+                  <label style="font-size:11px; letter-spacing:2px; color:#8c8478">DRONE COVERAGE</label>
+                  <select ref="{{ setDroneRef }}" style="background:#15120e; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)">
+                    <option>No</option>
+                    <option>Yes</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px">
+                <label style="font-size:11px; letter-spacing:2px; color:#8c8478">TELL US MORE</label>
+                <textarea ref="{{ setMsgRef }}" rows="3" placeholder="Date, location, what you have in mind..." style="background:transparent; border:none; border-bottom:1px solid rgba(244,239,231,0.18); color:#f4efe7; padding:10px 0; font-size:15px; outline:none; resize:none; transition:border-color .3s" style-focus="border-color:var(--accent,#c9a96a)"></textarea>
+              </div>
+              <sc-if value="{{ sendError }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px; color:#d99">Something went wrong sending your inquiry — please try again or reach us on WhatsApp.</div>
+              </sc-if>
+              <button type="submit" disabled="{{ sending }}" style="margin-top:6px; background:var(--accent,#c9a96a); color:#100e0c; border:none; padding:16px; border-radius:2px; font-size:12px; letter-spacing:2px; font-weight:600; cursor:pointer; transition:transform .3s, box-shadow .3s; opacity:{{ sendOpacity }}" style-hover="transform:translateY(-2px); box-shadow:0 12px 26px rgba(201,169,106,0.35)">{{ sendLabel }}</button>
+            </div>
+          </form>
+        </sc-if>
+        <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#15120e; border:1px solid rgba(201,169,106,0.3); border-radius:4px; padding:60px 38px; text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif; font-size:54px; color:var(--accent,#c9a96a); line-height:1">&#10003;</div>
+            <h3 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:30px; margin:18px 0 10px">Thank you!</h3>
+            <p style="font-size:15px; line-height:1.7; color:#b6ad9f; font-weight:300; margin:0">Your inquiry is on its way. We'll reach out within 24 hours to start planning your story.</p>
+          </div>
+        </sc-if>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- VIDEO LIGHTBOX -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeVideo }}" style="position:fixed; inset:0; z-index:2000; background:rgba(8,7,6,0.94); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:6vw 5vw">
+      <div onClick="{{ stopProp }}" style="width:100%; max-width:980px; position:relative; animation:revealUp .5s cubic-bezier(.22,.61,.36,1) both">
+        <button onClick="{{ closeVideo }}" aria-label="Close" style="position:absolute; top:-48px; right:0; background:none; border:none; color:#f4efe7; font-size:38px; cursor:pointer; line-height:1; font-family:'Cormorant Garamond',serif">&times;</button>
+        <sc-if value="{{ activeIsFile }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative; aspect-ratio:16/9; background:#000; border-radius:4px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.6)">
+            <video src="{{ activeFileSrc }}" controls autoplay playsinline poster="{{ activePoster }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#000"></video>
+          </div>
+        </sc-if>
+        <sc-if value="{{ activeHasVideo }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative; aspect-ratio:16/9; background:#000; border-radius:4px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.6)">
+            <iframe key="{{ av }}" src="{{ activeEmbed }}" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0"></iframe>
+          </div>
+        </sc-if>
+        <sc-if value="{{ activeNoVideo }}" hint-placeholder-val="{{ false }}">
+          <div style="aspect-ratio:16/9; border-radius:4px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; text-align:center; background-image:linear-gradient(rgba(13,11,10,0.80), rgba(13,11,10,0.88)), url('{{ activePoster }}'); background-size:cover; background-position:center; box-shadow:0 30px 80px rgba(0,0,0,0.6)">
+            <div style="max-width:400px; padding:26px">
+              <span style="width:58px; height:58px; border-radius:50%; border:1px solid rgba(244,239,231,0.4); display:inline-flex; align-items:center; justify-content:center; margin-bottom:18px">
+                <span style="width:0; height:0; border-left:13px solid var(--accent,#c9a96a); border-top:8px solid transparent; border-bottom:8px solid transparent; margin-left:4px"></span>
+              </span>
+              <div style="font-family:'Cormorant Garamond',serif; font-size:27px; color:#f4efe7; margin-bottom:10px">{{ activeTitle }}</div>
+              <p style="font-size:14px; line-height:1.7; color:#cfc7ba; font-weight:300; margin:0">Add this film's YouTube or Vimeo link to the videos list and it will play right here.</p>
+            </div>
+          </div>
+        </sc-if>
+        <div style="margin-top:18px; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap">
+          <span style="font-family:'Cormorant Garamond',serif; font-size:24px; color:#f4efe7">{{ activeTitle }}</span>
+          <span style="font-size:11px; letter-spacing:2.5px; color:var(--accent,#c9a96a)">{{ activeCategory }}</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- FOOTER -->
+  <footer style="background:#100e0c; border-top:1px solid rgba(244,239,231,0.08); padding:70px clamp(22px,5vw,48px) 40px">
+    <div style="max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:40px; justify-content:space-between; align-items:flex-start">
+      <div style="max-width:300px">
+        <div style="display:flex; align-items:baseline; gap:9px; margin-bottom:16px">
+          <span style="font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:500">Kemiras</span>
+          <span style="font-size:11px; font-weight:500; letter-spacing:4px; color:var(--accent,#c9a96a)">STUDIOZ</span>
+        </div>
+        <p style="font-size:14px; line-height:1.7; color:#8c8478; font-weight:300; margin:0">Turning fleeting moments into timeless cinematic experiences. Event photography &amp; videography.</p>
+      </div>
+      <div style="display:flex; gap:60px; flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column; gap:12px">
+          <span style="font-size:11px; letter-spacing:2px; color:#8c8478; margin-bottom:4px">EXPLORE</span>
+          <a href="#services" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Services</a>
+          <a href="#gallery" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Gallery</a>
+          <a href="#films" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Films</a>
+          <a href="#stories" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Stories</a>
+          <a href="#contact" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Inquiry</a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px">
+          <span style="font-size:11px; letter-spacing:2px; color:#8c8478; margin-bottom:4px">FOLLOW</span>
+          <a href="https://www.instagram.com/kemirasstudioz" target="_blank" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Instagram</a>
+          <a href="https://www.youtube.com/@kemirasstudioz" target="_blank" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">YouTube</a>
+          <a href="https://www.facebook.com/profile.php?id=61564517483561" target="_blank" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">Facebook</a>
+          <a href="https://wa.me/2017441097" target="_blank" style="text-decoration:none; color:#cfc7ba; font-size:14px" style-hover="color:var(--accent,#c9a96a)">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1180px; margin:50px auto 0; padding-top:24px; border-top:1px solid rgba(244,239,231,0.06); display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between">
+      <span style="font-size:12px; color:#6f685d; letter-spacing:0.5px">&copy; 2026 Kemiras Studioz · All Rights Reserved</span>
+      <span style="font-size:12px; color:#6f685d; letter-spacing:0.5px">Every frame, a memory.</span>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gold&quot;,&quot;Champagne&quot;,&quot;Rose&quot;,&quot;Sage&quot;],&quot;default&quot;:&quot;Sage&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;grain&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;googleWidgetId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;eeae185c-7257-4211-b71f-4232cef8307d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Reviews&quot;}}">
+class Component extends DCLogic {
+  state = { quote: 0, isMobile: false, menuOpen: false, submitted: false, sending: false, sendError: false, activeVideo: null, filmsFromAdmin: null, reviewsFromAdmin: null, photosFromAdmin: null };
+
+  EMAILJS_SERVICE_ID = 'service_dawkhnl';
+  EMAILJS_TEMPLATE_ID = 'template_eiycqgg';
+  EMAILJS_PUBLIC_KEY = 'si56dhfZomGAhMSCh';
+
+  quotes = [
+    { text: "We had an amazing experience for our baby shower. Affordable yet top-notch \u2014 a beautiful album and a lovely 6-minute video. No restrictions, no rush, full of creative ideas. Truly professional and highly recommended!", author: "Bhavik & Komal", role: "BABY SHOWER" },
+    { text: "Very professional and satisfactory experience. Reasonable prices and great quality photos and videos, delivered in a timely manner. Highly recommended!", author: "Herry Sinojiya", role: "EVENT COVERAGE" },
+    { text: "The baby shower photos were stunning. Thank you for giving us memories we'll cherish forever!", author: "Meera", role: "BABY SHOWER" },
+    { text: "Professional, creative, and passionate \u2014 Mitul made our anniversary celebration unforgettable.", author: "Neha", role: "ANNIVERSARY" },
+  ];
+
+  accents = { Gold: "#c9a96a", Champagne: "#cdb892", Rose: "#c99a96", Sage: "#a9b39a" };
+
+  // ===== YOUR FILMS — add / edit videos here =====
+  // Paste a full YouTube or Vimeo link (or a YouTube ID) into "url".
+  // Leave "url" empty to keep it as a placeholder. "poster" is the thumbnail
+  // (auto-pulled from YouTube when you add a link, or set your own image URL).
+  videos = [
+    { title: "Aanya's Baby Shower", category: "BABY SHOWER FILM", duration: "6:12", url: "", poster: "https://images.pixieset.com/17065689/7095b197c4ebdd87df83a52d03e58a6a-xxlarge.jpg" },
+    { title: "Riya & Arjun", category: "WEDDING FILM", duration: "4:48", url: "", poster: "https://images.pixieset.com/36630669/cd59702f24f280a70f7af7aaaaec52d7-xxlarge.jpg" },
+    { title: "The Patel Maternity", category: "MATERNITY", duration: "3:05", url: "", poster: "https://images.pixieset.com/63422287/83387254d5b99ed02039f2202724c6e9-xxlarge.jpg" },
+    { title: "Sharma Family", category: "FAMILY PORTRAIT", duration: "2:30", url: "", poster: "https://images.pixieset.com/59938577/d39076f964c2fb4955d84ab9db1a898f-xxlarge.jpg" },
+    { title: "Golden Anniversary", category: "ANNIVERSARY", duration: "5:20", url: "", poster: "https://images.pixieset.com/63422287/e433fdaffec3c465aa8b6ea390e2a6d7-xxlarge.png" },
+    { title: "Candid Highlights", category: "HIGHLIGHTS REEL", duration: "1:15", url: "", poster: "https://images.pixieset.com/22481158/a6a12793f0578c0aa47c59f6615d84ad-xxlarge.jpg" },
+  ];
+
+  // ===== SERVICE CATALOG — edit cards here (admin will manage these) =====
+  // mZoom = mobile image zoom %, mPos = mobile focal point (background-position)
+  services = [
+    { num: "01", title: "Wedding", desc: "Full-day coverage that captures every vow, glance, and celebration.", img: "https://images.pixieset.com/36630669/cd59702f24f280a70f7af7aaaaec52d7-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "02", title: "Engagement", desc: "Romantic, relaxed sessions that capture the start of forever.", img: "https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "03", title: "Baby Shower", desc: "Cherish the excitement and joy of welcoming a little one.", img: "https://images.pixieset.com/17065689/7095b197c4ebdd87df83a52d03e58a6a-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "04", title: "Maternity Shoot", desc: "Beautifully capture the journey into parenthood.", img: "https://images.pixieset.com/63422287/83387254d5b99ed02039f2202724c6e9-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "05", title: "Sweet 16th", desc: "Vibrant, high-energy coverage of a milestone birthday.", img: "https://images.pixieset.com/63422287/e433fdaffec3c465aa8b6ea390e2a6d7-xxlarge.png", mZoom: 100, mPos: "center" },
+    { num: "06", title: "Birthday Party", desc: "Candid joy and celebration, captured in its purest form.", img: "https://images.pixieset.com/22481158/a6a12793f0578c0aa47c59f6615d84ad-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "07", title: "Anniversary", desc: "Make every milestone celebration an unforgettable story.", img: "https://images.pixieset.com/59938577/d39076f964c2fb4955d84ab9db1a898f-xxlarge.jpg", mZoom: 100, mPos: "center" },
+    { num: "08", title: "Reception", desc: "The toasts, the dancing, the joy — all beautifully told.", img: "https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg", mZoom: 100, mPos: "center" },
+  ];
+
+  ytId(u) {
+    if (!u) return '';
+    const m = String(u).match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([\w-]{11})/);
+    if (m) return m[1];
+    return /^[\w-]{11}$/.test(u) ? u : '';
+  }
+  vimeoId(u) {
+    if (!u) return '';
+    const m = String(u).match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    return m ? m[1] : '';
+  }
+  posterFor(v) {
+    if (v.poster) return v.poster;
+    const y = this.ytId(v.url);
+    if (y) return 'https://img.youtube.com/vi/' + y + '/maxresdefault.jpg';
+    const vm = this.vimeoId(v.url);
+    if (vm) {
+      this._vimeoPosters = this._vimeoPosters || {};
+      if (this._vimeoPosters[vm]) return this._vimeoPosters[vm];
+      if (!this._vimeoFetching) this._vimeoFetching = {};
+      if (!this._vimeoFetching[vm]) {
+        this._vimeoFetching[vm] = true;
+        fetch('https://vimeo.com/api/oembed.json?url=' + encodeURIComponent('https://vimeo.com/' + vm))
+          .then(r => r.json())
+          .then(data => { if (data && data.thumbnail_url) { this._vimeoPosters[vm] = data.thumbnail_url; this.forceUpdate(); } })
+          .catch(() => {});
+      }
+      return '';
+    }
+    return '';
+  }
+  embedFor(v) {
+    const y = this.ytId(v.url);
+    if (y) return 'https://www.youtube.com/embed/' + y + '?rel=0';
+    const vm = this.vimeoId(v.url);
+    if (vm) return 'https://player.vimeo.com/video/' + vm;
+    return '';
+  }
+
+  getPhotos() {
+    const p = this.state.photosFromAdmin;
+    if (p && p.length) return p;
+    return null;
+  }
+  galleryGroups = ["Engagement & Anniversary", "Wedding & Haldi", "Baby Shower & Maternity", "Sweet 16 & Party"];
+  seedGroupUrls = {
+    "Engagement & Anniversary": ["https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg", "https://images.pixieset.com/22481158/49c7f2c93fe736293df25684cb5780f7-xxlarge.jpg", "https://images.pixieset.com/22481158/08751ddf276288c5a5912a9399ed4f5f-xxlarge.jpg"],
+    "Wedding & Haldi": ["https://images.pixieset.com/17065689/6f3dc2afd4adc5c1eb2c110c9295a457-xxlarge.jpg", "https://images.pixieset.com/17065689/82fd6eaf395a053970ba79a6b022179e-xxlarge.jpg", "https://images.pixieset.com/22481158/e282baa5efacfc8a1aef61f56275938b-xxlarge.jpg"],
+    "Baby Shower & Maternity": ["https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg", "https://images.pixieset.com/63422287/4098d8f70ef636384e49118157b4f6cd-xxlarge.png", "https://images.pixieset.com/12573887/fe230943e2da337cd0f79c9e4e2a4a4c-xxlarge.jpg"],
+    "Sweet 16 & Party": ["https://images.pixieset.com/63422287/e433fdaffec3c465aa8b6ea390e2a6d7-xxlarge.png"]
+  };
+  photosByGroup() {
+    const admin = this.getPhotos();
+    const out = {};
+    this.galleryGroups.forEach(g => {
+      if (admin) out[g] = admin.filter(p => (p.group || this.galleryGroups[0]) === g).map(p => ({ url: p.url, mZoom: p.mZoom || 100, mPos: p.mPos || 'center' }));
+      else out[g] = (this.seedGroupUrls[g] || []).map(u => ({ url: u, mZoom: 100, mPos: 'center' }));
+      if (!out[g].length) out[g] = (this.seedGroupUrls[g] || []).map(u => ({ url: u, mZoom: 100, mPos: 'center' }));
+    });
+    return out;
+  }
+
+  getVideos() {
+    return (this.state.filmsFromAdmin && this.state.filmsFromAdmin.length) ? this.state.filmsFromAdmin : this.videos;
+  }
+  getReviews() {
+    const r = this.state.reviewsFromAdmin;
+    if (r && r.length) {
+      const vis = r.filter(x => x.visible !== false);
+      if (vis.length) return vis.map(x => ({ text: x.text, author: x.author, role: x.role, rating: x.rating || 5 }));
+    }
+    return this.quotes.map(q => ({ text: q.text, author: q.author, role: q.role, rating: 5 }));
+  }
+
+  componentDidMount() {
+    if (window.emailjs) { try { window.emailjs.init({ publicKey: this.EMAILJS_PUBLIC_KEY }); } catch (e) {} }
+    this.qTimer = setInterval(() => this.setState(s => ({ quote: (s.quote + 1) % this.getReviews().length })), 6500);
+    this._resize = () => {
+      const m = window.innerWidth < 880;
+      if (m !== this.state.isMobile) this.setState({ isMobile: m });
+    };
+    this._resize();
+    window.addEventListener('resize', this._resize);
+
+    // Films are managed in the Studio Admin — read them from shared storage so
+    // YouTube/Vimeo links added there show here, and update live across tabs.
+    this._loadFilms = () => {
+      const apply = (d) => {
+        if (d && Array.isArray(d.films) && d.films.length) this.setState({ filmsFromAdmin: d.films });
+        if (d && Array.isArray(d.reviews)) this.setState({ reviewsFromAdmin: d.reviews });
+        if (d && Array.isArray(d.photos) && d.photos.length) this.setState({ photosFromAdmin: d.photos });
+      };
+      if (window.KemData) { window.KemData.load().then(apply).catch(function () {}); }
+      else { try { apply(JSON.parse(localStorage.getItem('kemiras_studio_admin_v2') || 'null')); } catch (e) {} }
+    };
+    this._loadFilms();
+    this._onStorage = (e) => { if (e.key === 'kemiras_studio_admin_v2') this._loadFilms(); };
+    window.addEventListener('storage', this._onStorage);
+    // Entrance reveals are pure CSS (animation:revealUp / fadeIn with fill 'both'),
+    // so content is never left stranded by JS timing or React re-renders.
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.qTimer);
+    window.removeEventListener('resize', this._resize);
+    window.removeEventListener('storage', this._onStorage);
+  }
+
+  renderVals() {
+    const accent = this.accents[this.props.accent] || this.accents.Gold;
+    const vids = this.getVideos();
+    const reviews = this.getReviews();
+    const idx = reviews.length ? ((this.state.quote % reviews.length) + reviews.length) % reviews.length : 0;
+    const q = reviews[idx] || { text: '', author: '', role: '', rating: 5 };
+    const av = this.state.activeVideo;
+    const active = (av == null) ? null : vids[av];
+    const activeEmbed = active ? this.embedFor(active) : '';
+    const activeIsFile = !!(active && active.file);
+    return {
+      accent,
+      grain: this.props.grain ?? true,
+      isMobile: this.state.isMobile,
+      showDesktopNav: !this.state.isMobile,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      quoteText: q.text,
+      quoteAuthor: q.author,
+      quoteRole: q.role,
+      hasGoogleWidget: !!(this.props.googleWidgetId ?? 'eeae185c-7257-4211-b71f-4232cef8307d'),
+      zoomIn: (e) => { e.currentTarget.style.transform = 'scale(1.06)'; },
+      zoomOut: (e) => { e.currentTarget.style.transform = 'scale(1)'; },
+      widgetClass: 'elfsight-app-' + (this.props.googleWidgetId ?? 'eeae185c-7257-4211-b71f-4232cef8307d'),
+      customQuoteDisplay: (this.props.googleWidgetId ?? 'eeae185c-7257-4211-b71f-4232cef8307d') ? 'none' : 'block',
+      quoteStarsFull: '★'.repeat(q.rating || 5),
+      quoteStarsEmpty: '☆'.repeat(5 - (q.rating || 5)),
+      nextQuote: () => this.setState(s => ({ quote: (s.quote + 1) % reviews.length })),
+      prevQuote: () => this.setState(s => ({ quote: (s.quote + reviews.length - 1) % reviews.length })),
+      dots: reviews.map((x, i) => ({
+        onClick: () => this.setState({ quote: i }),
+        bg: i === idx ? accent : 'rgba(244,239,231,0.25)',
+        w: i === idx ? '26px' : '8px',
+      })),
+      galleryPhotos: (this.getPhotos() || [
+        { url: "https://images.pixieset.com/17065689/6f3dc2afd4adc5c1eb2c110c9295a457-xxlarge.jpg" },
+      ]),
+      galleryGroupSections: (() => {
+        const byGroup = this.photosByGroup();
+        return this.galleryGroups.map(g => ({
+          name: g,
+          photos: byGroup[g].map(p => ({ url: p.url, size: (p.mZoom && p.mZoom !== 100) ? p.mZoom + '%' : 'cover', pos: p.mPos || 'center' })),
+        }));
+      })(),
+      showForm: !this.state.submitted,
+      submitted: this.state.submitted,
+      sending: this.state.sending,
+      sendError: this.state.sendError,
+      sendOpacity: this.state.sending ? 0.6 : 1,
+      sendLabel: this.state.sending ? 'SENDING…' : 'SEND INQUIRY',
+      setNameRef: (el) => { this._nameEl = el; },
+      setEmailRef: (el) => { this._emailEl = el; },
+      setPhoneRef: (el) => { this._phoneEl = el; },
+      setDateRef: (el) => { this._dateEl = el; },
+      setEventRef: (el) => { this._eventEl = el; },
+      setServiceRef: (el) => { this._serviceEl = el; },
+      setLiveRef: (el) => { this._liveEl = el; },
+      setDroneRef: (el) => { this._droneEl = el; },
+      setMsgRef: (el) => { this._msgEl = el; },
+      onSubmit: (e) => {
+        e.preventDefault();
+        if (this.state.sending) return;
+        this.setState({ sending: true, sendError: false });
+        const params = {
+          name: this._nameEl ? this._nameEl.value : '',
+          email: this._emailEl ? this._emailEl.value : '',
+          phone: this._phoneEl ? this._phoneEl.value : '',
+          bookingDate: this._dateEl ? this._dateEl.value : '',
+          eventType: this._eventEl ? this._eventEl.value : '',
+          serviceType: this._serviceEl ? this._serviceEl.value : '',
+          liveStream: this._liveEl ? this._liveEl.value : '',
+          drone: this._droneEl ? this._droneEl.value : '',
+          message: this._msgEl ? this._msgEl.value : '',
+        };
+        if (!window.emailjs) { this.setState({ sending: false, sendError: true }); return; }
+        window.emailjs.send(this.EMAILJS_SERVICE_ID, this.EMAILJS_TEMPLATE_ID, params)
+          .then(() => this.setState({ sending: false, submitted: true }))
+          .catch((err) => { console.error('EmailJS send failed:', err); this.setState({ sending: false, sendError: true }); });
+      },
+      isDesktop: !this.state.isMobile,
+      serviceCards: this.services.map(s => ({
+        num: s.num, title: s.title, desc: s.desc, img: s.img,
+        mZoom: (!s.mZoom || s.mZoom === 100) ? 'cover' : (s.mZoom + '%'),
+        mPos: s.mPos || 'center',
+      })),
+      videoCards: vids.map((v, i) => ({
+        title: v.title, category: v.category, duration: v.duration,
+        poster: this.posterFor(v),
+        onClick: () => this.setState({ activeVideo: i }),
+      })),
+      modalOpen: av != null,
+      activeIsFile,
+      av,
+      activeFileSrc: activeIsFile ? active.file : '',
+      activeHasVideo: !activeIsFile && !!activeEmbed,
+      activeNoVideo: av != null && !activeIsFile && !activeEmbed,
+      activeEmbed,
+      activeTitle: active ? active.title : '',
+      activeCategory: active ? active.category : '',
+      activePoster: active ? this.posterFor(active) : '',
+      closeVideo: () => this.setState({ activeVideo: null }),
+      stopProp: (e) => e.stopPropagation(),
+    };
+  }
+}
+</script>
+</body>
+</html>

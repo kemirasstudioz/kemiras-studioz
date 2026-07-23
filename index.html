@@ -527,6 +527,12 @@ class Component extends DCLogic {
     "Baby Shower & Maternity": ["https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg", "https://images.pixieset.com/63422287/4098d8f70ef636384e49118157b4f6cd-xxlarge.png", "https://images.pixieset.com/12573887/fe230943e2da337cd0f79c9e4e2a4a4c-xxlarge.jpg"],
     "Sweet 16 & Party": ["https://images.pixieset.com/63422287/e433fdaffec3c465aa8b6ea390e2a6d7-xxlarge.png"]
   };
+  padPhotos(list) {
+    if (!list.length) return list;
+    const out = [];
+    while (out.length < 10) out.push(...list);
+    return out;
+  }
   photosByGroup() {
     const admin = this.getPhotos();
     const out = {};
@@ -626,7 +632,7 @@ class Component extends DCLogic {
         const byGroup = this.photosByGroup();
         return this.galleryGroups.map(g => ({
           name: g,
-          photos: byGroup[g].map(p => ({ url: p.url, size: (p.mZoom && p.mZoom !== 100) ? p.mZoom + '%' : 'cover', pos: p.mPos || 'center' })),
+          photos: this.padPhotos(byGroup[g].map(p => ({ url: p.url, size: (p.mZoom && p.mZoom !== 100) ? p.mZoom + '%' : 'cover', pos: p.mPos || 'center' }))),
         }));
       })(),
       showForm: !this.state.submitted,

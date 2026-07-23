@@ -435,7 +435,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gold&quot;,&quot;Champagne&quot;,&quot;Rose&quot;,&quot;Sage&quot;],&quot;default&quot;:&quot;Sage&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;grain&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;googleWidgetId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;eeae185c-7257-4211-b71f-4232cef8307d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Reviews&quot;}}">
 class Component extends DCLogic {
-  state = { quote: 0, isMobile: false, menuOpen: false, submitted: false, sending: false, sendError: false, activeVideo: null, filmsFromAdmin: null, reviewsFromAdmin: null, photosFromAdmin: null };
+  state = { quote: 0, isMobile: false, menuOpen: false, submitted: false, sending: false, sendError: false, activeVideo: null, filmsFromAdmin: null, reviewsFromAdmin: null, photosFromAdmin: null, servicesFromAdmin: null };
 
   EMAILJS_SERVICE_ID = 'service_dawkhnl';
   EMAILJS_TEMPLATE_ID = 'template_eiycqgg';
@@ -573,6 +573,7 @@ class Component extends DCLogic {
         if (d && Array.isArray(d.films) && d.films.length) this.setState({ filmsFromAdmin: d.films });
         if (d && Array.isArray(d.reviews)) this.setState({ reviewsFromAdmin: d.reviews });
         if (d && Array.isArray(d.photos) && d.photos.length) this.setState({ photosFromAdmin: d.photos });
+        if (d && Array.isArray(d.services) && d.services.length) this.setState({ servicesFromAdmin: d.services });
       };
       if (window.KemData) { window.KemData.load().then(apply).catch(function () {}); }
       else { try { apply(JSON.parse(localStorage.getItem('kemiras_studio_admin_v2') || 'null')); } catch (e) {} }
@@ -671,7 +672,7 @@ class Component extends DCLogic {
           .catch((err) => { console.error('EmailJS send failed:', err); this.setState({ sending: false, sendError: true }); });
       },
       isDesktop: !this.state.isMobile,
-      serviceCards: this.services.map(s => ({
+      serviceCards: (this.state.servicesFromAdmin && this.state.servicesFromAdmin.length ? this.state.servicesFromAdmin : this.services).map(s => ({
         num: s.num, title: s.title, desc: s.desc, img: s.img,
         mZoom: (!s.mZoom || s.mZoom === 100) ? 'cover' : (s.mZoom + '%'),
         mPos: s.mPos || 'center',

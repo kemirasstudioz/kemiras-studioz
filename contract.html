@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="./kem-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #efece4; font-family: 'Jost', sans-serif; color: #201c17; -webkit-text-size-adjust: 100%; }
+  a { color: #8a6a2f; text-decoration: none; }
+  a:hover { color: #b8924f; }
+  input, select, textarea, button { font-family: 'Jost', sans-serif; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh; padding:clamp(16px,4vw,56px) clamp(12px,4vw,24px)">
+  <div style="max-width:820px; margin:0 auto">
+
+    <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+    <div style="background:#fffdf8; border:1px solid #e2ddd2; border-radius:4px; box-shadow:0 24px 60px rgba(32,28,23,0.09); overflow:hidden">
+
+      <div style="background:#16130f; padding:clamp(28px,5vw,46px) clamp(20px,5vw,52px); text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(26px,4.4vw,38px); font-weight:300; letter-spacing:2px; color:#f4efe7">Kemiras Studioz</div>
+        <div style="font-size:clamp(9px,1.6vw,11px); letter-spacing:clamp(3px,0.7vw,6px); color:#b8924f; margin-top:10px">PHOTOGRAPHY &amp; VIDEOGRAPHY</div>
+        <div style="height:1px; background:rgba(244,239,231,0.15); margin:clamp(18px,3vw,26px) auto; max-width:180px"></div>
+        <h1 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(20px,3.2vw,27px); color:#f4efe7; margin:0; letter-spacing:1px">Service Agreement</h1>
+      </div>
+
+      <div style="padding:clamp(22px,5vw,52px)">
+
+        <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fdf1ef; border:1px solid #f0cfc9; border-radius:4px; padding:15px 18px; font-size:13.5px; color:#a8443a; line-height:1.6; margin-bottom:clamp(22px,3.5vw,30px); text-wrap:pretty">This link is no longer active. Please ask Kemiras Studioz for a current contract link before signing — the details shown below may not be yours.</div>
+        </sc-if>
+        <p style="font-size:clamp(13px,2.2vw,14.5px); line-height:1.75; color:#5d564a; margin:0 0 clamp(26px,4vw,38px); text-wrap:pretty">This agreement confirms the booking of Kemiras Studioz for the event described below. Please review the coverage and terms, complete your details, choose how you would like to pay, and sign at the bottom. A signed copy will be emailed to you and to the studio.</p>
+
+        <div style="display:flex; align-items:center; gap:12px; margin:0 0 clamp(16px,3vw,22px)">
+          <span style="font-size:clamp(9px,1.6vw,10.5px); letter-spacing:3px; color:#b8924f; white-space:nowrap">01 &nbsp;YOUR DETAILS</span>
+          <span style="flex:1; height:1px; background:#e7e2d6"></span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:clamp(14px,2.5vw,20px); margin-bottom:clamp(22px,3.5vw,28px)">
+          <label style="display:flex; flex-direction:column; gap:7px">
+            <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">FULL LEGAL NAME *</span>
+            <input ref="{{ rName }}" type="text" placeholder="First and last name" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+          </label>
+          <label style="display:flex; flex-direction:column; gap:7px">
+            <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">EMAIL — FOR YOUR COPY *</span>
+            <input ref="{{ rEmail }}" type="email" placeholder="you@email.com" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+          </label>
+          <label style="display:flex; flex-direction:column; gap:7px">
+            <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">PHONE *</span>
+            <input ref="{{ rPhone }}" type="tel" placeholder="(201) 555-0100" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+          </label>
+
+          <sc-if value="{{ eventTypeFixed }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; flex-direction:column; gap:7px">
+              <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">EVENT TYPE</span>
+              <div style="padding:9px 2px; font-size:15px; color:#201c17; border-bottom:1px solid #e7e2d6; min-height:44px; display:flex; align-items:center; gap:9px">
+                <span style="color:#b8924f; font-size:11px">&#9670;</span>{{ presetEventType }}
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ eventTypeOpen }}" hint-placeholder-val="{{ true }}">
+            <label style="display:flex; flex-direction:column; gap:7px">
+              <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">EVENT TYPE *</span>
+              <select ref="{{ rEvent }}" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; cursor:pointer; transition:border-color .2s" style-focus="border-color:#b8924f">
+                <option value="">Select</option>
+                <sc-for list="{{ eventTypes }}" as="et" hint-placeholder-count="8"><option value="{{ et }}">{{ et }}</option></sc-for>
+              </select>
+            </label>
+          </sc-if>
+
+          <label style="display:flex; flex-direction:column; gap:7px">
+            <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">EVENT DATE *</span>
+            <input ref="{{ rDate }}" type="date" onChange="{{ onDateChange }}" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+          </label>
+          <div style="display:flex; gap:14px; {{ timePairStyle }}">
+            <label style="display:flex; flex-direction:column; gap:7px; flex:1">
+              <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">START TIME *</span>
+              <input ref="{{ rStart }}" type="time" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px; flex:1">
+              <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">END TIME</span>
+              <input ref="{{ rEnd }}" type="time" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:clamp(14px,2.5vw,20px); margin-bottom:clamp(28px,4.5vw,42px)">
+          <label style="display:flex; flex-direction:column; gap:7px">
+            <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">{{ venue1Label }} *</span>
+            <input ref="{{ rVenue }}" type="text" placeholder="Venue name, street, city, state" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+          </label>
+          <sc-if value="{{ twoVenues }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex; flex-direction:column; gap:7px">
+              <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">SECOND LOCATION — NAME &amp; ADDRESS *</span>
+              <input ref="{{ rVenue2 }}" type="text" placeholder="Venue name, street, city, state" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; transition:border-color .2s" style-focus="border-color:#b8924f">
+              <span style="font-size:12px; color:#a39c8d; line-height:1.5">Your coverage includes two locations. Travel between them is part of the agreed hours.</span>
+            </label>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ hasCeremonies }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f4ed; border:1px solid #e7e2d6; border-radius:3px; padding:clamp(16px,3vw,24px); margin-bottom:clamp(28px,4.5vw,42px)">
+            <div style="font-size:10.5px; letter-spacing:1.6px; color:#8a6a2f; margin-bottom:6px">FUNCTIONS COVERED</div>
+            <div style="font-size:12.5px; color:#6f685b; line-height:1.6; margin-bottom:clamp(16px,3vw,20px); text-wrap:pretty">These are the functions we are covering for you. Where a date or time is missing, please add it.</div>
+            <div style="display:flex; flex-direction:column; gap:14px">
+              <sc-for list="{{ ceremonyRows }}" as="cr" hint-placeholder-count="3">
+                <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; padding-bottom:14px; border-bottom:1px solid #e2ddd2">
+                  <div style="flex:1.5 1 118px; min-width:118px">
+                    <div style="font-size:10px; letter-spacing:1.4px; color:#a39c8d; margin-bottom:5px">FUNCTION</div>
+                    <div style="font-size:14px; color:#201c17; line-height:1.4">{{ cr.name }}</div>
+                  </div>
+                  <div style="flex:1.2 1 116px; min-width:116px">
+                    <div style="font-size:10px; letter-spacing:1.4px; color:#a39c8d; margin-bottom:5px">DATE</div>
+                    <sc-if value="{{ cr.hasDate }}" hint-placeholder-val="{{ true }}">
+                      <div style="font-size:14px; color:#201c17; min-height:32px; line-height:1.4">{{ cr.dateText }}</div>
+                    </sc-if>
+                    <sc-if value="{{ cr.needDate }}" hint-placeholder-val="{{ false }}">
+                      <input ref="{{ cr.rDate }}" type="date" style="width:100%; border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:5px 0; font-size:13.5px; color:#201c17; outline:none; min-height:40px; color-scheme:light; transition:border-color .2s" style-focus="border-color:#b8924f">
+                    </sc-if>
+                  </div>
+                  <div style="flex:0 1 84px; min-width:84px">
+                    <div style="font-size:10px; letter-spacing:1.4px; color:#a39c8d; margin-bottom:5px">START</div>
+                    <sc-if value="{{ cr.hasTime }}" hint-placeholder-val="{{ true }}">
+                      <div style="font-size:14px; color:#201c17; min-height:32px">{{ cr.timeText }}</div>
+                    </sc-if>
+                    <sc-if value="{{ cr.needTime }}" hint-placeholder-val="{{ false }}">
+                      <input ref="{{ cr.rTime }}" type="time" style="width:100%; border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:5px 0; font-size:13.5px; color:#201c17; outline:none; min-height:40px; transition:border-color .2s" style-focus="border-color:#b8924f">
+                    </sc-if>
+                  </div>
+                  <div style="flex:0 1 84px; min-width:84px">
+                    <div style="font-size:10px; letter-spacing:1.4px; color:#a39c8d; margin-bottom:5px">END</div>
+                    <sc-if value="{{ cr.hasEnd }}" hint-placeholder-val="{{ true }}">
+                      <div style="font-size:14px; color:#201c17; min-height:32px">{{ cr.endText }}</div>
+                    </sc-if>
+                    <sc-if value="{{ cr.needEnd }}" hint-placeholder-val="{{ false }}">
+                      <input ref="{{ cr.rEnd }}" type="time" style="width:100%; border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:5px 0; font-size:13.5px; color:#201c17; outline:none; min-height:40px; transition:border-color .2s" style-focus="border-color:#b8924f">
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ cr.needLoc }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1 1 104px; min-width:104px">
+                      <div style="font-size:10px; letter-spacing:1.4px; color:#a39c8d; margin-bottom:5px">LOCATION *</div>
+                      <select ref="{{ cr.rLoc }}" style="width:100%; border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:5px 0; font-size:13.5px; color:#201c17; outline:none; min-height:40px; cursor:pointer; transition:border-color .2s" style-focus="border-color:#b8924f">
+                        <option value="">Select</option>
+                        <option value="Location 1">Location 1</option>
+                        <option value="Location 2">Location 2</option>
+                      </select>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex; align-items:center; gap:12px; margin:0 0 clamp(16px,3vw,22px)">
+          <span style="font-size:clamp(9px,1.6vw,10.5px); letter-spacing:3px; color:#b8924f; white-space:nowrap">02 &nbsp;WHAT IS INCLUDED</span>
+          <span style="flex:1; height:1px; background:#e7e2d6"></span>
+        </div>
+
+        <div style="background:#f7f4ed; border:1px solid #e7e2d6; border-radius:3px; padding:clamp(18px,3.5vw,28px); margin-bottom:clamp(28px,4.5vw,42px)">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,23px); font-weight:500; margin:0 0 4px">{{ packageTitle }}</div>
+          <div style="font-size:11px; letter-spacing:1.6px; color:#a39c8d; margin-bottom:clamp(16px,3vw,22px)">COVERAGE &amp; DELIVERABLES</div>
+          <div style="display:flex; flex-direction:column; gap:11px">
+            <sc-for list="{{ inclusions }}" as="inc" hint-placeholder-count="5">
+              <div style="display:flex; gap:12px; align-items:flex-start">
+                <span style="color:#b8924f; font-size:13px; line-height:1.6; flex:none">&#9670;</span>
+                <span style="font-size:clamp(13px,2.2vw,14.5px); line-height:1.6; color:#3d382f; text-wrap:pretty">{{ inc }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:clamp(18px,3vw,24px); padding-top:clamp(16px,3vw,20px); border-top:1px solid #e2ddd2">
+              <div style="font-size:10px; letter-spacing:1.6px; color:#a39c8d; margin-bottom:8px">ADDITIONAL AGREEMENTS</div>
+              <div style="font-size:clamp(13px,2.2vw,14.5px); line-height:1.7; color:#3d382f; white-space:pre-wrap; text-wrap:pretty">{{ notes }}</div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; margin:0 0 clamp(16px,3vw,22px)">
+          <span style="font-size:clamp(9px,1.6vw,10.5px); letter-spacing:3px; color:#b8924f; white-space:nowrap">03 &nbsp;PAYMENT</span>
+          <span style="flex:1; height:1px; background:#e7e2d6"></span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding-bottom:14px; border-bottom:1px solid #e7e2d6; margin-bottom:clamp(18px,3vw,24px)">
+          <span style="font-size:11px; letter-spacing:1.6px; color:#8d8678">TOTAL FEE</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:clamp(24px,4vw,32px); font-weight:500">{{ totalFee }}</span>
+        </div>
+
+        <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678; margin-bottom:11px">HOW WOULD YOU LIKE TO PAY? *</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap:12px; margin-bottom:clamp(18px,3vw,24px)">
+          <sc-for list="{{ payModes }}" as="pm" hint-placeholder-count="2">
+            <button onClick="{{ pm.onPick }}" style="text-align:left; background:{{ pm.bg }}; border:1px solid {{ pm.border }}; border-radius:4px; padding:16px 18px; cursor:pointer; min-height:44px; transition:border-color .2s, background .2s" style-hover="border-color:#b8924f">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px">
+                <span style="width:15px; height:15px; border-radius:50%; border:1px solid {{ pm.dotBorder }}; background:{{ pm.dot }}; flex:none; box-shadow:{{ pm.dotShadow }}"></span>
+                <span style="font-size:14px; font-weight:500; color:#201c17">{{ pm.title }}</span>
+              </div>
+              <div style="font-size:12.5px; color:#6f685b; line-height:1.5; padding-left:25px">{{ pm.sub }}</div>
+            </button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ showSchedule }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#f7f4ed; border:1px solid #e7e2d6; border-radius:3px; padding:clamp(16px,3vw,24px); margin-bottom:clamp(18px,3vw,24px)">
+            <div style="font-size:10.5px; letter-spacing:1.6px; color:#8a6a2f; margin-bottom:clamp(14px,2.5vw,18px)">{{ scheduleTitle }}</div>
+            <sc-if value="{{ needsDate }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:13.5px; color:#6f685b; line-height:1.6">Add your event date above and the installment dates will appear here.</div>
+            </sc-if>
+            <div style="display:flex; flex-direction:column; gap:0">
+              <sc-for list="{{ scheduleRows }}" as="row" hint-placeholder-count="3">
+                <div style="display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:13px 0; border-bottom:1px solid #e2ddd2; flex-wrap:wrap">
+                  <div style="min-width:150px">
+                    <div style="font-size:13.5px; color:#201c17; font-weight:500">{{ row.label }}</div>
+                    <div style="font-size:12px; color:#8d8678; margin-top:3px">{{ row.due }}</div>
+                  </div>
+                  <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,22px); font-weight:500; white-space:nowrap">{{ row.amount }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hasScheduleNote }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px; color:#6f685b; line-height:1.6; margin-top:14px; text-wrap:pretty">{{ scheduleNote }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px">
+          <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">DEPOSIT TO SECURE THE DATE *</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,22px); font-weight:500">{{ depositAmount }}</div>
+        </div>
+        <div style="font-size:12.5px; color:#6f685b; line-height:1.6; margin-bottom:11px; text-wrap:pretty">Sent by bank transfer or Zelle so the booking is on record.</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap:12px; margin-bottom:clamp(22px,3.5vw,30px)">
+          <sc-for list="{{ depositMethods }}" as="dm" hint-placeholder-count="2">
+            <button onClick="{{ dm.onPick }}" style="text-align:left; background:{{ dm.bg }}; border:1px solid {{ dm.border }}; border-radius:4px; padding:15px 18px; cursor:pointer; min-height:44px; display:flex; align-items:center; gap:10px; transition:border-color .2s, background .2s" style-hover="border-color:#b8924f">
+              <span style="width:15px; height:15px; border-radius:50%; border:1px solid {{ dm.dotBorder }}; background:{{ dm.dot }}; flex:none; box-shadow:{{ dm.dotShadow }}"></span>
+              <span style="font-size:14px; color:#201c17">{{ dm.title }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px">
+          <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">REMAINING BALANCE *</div>
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,22px); font-weight:500">{{ balanceAmount }}</div>
+        </div>
+        <div style="font-size:12.5px; color:#6f685b; line-height:1.6; margin-bottom:11px; text-wrap:pretty">{{ balanceNote }}</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap:12px; margin-bottom:clamp(28px,4.5vw,42px)">
+          <sc-for list="{{ payMethods }}" as="mt" hint-placeholder-count="2">
+            <button onClick="{{ mt.onPick }}" style="text-align:left; background:{{ mt.bg }}; border:1px solid {{ mt.border }}; border-radius:4px; padding:15px 18px; cursor:pointer; min-height:44px; display:flex; align-items:center; gap:10px; transition:border-color .2s, background .2s" style-hover="border-color:#b8924f">
+              <span style="width:15px; height:15px; border-radius:50%; border:1px solid {{ mt.dotBorder }}; background:{{ mt.dot }}; flex:none; box-shadow:{{ mt.dotShadow }}"></span>
+              <span style="font-size:14px; color:#201c17">{{ mt.title }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; margin:0 0 clamp(16px,3vw,22px)">
+          <span style="font-size:clamp(9px,1.6vw,10.5px); letter-spacing:3px; color:#b8924f; white-space:nowrap">04 &nbsp;TERMS &amp; CONDITIONS</span>
+          <span style="flex:1; height:1px; background:#e7e2d6"></span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:clamp(14px,2.5vw,18px); margin-bottom:clamp(28px,4.5vw,42px)">
+          <sc-for list="{{ terms }}" as="t" hint-placeholder-count="10">
+            <div>
+              <div style="font-size:clamp(12.5px,2vw,13.5px); font-weight:500; letter-spacing:0.4px; color:#201c17; margin-bottom:5px">{{ t.n }}. {{ t.h }}</div>
+              <div style="font-size:clamp(12.5px,2.1vw,13.5px); line-height:1.75; color:#5d564a; white-space:pre-line; text-wrap:pretty">{{ t.b }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:12px; margin:0 0 clamp(16px,3vw,22px)">
+          <span style="font-size:clamp(9px,1.6vw,10.5px); letter-spacing:3px; color:#b8924f; white-space:nowrap">05 &nbsp;SIGNATURE</span>
+          <span style="flex:1; height:1px; background:#e7e2d6"></span>
+        </div>
+
+        <label style="display:flex; gap:12px; align-items:flex-start; cursor:pointer; margin-bottom:clamp(20px,3.5vw,26px)">
+          <input ref="{{ rAgree }}" type="checkbox" onChange="{{ onAgree }}" style="width:20px; height:20px; margin:1px 0 0; accent-color:#b8924f; flex:none; cursor:pointer">
+          <span style="font-size:clamp(12.5px,2.1vw,13.5px); line-height:1.65; color:#3d382f; text-wrap:pretty">I have read and agree to the coverage, fees, payment schedule, and terms above, and I confirm the event details I entered are correct.</span>
+        </label>
+
+        <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678; margin-bottom:9px">DRAW YOUR SIGNATURE BELOW *</div>
+        <div style="position:relative; border:1px solid #d9d3c6; border-radius:3px; background:#fff; margin-bottom:10px">
+          <canvas ref="{{ rCanvas }}" onPointerDown="{{ sigDown }}" onPointerMove="{{ sigMove }}" onPointerUp="{{ sigUp }}" onPointerLeave="{{ sigUp }}" style="display:block; width:100%; height:170px; touch-action:none; cursor:crosshair; border-radius:3px"></canvas>
+          <sc-if value="{{ sigEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; font-size:13px; color:#c4bdad; letter-spacing:1px">Sign here with your finger or mouse</div>
+          </sc-if>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:clamp(24px,4vw,34px)">
+          <button onClick="{{ clearSig }}" style="background:transparent; border:1px solid #d9d3c6; border-radius:4px; padding:11px 18px; font-size:11.5px; letter-spacing:1.4px; color:#6f685b; cursor:pointer; min-height:44px" style-hover="border-color:#b8924f; color:#8a6a2f">CLEAR SIGNATURE</button>
+          <div style="font-size:12.5px; color:#a39c8d">Dated {{ today }}</div>
+        </div>
+
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fdf1ef; border:1px solid #f0cfc9; border-radius:4px; padding:13px 16px; font-size:13px; color:#a8443a; line-height:1.55; margin-bottom:18px">{{ errorMsg }}</div>
+        </sc-if>
+
+        <button onClick="{{ submit }}" disabled="{{ busy }}" style="width:100%; background:#16130f; color:#fff; border:none; border-radius:4px; padding:19px; font-size:12px; letter-spacing:2.6px; font-weight:500; cursor:pointer; min-height:52px; opacity:{{ busyOpacity }}; transition:background .2s" style-hover="background:#2c2823">{{ submitLabel }}</button>
+        <div style="text-align:center; font-size:12px; color:#a39c8d; margin-top:14px; line-height:1.6">A PDF copy downloads to your device, and a copy of the agreement is emailed to you and to Kemiras Studioz.</div>
+
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fffdf8; border:1px solid #e2ddd2; border-radius:4px; box-shadow:0 24px 60px rgba(32,28,23,0.09); overflow:hidden; animation:fadeUp .5s ease both">
+        <div style="background:#16130f; padding:clamp(28px,5vw,46px) clamp(20px,5vw,52px); text-align:center">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(26px,4.4vw,38px); font-weight:300; letter-spacing:2px; color:#f4efe7">Kemiras Studioz</div>
+          <div style="font-size:clamp(9px,1.6vw,11px); letter-spacing:clamp(3px,0.7vw,6px); color:#b8924f; margin-top:10px">PHOTOGRAPHY &amp; VIDEOGRAPHY</div>
+        </div>
+        <div style="padding:clamp(40px,7vw,72px) clamp(22px,5vw,52px); text-align:center">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(40px,6vw,56px); color:#b8924f; line-height:1">&#10003;</div>
+          <h2 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(23px,4vw,32px); margin:clamp(14px,2.5vw,20px) 0 14px">This contract is already signed</h2>
+          <p style="font-size:clamp(13.5px,2.2vw,15px); line-height:1.75; color:#5d564a; max-width:440px; margin:0 auto; text-wrap:pretty">
+            <sc-if value="{{ hasLockedWho }}" hint-placeholder-val="{{ false }}">Signed by {{ lockedWho }} on {{ lockedWhen }}. </sc-if>
+            Your signed copy was emailed to you when you submitted it. If you need to review or change anything, please contact Kemiras Studioz and we will reopen it for you.
+          </p>
+          <div style="margin-top:clamp(26px,4vw,36px); font-size:13px; color:#8d8678; line-height:1.7">kemirasstudioz@gmail.com</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fffdf8; border:1px solid #e2ddd2; border-radius:4px; box-shadow:0 24px 60px rgba(32,28,23,0.09); overflow:hidden; animation:fadeUp .5s ease both">
+        <div style="padding:clamp(38px,6vw,64px) clamp(22px,5vw,52px) clamp(26px,4vw,38px); text-align:center; border-bottom:1px solid #e7e2d6">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(44px,7vw,62px); color:#b8924f; line-height:1">&#10003;</div>
+          <h2 style="font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(24px,4vw,34px); margin:clamp(14px,2.5vw,20px) 0 12px">Contract signed</h2>
+          <p style="font-size:clamp(13.5px,2.2vw,15px); line-height:1.75; color:#5d564a; max-width:460px; margin:0 auto; text-wrap:pretty">Thank you, {{ doneName }}. A copy of your signed agreement has been sent to <strong style="color:#201c17">{{ doneEmail }}</strong> and to Kemiras Studioz. The signed PDF has downloaded to your device — please keep it for your records.</p>
+        </div>
+
+        <div style="padding:clamp(26px,5vw,44px) clamp(22px,5vw,52px)">
+          <div style="font-size:10.5px; letter-spacing:2.4px; color:#b8924f; margin-bottom:8px">YOUR PAYMENT PLAN</div>
+          <p style="font-size:clamp(13px,2.2vw,14px); line-height:1.7; color:#5d564a; margin:0 0 clamp(20px,3.5vw,26px); text-wrap:pretty">{{ doneSummaryLine }}</p>
+
+          <div style="display:flex; flex-direction:column; gap:0; margin-bottom:clamp(18px,3vw,24px)">
+            <sc-for list="{{ scheduleRows }}" as="row" hint-placeholder-count="3">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; gap:14px; padding:14px 0; border-bottom:1px solid #e7e2d6; flex-wrap:wrap">
+                <div style="min-width:150px">
+                  <div style="font-size:14px; color:#201c17; font-weight:500">{{ row.label }}</div>
+                  <div style="font-size:12.5px; color:#8d8678; margin-top:3px">{{ row.due }}</div>
+                </div>
+                <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(19px,3vw,24px); font-weight:500; white-space:nowrap">{{ row.amount }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="background:#f7f4ed; border:1px solid #e7e2d6; border-radius:3px; padding:clamp(16px,3vw,22px); margin-bottom:clamp(20px,3.5vw,28px)">
+            <div style="font-size:10px; letter-spacing:1.6px; color:#a39c8d; margin-bottom:7px">HOW TO SEND YOUR PAYMENTS</div>
+            <div style="font-size:clamp(13px,2.2vw,14px); line-height:1.7; color:#3d382f; white-space:pre-line; text-wrap:pretty">{{ doneMethodHelp }}</div>
+          </div>
+
+          <div style="text-align:center">
+            <button onClick="{{ downloadAgain }}" style="background:transparent; border:1px solid #d9d3c6; border-radius:4px; padding:14px 26px; font-size:11.5px; letter-spacing:1.6px; color:#6f685b; cursor:pointer; min-height:46px" style-hover="border-color:#b8924f; color:#8a6a2f">DOWNLOAD PDF AGAIN</button>
+          </div>
+          <sc-if value="{{ mailWarning }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:clamp(20px,3.5vw,28px); font-size:12.5px; color:#a8443a; line-height:1.6; text-align:center">The email could not be sent automatically. Please keep the downloaded PDF and send it to kemirasstudioz@gmail.com.</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="text-align:center; font-size:11px; letter-spacing:2px; color:#a39c8d; padding:clamp(22px,4vw,34px) 0 6px">KEMIRAS STUDIOZ &nbsp;&middot;&nbsp; KEMIRASSTUDIOZ.COM</div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  EMAILJS_SERVICE_ID = 'service_dawkhnl';
+  EMAILJS_PUBLIC_KEY = 'si56dhfZomGAhMSCh';
+  STUDIO_TEMPLATE_ID = 'template_25fq746';
+  CLIENT_TEMPLATE_ID = '';
+  ATTACHMENTS_ENABLED = false;
+  STUDIO_EMAIL = 'kemirasstudioz@gmail.com';
+  ZELLE_HANDLE = 'kemirasstudioz@gmail.com';
+
+  eventTypes = ["Wedding", "Engagement", "Baby Shower", "Maternity Shoot", "Sweet 16th", "Birthday Party", "Anniversary", "Reception"];
+
+  defaults = {
+    packageTitle: 'Event Coverage Package',
+    inclusions: [
+      'Lead photographer for the agreed coverage hours',
+      'Professionally edited high-resolution images delivered in a private online gallery',
+      'Personal printing and social sharing rights for all delivered images',
+      'Travel within 30 miles of the studio',
+      'Backup equipment and duplicate on-site storage of all files'
+    ],
+    totalFee: 'TBD',
+    retainer: 'TBD',
+    balanceDue: 'Due in full on or before the event date',
+    notes: '',
+    eventType: '',
+    secondVenue: false,
+    allowInstallments: true
+  };
+
+  terms = [
+    { n: 0, h: 'Booking and deposit', b: 'Your date is reserved once you sign this agreement and we receive your deposit. The deposit counts toward your total fee and is not refundable, because we turn away other bookings to hold your date for you. Until both of those things happen, the date stays open to other enquiries.' },
+    { n: 0, h: 'Payment schedule and late payment', b: 'You pay the balance on the schedule you selected above. Where you chose installments, each payment is due on or before the date shown.\n\nIf a payment is more than seven days late, we may pause editing and delivery until it is settled, and your delivery dates move back by the length of the delay. Coverage of your event will not be cancelled for a late balance, but files stay with us until payment is complete.' },
+    { n: 0, h: 'How to pay', b: 'We accept bank transfer and Zelle, and cash where this agreement allows it. Your deposit must come by bank transfer or Zelle so that your booking is on record; cash is accepted for later payments only. When you pay in cash we will confirm it by text or email, so both of us have a record of what has been paid. Please include your name and event date with every electronic payment. Any fees your bank charges are yours to cover.' },
+    { n: 0, h: 'Coverage hours and extra time', b: 'We arrive and finish at the times recorded above, and we ask that you build a little slack into the schedule so a late start elsewhere does not eat into your coverage. If you would like us to stay longer and we are able to, extra time is agreed with you on the day, billed in one-hour blocks at our current hourly rate, and payable before we deliver your files.' },
+    { n: 0, h: 'Locations, travel and venue costs', b: 'Where this agreement records two locations, the time we spend traveling between them counts toward your coverage hours unless we have agreed otherwise in writing. Any location added after you sign is quoted separately.\n\nTravel is included in your fee where we discussed it beforehand. Parking and venue entry fees, where they apply, are yours to cover.' },
+    { n: 0, h: 'If you need to cancel or move your date', b: 'Please tell us in writing as soon as you know. Your deposit is not refundable, and anything you have paid beyond the deposit is returned to you in full.\n\nYou may move your booking once to another date within twelve months at no extra charge, as long as we are free that day and your new date is at least thirty days away. Your deposit moves with you. Any change after that first one is treated as a new booking at our rates at the time.' },
+    { n: 0, h: 'If we have to cancel', b: 'If serious illness, injury, an accident, a family emergency, or anything else genuinely outside our control stops us from covering your event, we will tell you the moment we know and do our best to arrange a photographer or videographer of comparable standard, at no extra cost to you.\n\nIf no replacement can be found, we refund everything you have paid us, including your deposit. That refund is the full extent of what we owe you in those circumstances.' },
+    { n: 0, h: 'When you receive your files', b: 'Edited photographs reach you within four to six weeks of your event. Films and highlight edits take eight to twelve weeks. Delivery can run longer during peak season, and we will tell you in advance if that affects your booking. Files are delivered through a private online gallery, and we will let you know when it is ready.' },
+    { n: 0, h: 'Editing and creative direction', b: 'We edit every image and film in our own style, which is the style you saw when you booked us. Color grading, which frames we retouch, and the final cut are our creative decisions.\n\nWe do not hand over raw or unedited files. If you would like substantial re-edits beyond what we deliver, we are glad to quote for them separately.' },
+    { n: 0, h: 'Copyright and how you may use your images', b: 'Kemiras Studioz keeps the copyright in all images and footage. You receive a permanent, non-exclusive license for you and your immediate family to use them personally, print them, and share them online, for as long as you like, at no further cost.\n\nPlease credit us where it is natural to do so, and please do not crop out or remove our watermark where one appears. Selling the images on, entering them in competitions, or licensing them to a business needs our written permission first. Your license cannot be transferred to anyone else.' },
+    { n: 0, h: 'Showing your images in our portfolio', b: 'We may show selected images and footage in our portfolio, on our website, and on social media, and you agree to that by signing this agreement. We will never sell your images to a third party or use them in paid advertising without asking you first.\n\nIf you would rather we kept everything private, just tell us in writing before your event date and we will. If something is already published when you ask, we will take it down from anywhere we control within a reasonable time.' },
+    { n: 0, h: 'What we need from you on the day', b: 'Please give us a schedule in advance, one person we can reach on the day, and reasonable access to every venue listed above, including any permission the venue requires for photography, filming, or lighting.\n\nWe are not responsible for moments we miss because of venue restrictions, house rules on where we may stand, power or lighting limits, delays outside our control, or guests blocking our view. Where a venue restricts us, we will get the best result the setting allows.' },
+    { n: 0, h: 'Group photographs and who gathers people', b: 'Your event coordinator, planner, or main point of contact is responsible for organizing, gathering, and managing everyone needed for group photographs and portraits. We need that active support during these sessions so nobody important is missed.\n\nWe will make every effort to capture every grouping on the shot list you give us. However, if someone is missing from a photograph and was not named on that list, or is not there when we take it, we are not responsible for their absence. Making sure everyone needed is present at the agreed time and place stays with your coordinator or representative.' },
+    { n: 0, h: 'Drone coverage', b: 'Where your package includes drone coverage, we fly only when the weather, the airspace, and the site allow a safe and lawful take-off and flight, and where the venue permits it. Please tell us in advance of any restriction you know about.\n\nIf conditions on the day are unsafe, we are not responsible for unstable footage or for the drone portion being dropped, and we will tell you at the time. If the drone was priced as a separate line in your package and we cannot fly at all, that part of the fee is refunded.' },
+    { n: 0, h: 'A safe and respectful working environment', b: 'Please help us work safely. We may pause or stop coverage, without refund, if our crew faces threatening or abusive behavior, unsafe conditions, or is asked to work somewhere that puts them or the equipment at real risk. We would far rather talk it through with your point of contact first, and stopping is always our last resort.' },
+    { n: 0, h: 'Breaks and meals', b: 'On coverage running longer than three hours our crew takes short staggered breaks, so at least one of us is always covering your event, and they arrange their own meals unless you would like to offer otherwise.' },
+    { n: 0, h: 'Equipment failure and data loss', b: 'We take real care with your photographs and footage. We carry backup bodies and cards, and we copy everything to two separate places as soon as we return from your event. Even so, if a mechanical breakdown, technical malfunction, memory card corruption, camera failure, or any other unforeseen equipment failure occurs, we are not liable for data that is lost, damaged, or cannot be recovered.\n\nIf that happens, we refund what you have paid under this agreement, in proportion to the work we could not deliver. That refund is the full extent of what we owe you for it.' },
+    { n: 0, h: 'Backups and how long we keep your files', b: 'We keep your files backed up in two locations and archived for ninety days after we deliver them. Please download and store your own copies within that window, as we cannot guarantee they will be available afterwards. If you ask us to retrieve files after that period and we still hold them, a small recovery fee applies.' },
+    { n: 0, h: 'The limit of what we owe you', b: 'We will always try to put things right first, and we ask that you raise any concern with us within thirty days of delivery so we have the chance to.\n\nIf something does go wrong, our total liability to you under this agreement, whatever the cause, will not exceed the total amount you have paid us. We are not liable for indirect or knock-on losses, such as the cost of re-staging an event, travel, venue hire, or lost earnings. Nothing in this agreement limits liability for anything that cannot lawfully be limited.' },
+    { n: 0, h: 'This is the whole agreement', b: 'This document, together with the coverage and payment details above, is the entire agreement between us and replaces any earlier discussion, quote, or message about the same booking. Any change to it needs to be agreed in writing by both you and Kemiras Studioz.\n\nIf any single clause turns out to be unenforceable, the rest of the agreement still stands. Your signature confirms you have read this agreement, that the details above are correct, and that you agree to it.' }
+  ];
+
+  termList() { return this.terms.map((t, i) => ({ n: i + 1, h: t.h, b: t.b })); }
+
+  markSigned(d) {
+    const blob = this._blob;
+    const cfg = this.state.cfg;
+    if (!blob || !cfg || !window.KemData) return;
+    const stamp = {
+      signed: true,
+      signedAt: new Date().toISOString(),
+      signedBy: d.name,
+      booking: {
+        name: d.name, email: d.email, phone: d.phone,
+        eventType: d.eventType, date: d.date, start: d.start, end: d.end,
+        venue: d.venue, venue2: d.venue2,
+        ceremonies: (d.ceremonies || []).map(c => ({ name: c.name, date: c.date, time: c.time, end: c.end, loc: c.loc }))
+      }
+    };
+    const list = Array.isArray(blob.contracts) && blob.contracts.length ? blob.contracts : (blob.contract ? [blob.contract] : []);
+    const next = list.map(c => (String(c.id) === String(cfg.id) ? { ...c, ...stamp } : c));
+    try { window.KemData.save({ ...blob, contracts: next, contract: next[0] }); } catch (e) {}
+  }
+
+  state = { cfg: null, notFound: false, locked: false, sigEmpty: true, busy: false, done: false, errorMsg: '', doneName: '', doneEmail: '', mailWarning: false, payMode: 'full', payMethod: '', depositMethod: 'transfer', eventDate: '' };
+
+  componentDidMount() {
+    if (window.emailjs) { try { window.emailjs.init({ publicKey: this.EMAILJS_PUBLIC_KEY }); } catch (e) {} }
+    if (window.KemData) window.KemData.load().then((d) => {
+      if (!d) return;
+      this._blob = d;
+      let want = '';
+      try { want = new URLSearchParams(location.search).get('c') || ''; } catch (e) {}
+      const list = Array.isArray(d.contracts) && d.contracts.length ? d.contracts : (d.contract ? [d.contract] : []);
+      if (!list.length) return;
+      const match = want ? list.find(c => String(c.id) === want) : null;
+      const cfg = match || list[0];
+      this.setState({ cfg, notFound: !!want && !match, locked: cfg.signed === true });
+    }).catch(() => {});
+    this._onResize = () => this.sizeCanvas(true);
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+
+  cfgVal(key) {
+    const c = this.state.cfg || {};
+    const v = c[key];
+    if (typeof v === 'boolean') return v;
+    if (Array.isArray(v)) return v.length ? v : this.defaults[key];
+    if (typeof v === 'string' && v.trim()) return v;
+    return this.defaults[key];
+  }
+
+  // ---------- money ----------
+  money(n) {
+    if (!isFinite(n)) return '\u2014';
+    const r = Math.round(n * 100) / 100;
+    const whole = Math.abs(r % 1) < 0.005;
+    return '$' + r.toLocaleString('en-US', { minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 });
+  }
+  num(str) {
+    const m = String(str == null ? '' : str).replace(/[^0-9.]/g, '');
+    const n = parseFloat(m);
+    return isFinite(n) && n > 0 ? n : null;
+  }
+  get totalNum() { return this.num(this.cfgVal('totalFee')); }
+  get retainerNum() {
+    const r = this.num(this.cfgVal('retainer'));
+    const t = this.totalNum;
+    if (r == null || t == null) return r;
+    return r < t ? r : null;
+  }
+
+  // ---------- dates ----------
+  parseDate(iso) {
+    if (!iso) return null;
+    const p = String(iso).split('-');
+    if (p.length !== 3) return null;
+    const d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return isNaN(d.getTime()) ? null : d;
+  }
+  shortDate(d) { return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; }
+  fmtDate(iso) {
+    const d = this.parseDate(iso);
+    return d ? d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : (iso || '');
+  }
+  fmtTime(t) {
+    if (!t) return '';
+    const p = String(t).split(':'); if (p.length < 2) return t;
+    let h = Number(p[0]); const m = p[1]; const ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if (h === 0) h = 12;
+    return h + ':' + m + ' ' + ap;
+  }
+  todayStr() { return new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); }
+  addDays(d, n) { const x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+
+  // ---------- payment plan ----------
+  plan() {
+    const mode = this.state.payMode;
+    const total = this.totalNum;
+    const totalLabel = total == null ? String(this.cfgVal('totalFee')) : this.money(total);
+    const event = this.parseDate(this.state.eventDate);
+
+    if (mode === 'full') {
+      return {
+        mode: 'full',
+        title: 'PAYING IN FULL',
+        rows: [{
+          label: 'Full payment',
+          amount: totalLabel,
+          due: event ? 'On or before ' + this.shortDate(this.addDays(event, -7)) : String(this.cfgVal('balanceDue'))
+        }],
+        note: 'We hold your date as soon as the payment reaches us.',
+        needsDate: false
+      };
+    }
+
+    const retainer = this.retainerNum;
+    if (total == null || retainer == null) {
+      return {
+        mode: 'installments',
+        title: 'PAYING IN THREE INSTALLMENTS',
+        rows: [
+          { label: 'Installment 1 — deposit', amount: String(this.cfgVal('retainer')), due: 'On signing this agreement' },
+          { label: 'Installment 2', amount: 'To be confirmed', due: 'Midway to the event date' },
+          { label: 'Installment 3 — final', amount: 'To be confirmed', due: '7 days before the event' }
+        ],
+        note: 'We will confirm the exact installment amounts in writing once your total is finalized.',
+        needsDate: false
+      };
+    }
+
+    if (!event) {
+      return {
+        mode: 'installments',
+        title: 'PAYING IN THREE INSTALLMENTS',
+        rows: [],
+        note: '',
+        needsDate: true
+      };
+    }
+
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const finalDue = this.addDays(event, -7);
+    const start = finalDue.getTime() > today.getTime() ? today : this.addDays(event, -14);
+    let midDue = new Date(Math.round((start.getTime() + finalDue.getTime()) / 2));
+    midDue.setHours(0, 0, 0, 0);
+    if (midDue.getTime() <= today.getTime()) midDue = this.addDays(today, 1);
+    if (midDue.getTime() >= finalDue.getTime()) midDue = this.addDays(finalDue, -1);
+
+    const remaining = total - retainer;
+    const second = Math.round((remaining / 2) * 100) / 100;
+    const third = Math.round((remaining - second) * 100) / 100;
+
+    return {
+      mode: 'installments',
+      title: 'PAYING IN THREE INSTALLMENTS',
+      rows: [
+        { label: 'Installment 1 — deposit', amount: this.money(retainer), due: 'On signing — ' + this.shortDate(today) },
+        { label: 'Installment 2', amount: this.money(second), due: 'On or before ' + this.shortDate(midDue) },
+        { label: 'Installment 3 — final', amount: this.money(third), due: 'On or before ' + this.shortDate(finalDue) }
+      ],
+      note: 'Total ' + this.money(total) + '. Your deposit holds the date, and the final installment is due seven days before your event so coverage is fully confirmed.',
+      needsDate: false
+    };
+  }
+  depositLabel(key) { return key === 'zelle' ? 'Zelle' : 'Bank transfer'; }
+  methodLabel() {
+    if (!this.state.payMethod) return '';
+    return 'Deposit by ' + this.depositLabel(this.state.depositMethod).toLowerCase() + ', balance by ' + this.methodLabelPlain().toLowerCase();
+  }
+  methodBlurb(key) {
+    if (key === 'zelle') return 'Send payment by Zelle to ' + this.ZELLE_HANDLE + '. Put your name and event date in the memo so it can be matched to your booking.';
+    return 'The studio will email you its bank transfer details within one business day. Reference your name and event date on every transfer so it can be matched to your booking.';
+  }
+  methodHelp() {
+    const dep = this.depositLabel(this.state.depositMethod);
+    const first = 'Deposit by ' + dep.toLowerCase() + '. ' + this.methodBlurb(this.state.depositMethod);
+    if (this.state.payMethod === 'cash') {
+      return first + '\n\nThe remaining balance is paid in cash, in person. We will confirm each cash payment by text or email so you have a record of it.';
+    }
+    if (this.state.payMethod === this.state.depositMethod) {
+      return first + '\n\nThe remaining balance goes the same way.';
+    }
+    return first + '\n\nRemaining balance by ' + this.methodLabelPlain().toLowerCase() + '. ' + this.methodBlurb(this.state.payMethod);
+  }
+  methodLabelPlain() {
+    const m = this.state.payMethod;
+    return m === 'zelle' ? 'Zelle' : m === 'cash' ? 'Cash' : 'Bank transfer';
+  }
+
+  // ---------- signature ----------
+  sizeCanvas(preserve) {
+    const cv = this._canvas;
+    if (!cv) return;
+    const w = cv.clientWidth, h = cv.clientHeight, r = window.devicePixelRatio || 1;
+    if (!w || !h) return;
+    let prev = null;
+    if (preserve && !this.state.sigEmpty) { try { prev = cv.toDataURL(); } catch (e) {} }
+    if (cv.width === Math.round(w * r) && cv.height === Math.round(h * r)) return;
+    cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(r, 0, 0, r, 0, 0);
+    ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#201c17';
+    if (prev) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = prev; }
+  }
+  ptFrom(e) { const r = this._canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  sigDown(e) {
+    this.sizeCanvas(false);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+    const p = this.ptFrom(e); const ctx = this._canvas.getContext('2d');
+    ctx.beginPath(); ctx.moveTo(p.x, p.y);
+    this._drawing = true;
+    if (this.state.sigEmpty) this.setState({ sigEmpty: false });
+  }
+  sigMove(e) {
+    if (!this._drawing) return;
+    const p = this.ptFrom(e); const ctx = this._canvas.getContext('2d');
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+  }
+  sigUp() { this._drawing = false; }
+  clearSig() {
+    const cv = this._canvas; if (!cv) return;
+    const ctx = cv.getContext('2d');
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.restore();
+    this.setState({ sigEmpty: true });
+  }
+
+  ceremonies() {
+    const c = this.state.cfg || {};
+    return Array.isArray(c.ceremonies) ? c.ceremonies.filter(x => x && (x.name || '').trim()) : [];
+  }
+  twoVenues() {
+    return (this.state.cfg || {}).secondVenue === true;
+  }
+  collectCeremonies() {
+    this._cer = this._cer || {};
+    return this.ceremonies().map(c => {
+      const els = this._cer[c.id] || {};
+      const date = (c.date || '').trim() || (els.date && els.date.value ? els.date.value : '');
+      const time = (c.time || '').trim() || (els.time && els.time.value ? els.time.value : '');
+      const end = (c.endTime || '').trim() || (els.end && els.end.value ? els.end.value : '');
+      const loc = this.twoVenues() ? (els.loc && els.loc.value ? els.loc.value : '') : '';
+      return { name: c.name, date, time, end, loc };
+    });
+  }
+  ceremonyText(list) {
+    return list.map(c => {
+      const d = c.date ? this.fmtDate(c.date) : 'date to confirm';
+      const t = c.time ? this.fmtTime(c.time) : 'time to confirm';
+      const e = c.end ? ' \u2013 ' + this.fmtTime(c.end) : '';
+      const l = c.loc ? ' (' + c.loc + ')' : '';
+      return c.name + ' — ' + d + ', ' + t + e + l;
+    }).join('\n');
+  }
+
+  collect() {
+    const v = (el) => (el && el.value ? String(el.value).trim() : '');
+    const preset = String(this.cfgVal('eventType') || '').trim();
+    return {
+      name: v(this._name), email: v(this._email), phone: v(this._phone),
+      eventType: preset || v(this._event),
+      date: v(this._date), start: v(this._start), end: v(this._end),
+      venue: v(this._venue), venue2: this.twoVenues() ? v(this._venue2) : '',
+      ceremonies: this.collectCeremonies()
+    };
+  }
+
+  buildPdf(d, plan) {
+    const jsPDFCtor = window.jspdf && window.jspdf.jsPDF;
+    if (!jsPDFCtor) return null;
+    const doc = new jsPDFCtor({ unit: 'pt', format: 'letter' });
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+    const M = 56, CW = W - M * 2;
+    let y = 0;
+    const ensure = (need) => { if (y + need > H - 58) { doc.addPage(); y = M; } };
+    const rule = (yy) => { doc.setDrawColor(226, 221, 210); doc.setLineWidth(0.7); doc.line(M, yy, W - M, yy); };
+
+    doc.setFillColor(22, 19, 15); doc.rect(0, 0, W, 112, 'F');
+    doc.setTextColor(244, 239, 231); doc.setFont('times', 'normal'); doc.setFontSize(24);
+    doc.text('Kemiras Studioz', W / 2, 46, { align: 'center' });
+    doc.setFontSize(8); doc.setTextColor(184, 146, 79);
+    doc.text('P H O T O G R A P H Y   &   V I D E O G R A P H Y', W / 2, 64, { align: 'center' });
+    doc.setFontSize(14); doc.setTextColor(244, 239, 231);
+    doc.text('Service Agreement', W / 2, 91, { align: 'center' });
+    y = 142;
+
+    const heading = (txt) => {
+      ensure(46);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(138, 106, 47);
+      doc.text(txt.toUpperCase(), M, y);
+      y += 7; rule(y); y += 18;
+    };
+    const pair = (label, val) => {
+      ensure(34);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(150, 143, 130);
+      doc.text(label.toUpperCase(), M, y);
+      doc.setFontSize(10.5); doc.setTextColor(32, 28, 23);
+      const lines = doc.splitTextToSize(val || '\u2014', CW);
+      doc.text(lines, M, y + 14);
+      y += 14 + lines.length * 13 + 9;
+    };
+
+    heading('Client and event details');
+    pair('Client name', d.name);
+    pair('Email', d.email);
+    pair('Phone', d.phone);
+    pair('Event type', d.eventType);
+    pair('Event date', this.fmtDate(d.date));
+    if (d.start) pair('Coverage time', this.fmtTime(d.start) + (d.end ? ' \u2013 ' + this.fmtTime(d.end) : ''));
+    if ((d.ceremonies || []).length) pair('Functions covered', this.ceremonyText(d.ceremonies));
+    pair(d.venue2 ? 'Location 1' : 'Venue', d.venue);
+    if (d.venue2) pair('Location 2', d.venue2);
+    y += 8;
+
+    heading('What is included');
+    doc.setFont('times', 'bold'); doc.setFontSize(13); doc.setTextColor(32, 28, 23);
+    doc.text(String(this.cfgVal('packageTitle')), M, y); y += 20;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    (this.cfgVal('inclusions') || []).forEach((it) => {
+      const lines = doc.splitTextToSize(String(it), CW - 16);
+      ensure(lines.length * 13 + 8);
+      doc.setTextColor(184, 146, 79); doc.text('\u2022', M, y);
+      doc.setTextColor(61, 56, 47); doc.text(lines, M + 14, y);
+      y += lines.length * 13 + 7;
+    });
+    const notes = String(this.cfgVal('notes') || '').trim();
+    if (notes) { y += 10; pair('Additional agreements', notes); }
+    y += 12;
+
+    heading('Payment');
+    pair('Total fee', this.totalNum == null ? String(this.cfgVal('totalFee')) : this.money(this.totalNum));
+    pair('Selected plan', plan.mode === 'full' ? 'Paying in full' : 'Paying in three installments');
+    pair('Deposit method', this.depositLabel(this.state.depositMethod));
+    pair('Balance method', this.methodLabelPlain());
+    y += 4;
+    plan.rows.forEach((r) => {
+      ensure(34);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(32, 28, 23);
+      doc.text(r.label, M, y);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+      doc.text(String(r.amount), W - M, y, { align: 'right' });
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(150, 143, 130);
+      doc.text(r.due, M, y + 13);
+      y += 22; rule(y); y += 12;
+    });
+    if (plan.note) {
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(93, 86, 74);
+      const nl = doc.splitTextToSize(plan.note, CW);
+      ensure(nl.length * 12 + 10);
+      doc.text(nl, M, y); y += nl.length * 12 + 8;
+    }
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(93, 86, 74);
+    const mh = doc.splitTextToSize(this.methodHelp(), CW);
+    ensure(mh.length * 12 + 14);
+    doc.text(mh, M, y); y += mh.length * 12 + 16;
+
+    heading('Terms and conditions');
+    this.termList().forEach((t) => {
+      doc.setFontSize(9.5);
+      const body = doc.splitTextToSize(t.b, CW);
+      ensure(16 + body.length * 12 + 12);
+      doc.setFont('helvetica', 'bold'); doc.setTextColor(32, 28, 23);
+      doc.text(t.n + '. ' + t.h, M, y); y += 14;
+      doc.setFont('helvetica', 'normal'); doc.setTextColor(93, 86, 74);
+      doc.text(body, M, y); y += body.length * 12 + 13;
+    });
+    y += 10;
+
+    ensure(190);
+    heading('Signature');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(93, 86, 74);
+    const ack = doc.splitTextToSize('The client confirms they have read and agree to the coverage, fees, payment schedule, and terms set out in this agreement, and that the event details recorded above are correct.', CW);
+    doc.text(ack, M, y); y += ack.length * 12 + 22;
+    try {
+      doc.addImage(this._canvas.toDataURL('image/png'), 'PNG', M, y, 230, 78);
+      y += 82;
+    } catch (e) { y += 60; }
+    doc.setDrawColor(180, 174, 160); doc.setLineWidth(0.8);
+    doc.line(M, y, M + 250, y); doc.line(M + 290, y, W - M, y);
+    y += 13;
+    doc.setFontSize(7.5); doc.setTextColor(150, 143, 130);
+    doc.text('CLIENT SIGNATURE', M, y); doc.text('DATE SIGNED', M + 290, y);
+    y += 15;
+    doc.setFontSize(10.5); doc.setTextColor(32, 28, 23);
+    doc.text(d.name, M, y); doc.text(this.todayStr(), M + 290, y);
+    y += 32;
+    ensure(30);
+    doc.setFontSize(9.5); doc.setTextColor(93, 86, 74);
+    doc.text('For Kemiras Studioz: accepted upon receipt of the deposit.', M, y);
+
+    const total = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+      doc.setPage(i);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor(163, 156, 141);
+      doc.text('Kemiras Studioz  \u00b7  kemirasstudioz.com', M, H - 30);
+      doc.text('Page ' + i + ' of ' + total, W - M, H - 30, { align: 'right' });
+    }
+    return doc;
+  }
+
+  pdfName(d) {
+    const safe = String(d.name || 'client').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+    return 'Kemiras-Contract-' + safe + (d.date ? '-' + d.date : '') + '.pdf';
+  }
+
+  summary(d, plan) {
+    const inc = (this.cfgVal('inclusions') || []).map(i => '  \u2022 ' + i).join('\n');
+    const sched = plan.rows.map(r => '  ' + r.label + ': ' + r.amount + ' — ' + r.due).join('\n');
+    return [
+      'SIGNED CONTRACT — ' + d.name,
+      '',
+      'Client: ' + d.name,
+      'Email: ' + d.email,
+      'Phone: ' + d.phone,
+      'Event: ' + d.eventType,
+      'Date: ' + this.fmtDate(d.date),
+      d.start ? 'Time: ' + this.fmtTime(d.start) + (d.end ? ' – ' + this.fmtTime(d.end) : '') : '',
+      (d.ceremonies || []).length ? 'FUNCTIONS COVERED:\n' + this.ceremonyText(d.ceremonies) : '',
+      d.venue2 ? 'Location 1: ' + d.venue : 'Venue: ' + d.venue,
+      d.venue2 ? 'Location 2: ' + d.venue2 : '',
+      '',
+      'PACKAGE: ' + this.cfgVal('packageTitle'),
+      inc,
+      '',
+      'PAYMENT — ' + (plan.mode === 'full' ? 'Paying in full' : 'Three installments') + ' by ' + this.methodLabel(),
+      'Total: ' + (this.totalNum == null ? this.cfgVal('totalFee') : this.money(this.totalNum)),
+      sched,
+      plan.note ? '\n' + plan.note : '',
+      (String(this.cfgVal('notes') || '').trim() ? '\nAdditional agreements:\n' + this.cfgVal('notes') : ''),
+      '',
+      'Signed electronically on ' + this.todayStr() + '. The signed PDF is attached, or held by the client if the attachment did not send.'
+    ].filter(l => l !== '').join('\n');
+  }
+
+  sendMail(d, plan, base64, pdfLink) {
+    if (!window.emailjs) return Promise.reject(new Error('no emailjs'));
+    const params = {
+      pdfLink: pdfLink || '',
+      name: d.name, email: d.email, phone: d.phone,
+      bookingDate: this.fmtDate(d.date),
+      eventType: d.eventType,
+      serviceType: String(this.cfgVal('packageTitle')),
+      liveStream: this.fmtTime(d.start) + (d.end ? ' – ' + this.fmtTime(d.end) : ''),
+      drone: d.venue + (d.venue2 ? '  |  ' + d.venue2 : ''),
+      message: this.summary(d, plan) + (pdfLink ? '\n\nDOWNLOAD THE SIGNED PDF:\n' + pdfLink : ''),
+      clientName: d.name,
+      clientEmail: d.email,
+      clientPhone: d.phone,
+      eventDate: this.fmtDate(d.date),
+      coverageTime: (d.ceremonies || []).length
+        ? this.ceremonyText(d.ceremonies)
+        : this.fmtTime(d.start) + (d.end ? ' \u2013 ' + this.fmtTime(d.end) : ''),
+      venues: d.venue + (d.venue2 ? '  |  ' + d.venue2 : ''),
+      packageTitle: String(this.cfgVal('packageTitle')),
+      inclusionsText: (this.cfgVal('inclusions') || []).map(i => '\u2022 ' + i).join('\n'),
+      totalFee: this.totalNum == null ? String(this.cfgVal('totalFee')) : this.money(this.totalNum),
+      paymentPlan: plan.mode === 'full' ? 'Paying in full' : 'Three installments',
+      paymentMethod: this.methodLabel(),
+      scheduleText: plan.rows.map(r => r.label + ': ' + r.amount + ' — ' + r.due).join('\n'),
+      signedOn: this.todayStr(),
+      pdfNote: pdfLink ? pdfLink : 'The signed PDF was downloaded to the client\u2019s device.'
+    };
+    const sendTo = (addr) => window.emailjs.send(
+      this.EMAILJS_SERVICE_ID,
+      this.STUDIO_TEMPLATE_ID,
+      Object.assign({}, params, { to_email: addr, reply_to: d.email }),
+      { publicKey: this.EMAILJS_PUBLIC_KEY }
+    );
+    return sendTo(this.STUDIO_EMAIL)
+      .then(() => sendTo(d.email).catch(() => null));
+  }
+
+  submit() {
+    if (this.state.busy) return;
+    const d = this.collect();
+    const missing = [];
+    if (!d.name) missing.push('your full name');
+    if (!d.email) missing.push('your email');
+    if (!d.phone) missing.push('your phone');
+    if (!d.eventType) missing.push('the event type');
+    if (!d.date) missing.push('the event date');
+    if (!d.start && !this.ceremonies().length) missing.push('the start time');
+    (d.ceremonies || []).forEach(c => {
+      if (!c.date) missing.push('the date for ' + c.name);
+      if (!c.time) missing.push('the start time for ' + c.name);
+      if (this.twoVenues() && !c.loc) missing.push('the location for ' + c.name);
+    });
+    if (!d.venue) missing.push(this.twoVenues() ? 'the first location' : 'the venue');
+    if (this.twoVenues() && !d.venue2) missing.push('the second location');
+    if (missing.length) { this.setState({ errorMsg: 'Please add ' + missing.join(', ') + '.' }); return; }
+    if (d.email.indexOf('@') < 1) { this.setState({ errorMsg: 'That email address does not look right.' }); return; }
+    if (!this.state.depositMethod) { this.setState({ errorMsg: 'Please choose how you will send the deposit.' }); return; }
+    if (!this.state.payMethod) { this.setState({ errorMsg: 'Please choose how you will pay the remaining balance.' }); return; }
+    if (!this._agree || !this._agree.checked) { this.setState({ errorMsg: 'Please tick the box to confirm you agree to the terms.' }); return; }
+    if (this.state.sigEmpty) { this.setState({ errorMsg: 'Please draw your signature before submitting.' }); return; }
+
+    this.setState({ busy: true, errorMsg: '' });
+    const plan = this.plan();
+    const doc = this.buildPdf(d, plan);
+    if (!doc) { this.setState({ busy: false, errorMsg: 'The PDF tool did not load. Please refresh the page and try again.' }); return; }
+    this._doc = doc; this._data = d;
+    try { doc.save(this.pdfName(d)); } catch (e) {}
+    let base64 = '';
+    try { base64 = String(doc.output('datauristring')).split(',')[1] || ''; } catch (e) {}
+
+    this.markSigned(d);
+    const finish = (warn) => this.setState({
+      busy: false, done: true, mailWarning: !!warn,
+      doneName: (d.name.split(' ')[0] || d.name), doneEmail: d.email
+    });
+    const upload = (window.KemData && window.KemData.uploadContract)
+      ? window.KemData.uploadContract(base64, this.pdfName(d)).catch(() => null)
+      : Promise.resolve(null);
+    upload.then((link) => this.sendMail(d, plan, base64, link))
+      .then(() => finish(false))
+      .catch(() => finish(true));
+  }
+
+  renderVals() {
+    const st = this.state;
+    const plan = this.plan();
+    const preset = String(this.cfgVal('eventType') || '').trim();
+    const allowInst = this.cfgVal('allowInstallments') !== false;
+    const gold = '#b8924f';
+
+    const modeDefs = [{ key: 'full', title: 'Pay in full', sub: 'One payment covering the whole fee.' }];
+    if (allowInst) modeDefs.push({ key: 'installments', title: 'Pay in three installments', sub: 'Deposit now, then two payments before your event.' });
+
+    const radio = (active) => ({
+      bg: active ? 'rgba(184,146,79,0.09)' : '#fff',
+      border: active ? gold : '#d9d3c6',
+      dot: active ? gold : '#fff',
+      dotBorder: active ? gold : '#c4bdad',
+      dotShadow: active ? 'inset 0 0 0 3px #fff' : 'none'
+    });
+
+    return {
+      showForm: !st.done && !st.locked,
+      locked: st.locked && !st.done,
+      lockedWhen: st.cfg && st.cfg.signedAt ? new Date(st.cfg.signedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+      lockedWho: (st.cfg && st.cfg.signedBy) ? st.cfg.signedBy : '',
+      hasLockedWho: !!(st.cfg && st.cfg.signedBy),
+      done: st.done,
+      doneName: st.doneName,
+      doneEmail: st.doneEmail,
+      mailWarning: st.mailWarning,
+
+      notFound: st.notFound,
+      hasCeremonies: this.ceremonies().length > 0,
+      timePairStyle: this.ceremonies().length ? 'display:none' : '',
+      ceremonyRows: this.ceremonies().map(c => {
+        this._cer = this._cer || {};
+        this._cer[c.id] = this._cer[c.id] || {};
+        return {
+          name: c.name,
+          hasDate: !!(c.date || '').trim(),
+          needDate: !(c.date || '').trim(),
+          dateText: c.date ? this.fmtDate(c.date) : '',
+          hasTime: !!(c.time || '').trim(),
+          needTime: !(c.time || '').trim(),
+          timeText: c.time ? this.fmtTime(c.time) : '',
+          hasEnd: !!(c.endTime || '').trim(),
+          needEnd: !(c.endTime || '').trim(),
+          endText: c.endTime ? this.fmtTime(c.endTime) : '',
+          needLoc: this.twoVenues(),
+          rDate: (el) => { this._cer[c.id].date = el; },
+          rTime: (el) => { this._cer[c.id].time = el; },
+          rEnd: (el) => { this._cer[c.id].end = el; },
+          rLoc: (el) => { this._cer[c.id].loc = el; }
+        };
+      }),
+      eventTypes: this.eventTypes,
+      eventTypeFixed: !!preset,
+      eventTypeOpen: !preset,
+      presetEventType: preset,
+      twoVenues: this.twoVenues(),
+      venue1Label: this.twoVenues() ? 'FIRST LOCATION — NAME & ADDRESS' : 'VENUE NAME & ADDRESS',
+
+      terms: this.termList(),
+      packageTitle: String(this.cfgVal('packageTitle')),
+      inclusions: this.cfgVal('inclusions'),
+      totalFee: this.totalNum == null ? String(this.cfgVal('totalFee')) : this.money(this.totalNum),
+      notes: String(this.cfgVal('notes') || ''),
+      hasNotes: !!String(this.cfgVal('notes') || '').trim(),
+      today: this.todayStr(),
+
+      payModes: modeDefs.map(m => Object.assign({
+        title: m.title, sub: m.sub, onPick: () => this.setState({ payMode: m.key, errorMsg: '' })
+      }, radio(st.payMode === m.key))),
+      payMethods: [{ key: 'transfer', title: 'Bank transfer' }, { key: 'zelle', title: 'Zelle' }]
+        .concat(this.cfgVal('allowCash') === true ? [{ key: 'cash', title: 'Cash' }] : [])
+        .map(m => Object.assign({
+          title: m.title, onPick: () => this.setState({ payMethod: m.key, errorMsg: '' })
+        }, radio(st.payMethod === m.key))),
+      depositAmount: (() => {
+        const r = this.retainerNum;
+        return r == null ? String(this.cfgVal('retainer')) : this.money(r);
+      })(),
+      balanceAmount: (() => {
+        const t = this.totalNum, r = this.retainerNum;
+        if (t == null) return String(this.cfgVal('balanceDue'));
+        return this.money(r == null ? t : t - r);
+      })(),
+      balanceNote: st.payMode === 'installments'
+        ? 'Paid across the two installments shown above.'
+        : 'Paid as a single payment on the date shown above.',
+      depositMethods: [{ key: 'transfer', title: 'Bank transfer' }, { key: 'zelle', title: 'Zelle' }].map(m => Object.assign({
+        title: m.title, onPick: () => this.setState({ depositMethod: m.key, errorMsg: '' })
+      }, radio(st.depositMethod === m.key))),
+
+      showSchedule: true,
+      scheduleTitle: plan.title,
+      scheduleRows: plan.rows,
+      scheduleNote: plan.note,
+      hasScheduleNote: !!plan.note,
+      needsDate: !!plan.needsDate,
+
+      doneSummaryLine: (plan.mode === 'full'
+        ? 'You chose to pay the full fee in one payment.'
+        : 'You chose to pay in three installments.') + ' ' + (plan.note || ''),
+      doneMethodUpper: this.methodLabel().toUpperCase(),
+      doneMethodHelp: this.methodHelp(),
+
+      sigEmpty: st.sigEmpty,
+      busy: st.busy,
+      busyOpacity: st.busy ? 0.6 : 1,
+      submitLabel: st.busy ? 'SENDING\u2026' : 'SIGN AND SUBMIT CONTRACT',
+      hasError: !!st.errorMsg,
+      errorMsg: st.errorMsg,
+
+      rName: (el) => { this._name = el; },
+      rEmail: (el) => { this._email = el; },
+      rPhone: (el) => { this._phone = el; },
+      rEvent: (el) => { this._event = el; },
+      rDate: (el) => {
+        this._date = el;
+        if (el && !el._kemBound) {
+          el._kemBound = true;
+          const sync = () => this.setState({ eventDate: el.value });
+          el.addEventListener('change', sync);
+          el.addEventListener('input', sync);
+        }
+      },
+      rStart: (el) => { this._start = el; },
+      rEnd: (el) => { this._end = el; },
+      rVenue: (el) => { this._venue = el; },
+      rVenue2: (el) => { this._venue2 = el; },
+      rAgree: (el) => { this._agree = el; },
+      rCanvas: (el) => { this._canvas = el; if (el) setTimeout(() => this.sizeCanvas(false), 0); },
+      onDateChange: (e) => this.setState({ eventDate: e.target.value }),
+      onAgree: () => { if (this.state.errorMsg) this.setState({ errorMsg: '' }); },
+      sigDown: (e) => this.sigDown(e),
+      sigMove: (e) => this.sigMove(e),
+      sigUp: () => this.sigUp(),
+      clearSig: () => this.clearSig(),
+      submit: () => this.submit(),
+      downloadAgain: () => { if (this._doc) { try { this._doc.save(this.pdfName(this._data || {})); } catch (e) {} } }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

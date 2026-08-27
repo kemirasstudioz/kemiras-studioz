@@ -665,11 +665,13 @@ class Component extends DCLogic {
           liveStream: this._liveEl ? this._liveEl.value : '',
           drone: this._droneEl ? this._droneEl.value : '',
           message: this._msgEl ? this._msgEl.value : '',
+          to_email: 'kemirasstudioz@gmail.com',
+          reply_to: this._emailEl ? this._emailEl.value : '',
         };
         if (!window.emailjs) { this.setState({ sending: false, sendError: true }); return; }
-        window.emailjs.send(this.EMAILJS_SERVICE_ID, this.EMAILJS_TEMPLATE_ID, params)
+        window.emailjs.send(this.EMAILJS_SERVICE_ID, this.EMAILJS_TEMPLATE_ID, params, { publicKey: this.EMAILJS_PUBLIC_KEY })
           .then(() => this.setState({ sending: false, submitted: true }))
-          .catch((err) => { console.error('EmailJS send failed:', err); this.setState({ sending: false, sendError: true }); });
+          .catch(() => { this.setState({ sending: false, sendError: true }); });
       },
       isDesktop: !this.state.isMobile,
       serviceCards: (this.state.servicesFromAdmin && this.state.servicesFromAdmin.length ? this.state.servicesFromAdmin : this.services).map(s => ({

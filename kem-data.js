@@ -54,6 +54,32 @@
       return Promise.resolve(lsLoad());
     },
 
+    // Uploads a signed contract PDF and resolves with a public URL (or null).
+    // Requires a PUBLIC Storage bucket named "contracts" in Supabase.
+    uploadContract: function (base64, filename) {
+      if (!ENABLED || !base64) return Promise.resolve(null);
+      var bytes;
+      try {
+        var bin = atob(base64);
+        bytes = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      } catch (e) { return Promise.resolve(null); }
+      var path = Date.now().toString(36) + "-" + String(filename || "contract.pdf").replace(/[^\w.-]/g, "");
+      return fetch(SUPABASE_URL + "/storage/v1/object/contracts/" + encodeURIComponent(path), {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "Content-Type": "application/pdf",
+          "x-upsert": "true"
+        },
+        body: new Blob([bytes], { type: "application/pdf" })
+      }).then(function (res) {
+        if (!res.ok) return null;
+        return SUPABASE_URL + "/storage/v1/object/public/contracts/" + encodeURIComponent(path);
+      }).catch(function () { return null; });
+    },
+
     // Persists the whole content object. Always keeps a local copy too.
     save: function (state) {
       lsSave(state);

@@ -280,6 +280,228 @@
             </div>
           </sc-if>
 
+          <!-- PACKAGES -->
+          <sc-if value="{{ isPackages }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:fadeIn .4s ease both; max-width:900px">
+              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">Two packages per occasion, Basic and Signature. Clients pick an occasion on the packages page and turn the cards over to see what is included.</p>
+
+              <div style="background:rgba(184,146,79,0.12); border:1px solid rgba(184,146,79,0.3); border-radius:8px; padding:14px 16px; margin-bottom:24px">
+                <div style="font-size:11px; letter-spacing:1.4px; color:#8a6a2f; margin-bottom:7px">PACKAGES PAGE LINK</div>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                  <code style="font-size:13px; color:#3d382f; background:#fff; border:1px solid #e7e2d6; border-radius:5px; padding:9px 12px; flex:1; min-width:220px; word-break:break-all">{{ packagesLink }}</code>
+                  <button onClick="{{ copyPackagesLink }}" style="background:#16130f; color:#fff; border:none; padding:11px 18px; border-radius:6px; font-size:11.5px; letter-spacing:1.4px; cursor:pointer; min-height:42px">{{ copyPkgLabel }}</button>
+                </div>
+              </div>
+
+              <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678; margin-bottom:10px">OCCASION</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px">
+                <sc-for list="{{ pkgTabs }}" as="pt" hint-placeholder-count="8">
+                  <button onClick="{{ pt.onPick }}" style="background:{{ pt.bg }}; color:{{ pt.color }}; border:1px solid {{ pt.border }}; border-radius:7px; padding:10px 15px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ pt.name }}</button>
+                </sc-for>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap:18px">
+                <sc-for list="{{ pkgEditors }}" as="pe" hint-placeholder-count="2">
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:18px">
+                    <div style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:500; margin-bottom:4px">{{ pe.title }}</div>
+                    <div style="font-size:12px; color:#a39c8d; margin-bottom:16px">{{ pe.hint }}</div>
+                    <div style="display:flex; flex-direction:column; gap:14px">
+                      <label style="display:flex; flex-direction:column; gap:6px">
+                        <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">PRICE</span>
+                        <input type="text" value="{{ pe.price }}" onChange="{{ pe.onPrice }}" placeholder="$1,800 or Enquire for pricing" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                      </label>
+                      <label style="display:flex; flex-direction:column; gap:6px">
+                        <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">ONE-LINE SUMMARY</span>
+                        <input type="text" value="{{ pe.tagline }}" onChange="{{ pe.onTagline }}" placeholder="Shown on the front of the card" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                      </label>
+                      <label style="display:flex; flex-direction:column; gap:6px">
+                        <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">WHAT IS INCLUDED — ONE PER LINE</span>
+                        <textarea rows="8" value="{{ pe.items }}" onChange="{{ pe.onItems }}" placeholder="Six hours of coverage&#10;One lead photographer" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                      </label>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-top:22px; padding-top:18px; border-top:1px solid #ebe7dd">
+                <div style="font-size:12.5px; color:#a39c8d; line-height:1.6; flex:1; min-width:220px">Changes save automatically. Leave a field empty to fall back to the suggested wording.</div>
+                <button onClick="{{ resetPackage }}" style="background:transparent; border:1px solid #e2ddd2; border-radius:6px; padding:11px 18px; font-size:11.5px; letter-spacing:1.4px; color:#6f685b; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f; color:#8a6a2f">RESET THIS OCCASION</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- CONTRACT -->
+          <sc-if value="{{ isContract }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:fadeIn .4s ease both; max-width:760px">
+              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">One contract per client, each with its own link. Two clients on the same date can be sent different terms at the same time. The terms and conditions are fixed; everything below is yours to change per client.</p>
+
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:18px">
+                <sc-for list="{{ contractTabs }}" as="ct" hint-placeholder-count="1">
+                  <button onClick="{{ ct.onPick }}" style="background:{{ ct.bg }}; color:{{ ct.color }}; border:1px solid {{ ct.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ ct.label }}</button>
+                </sc-for>
+                <button onClick="{{ addContract }}" style="background:transparent; color:#8a6a2f; border:1px dashed #c9bfa5; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">+ New contract</button>
+              </div>
+
+              <div style="display:flex; gap:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; background:{{ cStatusBg }}; border:1px solid {{ cStatusBorder }}; border-radius:8px; padding:14px 16px; margin-bottom:14px">
+                <div style="flex:1; min-width:230px">
+                  <div style="font-size:11px; letter-spacing:1.4px; color:{{ cStatusColor }}; margin-bottom:5px">{{ cStatusLabel }}</div>
+                  <div style="font-size:13px; color:#6f685b; line-height:1.6">{{ cStatusDetail }}</div>
+                </div>
+                <button onClick="{{ toggleCSigned }}" style="background:#16130f; color:#fff; border:none; padding:11px 18px; border-radius:6px; font-size:11.5px; letter-spacing:1.4px; cursor:pointer; min-height:42px" style-hover="background:#2c2823">{{ cStatusAction }}</button>
+              </div>
+
+              <sc-if value="{{ cNoBookingYet }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#fff; border:1px dashed #d9d3c6; border-radius:8px; padding:14px 16px; margin-bottom:14px; font-size:12.5px; color:#8d8678; line-height:1.6">Calendar blocking appears here once this contract is signed, or as soon as you set a date on any function above.</div>
+              </sc-if>
+
+              <sc-if value="{{ cHasBooking }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px; margin-bottom:14px">
+                  <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678; margin-bottom:6px">BLOCK YOUR CALENDAR</div>
+                  <div style="font-size:12.5px; color:#a39c8d; line-height:1.55; margin-bottom:16px">Built from what {{ cBookingName }} filled in. Add your team's emails and they are invited as guests, which blocks their calendars too once they accept.</div>
+
+                  <label style="display:flex; flex-direction:column; gap:7px; margin-bottom:14px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">TEAM EMAILS — COMMA SEPARATED</span>
+                    <input type="text" value="{{ cTeam }}" onChange="{{ setCTeam }}" placeholder="second@shooter.com, editor@studio.com" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  </label>
+
+                  <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678; margin-bottom:9px">REMINDERS</div>
+                  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px">
+                    <sc-for list="{{ reminderChips }}" as="rc" hint-placeholder-count="3">
+                      <button onClick="{{ rc.onToggle }}" style="background:{{ rc.bg }}; color:{{ rc.color }}; border:1px solid {{ rc.border }}; border-radius:20px; padding:9px 15px; font-size:12.5px; cursor:pointer; min-height:40px" style-hover="border-color:#b8924f">{{ rc.tick }}{{ rc.label }}</button>
+                    </sc-for>
+                  </div>
+
+                  <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px">
+                    <sc-for list="{{ bookingEventRows }}" as="be" hint-placeholder-count="1">
+                      <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; padding:12px 14px; background:#faf8f3; border:1px solid #ebe7dd; border-radius:6px">
+                        <div style="flex:1; min-width:200px">
+                          <div style="font-size:13.5px; color:#201c17">{{ be.title }}</div>
+                          <div style="font-size:12px; color:#8d8678; margin-top:3px; line-height:1.5">{{ be.when }}</div>
+                        </div>
+                        <a href="{{ be.googleUrl }}" target="_blank" rel="noopener" style="background:#16130f; color:#fff; border-radius:6px; padding:10px 16px; font-size:11.5px; letter-spacing:1.2px; min-height:40px; display:inline-flex; align-items:center" style-hover="background:#2c2823">ADD TO GOOGLE</a>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <button onClick="{{ downloadIcs }}" style="background:transparent; border:1px solid #d9d3c6; border-radius:6px; padding:12px 18px; font-size:11.5px; letter-spacing:1.4px; color:#6f685b; cursor:pointer; min-height:44px" style-hover="border-color:#b8924f; color:#8a6a2f">DOWNLOAD ALL AS .ICS (APPLE / OUTLOOK)</button>
+                </div>
+              </sc-if>
+
+              <div style="background:rgba(184,146,79,0.12); border:1px solid rgba(184,146,79,0.3); border-radius:8px; padding:14px 16px; margin-bottom:24px">
+                <div style="font-size:11px; letter-spacing:1.4px; color:#8a6a2f; margin-bottom:7px">LINK FOR THIS CLIENT</div>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                  <code style="font-size:13px; color:#3d382f; background:#fff; border:1px solid #e7e2d6; border-radius:5px; padding:9px 12px; flex:1; min-width:220px; word-break:break-all">{{ contractLink }}</code>
+                  <button onClick="{{ copyLink }}" style="background:#16130f; color:#fff; border:none; padding:11px 18px; border-radius:6px; font-size:11.5px; letter-spacing:1.4px; cursor:pointer; min-height:42px">{{ copyLabel }}</button>
+                </div>
+                <div style="font-size:12px; color:#8d8678; margin-top:9px; line-height:1.55">Send this to this client only. Each contract has a different link, so their details never mix.</div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:20px">
+                <label style="display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">CLIENT NAME — FOR YOUR REFERENCE ONLY</span>
+                  <input type="text" value="{{ cLabel }}" onChange="{{ setCLabel }}" placeholder="e.g. Patel wedding — Nov 14" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  <span style="font-size:12px; color:#a39c8d">Names the tab above. The client never sees this.</span>
+                </label>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:16px">
+                  <label style="display:flex; flex-direction:column; gap:7px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">PACKAGE TITLE</span>
+                    <input type="text" value="{{ cPackageTitle }}" onChange="{{ setCPackageTitle }}" placeholder="e.g. Wedding Full-Day Coverage" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  </label>
+                  <label style="display:flex; flex-direction:column; gap:7px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">EVENT TYPE FOR THIS CLIENT</span>
+                    <select value="{{ cEventType }}" onChange="{{ setCEventType }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; background:#fff; outline:none; min-height:44px; cursor:pointer" style-focus="border-color:#b8924f">
+                      <option value="">Let the client choose</option>
+                      <sc-for list="{{ filmCats }}" as="c" hint-placeholder-count="8"><option value="{{ c }}">{{ c }}</option></sc-for>
+                    </select>
+                    <span style="font-size:12px; color:#a39c8d">Pick one and it shows on the contract as fixed.</span>
+                  </label>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:12px; background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px">
+                  <button onClick="{{ toggleCSecondVenue }}" style="display:flex; align-items:flex-start; gap:12px; background:transparent; border:none; padding:0; text-align:left; cursor:pointer; min-height:44px">
+                    <span style="width:19px; height:19px; border-radius:4px; border:1px solid {{ cVenueBorder }}; background:{{ cVenueBg }}; color:#fff; font-size:12px; line-height:17px; text-align:center; flex:none; margin-top:1px">{{ cVenueTick }}</span>
+                    <span>
+                      <span style="display:block; font-size:14px; color:#201c17">Event covers two locations</span>
+                      <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Adds a second address field, and lets the client say which location each function is at. Ticked automatically when you pick Wedding — untick it if the wedding is at one venue.</span>
+                    </span>
+                  </button>
+                  <button onClick="{{ toggleCCash }}" style="display:flex; align-items:flex-start; gap:12px; background:transparent; border:none; padding:0; text-align:left; cursor:pointer; min-height:44px">
+                    <span style="width:19px; height:19px; border-radius:4px; border:1px solid {{ cCashBorder }}; background:{{ cCashBg }}; color:#fff; font-size:12px; line-height:17px; text-align:center; flex:none; margin-top:1px">{{ cCashTick }}</span>
+                    <span>
+                      <span style="display:block; font-size:14px; color:#201c17">Allow cash payment</span>
+                      <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Adds Cash to the client's payment methods. The retainer still has to come by bank transfer or Zelle, and the contract says so.</span>
+                    </span>
+                  </button>
+                  <button onClick="{{ toggleCInstallments }}" style="display:flex; align-items:flex-start; gap:12px; background:transparent; border:none; padding:0; text-align:left; cursor:pointer; min-height:44px">
+                    <span style="width:19px; height:19px; border-radius:4px; border:1px solid {{ cInstBorder }}; background:{{ cInstBg }}; color:#fff; font-size:12px; line-height:17px; text-align:center; flex:none; margin-top:1px">{{ cInstTick }}</span>
+                    <span>
+                      <span style="display:block; font-size:14px; color:#201c17">Allow payment in three instalments</span>
+                      <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Retainer on signing, then two payments worked out from the event date. Untick to require payment in full.</span>
+                    </span>
+                  </button>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px">
+                  <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678; margin-bottom:6px">EVENT SCHEDULE — FUNCTIONS COVERED</div>
+                  <div style="font-size:12.5px; color:#a39c8d; line-height:1.55; margin-bottom:6px">Add only the functions this client is booking. Set a time if you know it, or leave it blank and the client fills it in. Add nothing and the contract just asks for one start and end time.</div>
+                  <div style="font-size:12.5px; color:#8a6a2f; line-height:1.55; margin-bottom:14px">{{ ceremonyHint }}</div>
+
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px">
+                    <sc-for list="{{ ceremonyPresets }}" as="cp" hint-placeholder-count="7">
+                      <button onClick="{{ cp.onAdd }}" style="background:transparent; color:#6f685b; border:1px dashed #c9bfa5; border-radius:20px; padding:8px 14px; font-size:12.5px; cursor:pointer; min-height:38px" style-hover="border-color:#b8924f; color:#8a6a2f">+ {{ cp.name }}</button>
+                    </sc-for>
+                  </div>
+
+                  <div style="display:flex; flex-direction:column; gap:10px">
+                    <sc-for list="{{ ceremonyRows }}" as="cr" hint-placeholder-count="0">
+                      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:11px; background:#faf8f3; border:1px solid #ebe7dd; border-radius:6px">
+                        <input type="text" value="{{ cr.name }}" onChange="{{ cr.onName }}" placeholder="Function name" style="flex:1; min-width:150px; border:1px solid #e2ddd2; border-radius:5px; padding:10px 11px; font-size:13.5px; outline:none; min-height:42px" style-focus="border-color:#b8924f">
+                        <input type="date" value="{{ cr.date }}" onChange="{{ cr.onDate }}" style="border:1px solid #e2ddd2; border-radius:5px; padding:10px 11px; font-size:13.5px; outline:none; min-height:42px" style-focus="border-color:#b8924f">
+                        <input type="time" value="{{ cr.time }}" onChange="{{ cr.onTime }}" title="Start time" style="border:1px solid #e2ddd2; border-radius:5px; padding:10px 11px; font-size:13.5px; outline:none; min-height:42px" style-focus="border-color:#b8924f">
+                        <input type="time" value="{{ cr.endTime }}" onChange="{{ cr.onEndTime }}" title="End time" style="border:1px solid #e2ddd2; border-radius:5px; padding:10px 11px; font-size:13.5px; outline:none; min-height:42px" style-focus="border-color:#b8924f">
+                        <button onClick="{{ cr.onRemove }}" style="background:transparent; border:1px solid #e2ddd2; border-radius:5px; padding:9px 13px; font-size:12px; color:#a8443a; cursor:pointer; min-height:42px" style-hover="border-color:#a8443a">Remove</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <label style="display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">WHAT IS INCLUDED — ONE ITEM PER LINE</span>
+                  <textarea rows="9" value="{{ cInclusions }}" onChange="{{ setCInclusions }}" placeholder="Lead photographer for 8 hours&#10;Second shooter&#10;500+ edited images in a private gallery" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                  <span style="font-size:12px; color:#a39c8d">Each line becomes one bullet on the contract and in the PDF.</span>
+                </label>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap:16px">
+                  <label style="display:flex; flex-direction:column; gap:7px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">TOTAL FEE</span>
+                    <input type="text" value="{{ cTotalFee }}" onChange="{{ setCTotalFee }}" placeholder="$2,400" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  </label>
+                  <label style="display:flex; flex-direction:column; gap:7px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">RETAINER TO BOOK</span>
+                    <input type="text" value="{{ cRetainer }}" onChange="{{ setCRetainer }}" placeholder="$500" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  </label>
+                  <label style="display:flex; flex-direction:column; gap:7px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">BALANCE DUE</span>
+                    <input type="text" value="{{ cBalanceDue }}" onChange="{{ setCBalanceDue }}" placeholder="Due 7 days before the event" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                  </label>
+                </div>
+
+                <label style="display:flex; flex-direction:column; gap:7px">
+                  <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">ADDITIONAL AGREEMENTS — OPTIONAL</span>
+                  <textarea rows="4" value="{{ cNotes }}" onChange="{{ setCNotes }}" placeholder="Anything agreed specifically with this client — extra hours, drone, travel, second location." style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                </label>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-top:24px; padding-top:20px; border-top:1px solid #ebe7dd">
+                <div style="font-size:12.5px; color:#a39c8d; line-height:1.6; flex:1; min-width:220px">Changes save automatically and appear on the contract page the next time the client loads it.</div>
+                <sc-if value="{{ canDeleteContract }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ deleteContract }}" style="background:transparent; border:1px solid #e2ddd2; border-radius:6px; padding:11px 18px; font-size:11.5px; letter-spacing:1.4px; color:#a8443a; cursor:pointer; min-height:42px" style-hover="border-color:#a8443a">DELETE THIS CONTRACT</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
           <!-- REVIEWS -->
           <sc-if value="{{ isReviews }}" hint-placeholder-val="{{ false }}">
             <div style="animation:fadeIn .4s ease both">
@@ -496,8 +718,252 @@ class Component extends DCLogic {
   filmCats = ["Wedding", "Engagement", "Baby Shower", "Maternity Shoot", "Sweet 16th", "Birthday Party", "Anniversary", "Reception"];
   galleryGroups = ["Engagement & Anniversary", "Wedding & Haldi", "Baby Shower & Maternity", "Sweet 16 & Party"];
   focals = ["center", "top", "bottom", "left", "right"];
-  ADMIN_PASSWORD = '!@#Mp-2696221503@';
-  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
+  // SHA-256 of the admin password. The password itself is not in this file.
+  ADMIN_PASSWORD_HASH = 'd1224a7a100bd394581485643b39d8e2fc978b7110d1fdb122cfab8d9d748949';
+  async sha256(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], contract: null, contracts: null, selectedContract: null, packages: null, pkgEvent: 'Wedding', copiedPkg: false, copied: false, photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
+
+  seedContract() {
+    return {
+      packageTitle: 'Event Coverage Package',
+      inclusions: [
+        'Lead photographer for the agreed coverage hours',
+        'Professionally edited high-resolution images delivered in a private online gallery',
+        'Personal printing and social sharing rights for all delivered images',
+        'Travel within 30 miles of the studio',
+        'Backup equipment and duplicate on-site storage of all files'
+      ],
+      totalFee: 'TBD',
+      retainer: 'TBD',
+      balanceDue: 'Due in full on or before the event date',
+      notes: '',
+      eventType: '',
+      secondVenue: false,
+      allowInstallments: true,
+      ceremonies: [],
+      id: 'c1',
+      label: 'Contract 1'
+    };
+  }
+  migrateContracts(d) {
+    if (d && Array.isArray(d.contracts) && d.contracts.length) {
+      return d.contracts.map((c, i) => ({ ...c, id: c.id || 'c' + (i + 1), label: c.label || 'Contract ' + (i + 1) }));
+    }
+    const legacy = (d && d.contract) ? d.contract : this.seedContract();
+    return [{ ...legacy, id: legacy.id || 'c1', label: legacy.label || 'Contract 1' }];
+  }
+  contractList() {
+    const st = this.state;
+    if (Array.isArray(st.contracts) && st.contracts.length) return st.contracts;
+    const legacy = st.contract || this.seedContract();
+    return [{ ...legacy, id: 'c1', label: legacy.label || 'Contract 1' }];
+  }
+  currentContract() {
+    const list = this.contractList();
+    return list.find(c => c.id === this.state.selectedContract) || list[0];
+  }
+  setContractField(field, value) {
+    const list = this.contractList();
+    const cur = this.currentContract();
+    const patched = { ...cur };
+    if (field === 'inclusions' && typeof value === 'string') {
+      patched.inclusionsText = value;
+      patched.inclusions = value.split('\n').map(s => s.trim()).filter(Boolean);
+    } else {
+      patched[field] = value;
+    }
+    const next = list.map(c => (c.id === cur.id ? patched : c));
+    this.setState({ selectedContract: cur.id }, () => this.save({ contracts: next, contract: next[0] }));
+  }
+  addContract() {
+    const list = this.contractList();
+    const id = 'c' + Date.now().toString(36);
+    const fresh = { ...this.seedContract(), id, label: 'Contract ' + (list.length + 1) };
+    this.setState({ selectedContract: id }, () => this.save({ contracts: [...list, fresh], contract: list[0] }));
+  }
+  deleteContract() {
+    const list = this.contractList();
+    if (list.length < 2) return;
+    const cur = this.currentContract();
+    if (!window.confirm('Delete "' + (cur.label || 'this contract') + '"? Its link will stop working.')) return;
+    const next = list.filter(c => c.id !== cur.id);
+    this.setState({ selectedContract: next[0].id }, () => this.save({ contracts: next, contract: next[0] }));
+  }
+  pkgTiers = [
+    { key: 'basic', title: 'Basic', hint: 'The essential coverage option.' },
+    { key: 'signature', title: 'Signature', hint: 'Your full service, photo and film.' }
+  ];
+  setPackageField(eventType, tier, field, value) {
+    const all = Object.assign({}, this.state.packages || {});
+    const forEvent = Object.assign({}, all[eventType] || {});
+    const t = Object.assign({}, forEvent[tier] || {});
+    if (field === 'items') {
+      t.itemsText = String(value);
+      t.items = String(value).split('\n').map(s => s.trim()).filter(Boolean);
+    } else {
+      t[field] = value;
+    }
+    forEvent[tier] = t;
+    all[eventType] = forEvent;
+    this.save({ packages: all });
+  }
+  resetPackageFor(eventType) {
+    if (!window.confirm('Reset both packages for ' + eventType + ' back to the suggested wording?')) return;
+    const all = Object.assign({}, this.state.packages || {});
+    delete all[eventType];
+    this.save({ packages: all });
+  }
+
+  ceremonyPresetsByEvent = {
+    'Wedding': ['Ganesh Sthapan / Puja', 'Vidhi', 'Haldi / Pithi', 'Mehndi', 'Garba', 'Sangeet', 'Baraat', 'Wedding Day', 'Reception'],
+    'Engagement': ['Ring Ceremony', 'Engagement Party'],
+    'Baby Shower': ['Godh Bharai / Puja', 'Baby Shower'],
+    'Maternity Shoot': ['Indoor Session', 'Outdoor Session'],
+    'Sweet 16th': ['Arrival & Portraits', 'Main Party', 'Cake Cutting'],
+    'Birthday Party': ['Arrival & Portraits', 'Main Party', 'Cake Cutting'],
+    'Anniversary': ['Puja / Blessing', 'Celebration Dinner'],
+    'Reception': ['Reception']
+  };
+  ceremonyPresetNamesFor(eventType) {
+    const list = this.ceremonyPresetsByEvent[String(eventType || '').trim()];
+    return (list ? list.slice() : []).concat(['Other function']);
+  }
+
+  addCeremony(name) {
+    const cur = this.currentContract();
+    const list = (cur.ceremonies || []).slice();
+    list.push({ id: 'e' + Date.now().toString(36) + Math.floor(Math.random() * 1000), name: name === 'Other function' ? '' : name, date: '', time: '', endTime: '' });
+    this.setContractField('ceremonies', list);
+  }
+  updateCeremony(id, field, value) {
+    const cur = this.currentContract();
+    const list = (cur.ceremonies || []).map(c => (c.id === id ? { ...c, [field]: value } : c));
+    this.setContractField('ceremonies', list);
+  }
+  removeCeremony(id) {
+    const cur = this.currentContract();
+    this.setContractField('ceremonies', (cur.ceremonies || []).filter(c => c.id !== id));
+  }
+
+  tz() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/New_York'; } catch (e) { return 'America/New_York'; } }
+
+  // Builds the list of calendar events for a signed contract.
+  bookingEvents(c) {
+    // Prefer what the client signed; fall back to the dates you set in this contract.
+    const b = c.booking || (((c.ceremonies || []).some(x => x && x.date))
+      ? { name: c.label || 'Booking', eventType: c.eventType, ceremonies: (c.ceremonies || []).map(x => ({ name: x.name, date: x.date, time: x.time, end: x.endTime, loc: '' })) }
+      : null);
+    if (!b) return [];
+    const venueFor = (loc) => (loc === 'Location 2' && b.venue2) ? b.venue2 : (b.venue || '');
+    const pad = (n) => (n < 10 ? '0' + n : '' + n);
+    const mk = (dateStr, timeStr, fallbackHour) => {
+      const p = String(dateStr || '').split('-');
+      if (p.length !== 3) return null;
+      const t = String(timeStr || '').split(':');
+      const h = t.length >= 2 ? Number(t[0]) : fallbackHour;
+      const m = t.length >= 2 ? Number(t[1]) : 0;
+      return new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), h, m, 0);
+    };
+    const stamp = (d) => d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00';
+    const out = [];
+    const push = (title, startD, endD, place) => {
+      if (!startD) return;
+      const e = endD && endD > startD ? endD : new Date(startD.getTime() + 3 * 3600 * 1000);
+      out.push({
+        title, place: place || '',
+        startText: startD.toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
+        start: stamp(startD), end: stamp(e)
+      });
+    };
+    const list = (b.ceremonies || []).filter(x => x && x.name);
+    if (list.length) {
+      list.forEach(x => push(
+        b.name + ' — ' + x.name,
+        mk(x.date || b.date, x.time, 10),
+        mk(x.date || b.date, x.end, 0),
+        venueFor(x.loc)
+      ));
+    } else {
+      push(b.name + ' — ' + (b.eventType || 'Event'), mk(b.date, b.start, 10), mk(b.date, b.end, 0), b.venue);
+    }
+    return out;
+  }
+
+  reminderMins(c) {
+    const r = c.reminders || { week: true, day: true, hours: true };
+    const out = [];
+    if (r.week !== false) out.push(10080);
+    if (r.day !== false) out.push(1440);
+    if (r.hours !== false) out.push(120);
+    return out;
+  }
+  teamList(c) {
+    return String(c.team || '').split(/[,\s;]+/).map(s => s.trim()).filter(s => s.indexOf('@') > 0);
+  }
+  eventDetails(c, ev) {
+    const b = c.booking || {};
+    return [
+      'Client: ' + (b.name || ''),
+      b.phone ? 'Phone: ' + b.phone : '',
+      b.email ? 'Email: ' + b.email : '',
+      c.packageTitle ? 'Package: ' + c.packageTitle : '',
+      'Booked through the signed Kemiras Studioz contract.'
+    ].filter(Boolean).join('\n');
+  }
+  googleUrl(c, ev) {
+    const team = this.teamList(c);
+    const p = [
+      'action=TEMPLATE',
+      'text=' + encodeURIComponent(ev.title),
+      'dates=' + ev.start + '/' + ev.end,
+      'ctz=' + encodeURIComponent(this.tz()),
+      'details=' + encodeURIComponent(this.eventDetails(c, ev)),
+      'location=' + encodeURIComponent(ev.place)
+    ];
+    if (team.length) p.push('add=' + encodeURIComponent(team.join(',')));
+    return 'https://calendar.google.com/calendar/render?' + p.join('&');
+  }
+  downloadIcs(c) {
+    const events = this.bookingEvents(c);
+    if (!events.length) return;
+    const mins = this.reminderMins(c);
+    const team = this.teamList(c);
+    const esc = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kemiras Studioz//Bookings//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    events.forEach((ev, i) => {
+      lines.push('BEGIN:VEVENT');
+      lines.push('UID:' + (c.id || 'kem') + '-' + i + '-' + Date.now() + '@kemirasstudioz.com');
+      lines.push('DTSTAMP:' + new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z');
+      lines.push('DTSTART;TZID=' + this.tz() + ':' + ev.start);
+      lines.push('DTEND;TZID=' + this.tz() + ':' + ev.end);
+      lines.push('SUMMARY:' + esc(ev.title));
+      lines.push('LOCATION:' + esc(ev.place));
+      lines.push('DESCRIPTION:' + esc(this.eventDetails(c, ev)));
+      lines.push('TRANSP:OPAQUE');
+      lines.push('STATUS:CONFIRMED');
+      team.forEach(t => lines.push('ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:' + t));
+      mins.forEach(m => {
+        lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(ev.title), 'TRIGGER:-PT' + m + 'M', 'END:VALARM');
+      });
+      lines.push('END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Kemiras-' + String((c.booking || {}).name || 'booking').replace(/[^\w-]/g, '-') + '.ics';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+
+  contractUrl(id) {
+    let base = 'https://kemirasstudioz.com/contract.html';
+    try { base = location.origin + location.pathname.replace(/[^/]*$/, '') + 'contract.html'; } catch (e) {}
+    return base + '?c=' + encodeURIComponent(id);
+  }
 
   seedPhotos() {
     const d = [
@@ -564,16 +1030,17 @@ class Component extends DCLogic {
       if (d && d.photos) {
         const services = migrateServices(d.services || this.seedServices());
         const photos = migratePhotos(d.photos);
-        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews() }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
+        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews(), contract: d.contract || this.seedContract(), contracts: this.migrateContracts(d), packages: d.packages || {} }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
       } else {
-        this.setState({ photos: this.seedPhotos(), films: this.seedFilms(), services: this.seedServices(), reviews: this.seedReviews() }, () => this.persist());
+        this.setState({ photos: this.seedPhotos(), films: this.seedFilms(), services: this.seedServices(), reviews: this.seedReviews(), contract: this.seedContract(), contracts: [this.seedContract()] }, () => this.persist());
       }
     };
     if (window.KemData) { window.KemData.load().then(apply); }
     else { let d = null; try { d = JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch (e) {} apply(d); }
   }
   persist() {
-    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews };
+    const contracts = this.contractList();
+    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews, contracts, contract: contracts[0], packages: this.state.packages || {} };
     if (window.KemData) { window.KemData.save(blob); }
     else { try { localStorage.setItem(this.KEY, JSON.stringify(blob)); } catch (e) {} }
     this.setState({ savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
@@ -700,16 +1167,21 @@ class Component extends DCLogic {
   }
   login() {
     const val = this._loginPassEl ? this._loginPassEl.value : '';
-    if (val === this.ADMIN_PASSWORD) {
-      this.setState({ authed: true, loginError: false });
-      try { sessionStorage.setItem('kem_admin_authed', '1'); } catch (e) {}
-    } else {
-      this.setState({ loginError: true });
-    }
+    if (!val) { this.setState({ loginError: true }); return; }
+    this.sha256(val).then((h) => {
+      if (h === this.ADMIN_PASSWORD_HASH) {
+        this.setState({ authed: true, loginError: false });
+        try { sessionStorage.setItem('kem_admin_authed', '1'); } catch (e) {}
+      } else {
+        this.setState({ loginError: true });
+      }
+    }).catch(() => this.setState({ loginError: true }));
   }
   logout() { try { sessionStorage.removeItem('kem_admin_authed'); } catch (e) {} this.setState({ authed: false, tab: 'overview' }); }
 
   renderVals() {
+    const contractsAll = this.contractList();
+    const cur = this.currentContract();
     const st = this.state, m = st.modal;
     const photosAll = st.photos;
     const filtered = st.photoFilter === 'All' ? photosAll : photosAll.filter(p => p.category === st.photoFilter);
@@ -740,10 +1212,13 @@ class Component extends DCLogic {
       onLoginKeyDown: (e) => { if (e.key === 'Enter') this.login(); },
       login: () => this.login(), logout: () => this.logout(),
       tab: st.tab,
+      isPackages: st.tab === 'packages',
+      isContract: st.tab === 'contract',
+      contractCount: contractsAll.length,
       isOverview: st.tab === 'overview', isAnalytics: st.tab === 'analytics', isPhotos: st.tab === 'photos', isFilms: st.tab === 'films', isServices: st.tab === 'services', isReviews: st.tab === 'reviews',
       pageTitle: st.tab.charAt(0).toUpperCase() + st.tab.slice(1),
       savedAt: st.savedAt,
-      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }].map(n => {
+      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }, { label: 'Packages', key: 'packages' }, { label: 'Contract', key: 'contract' }].map(n => {
         const active = st.tab === n.key;
         return {
           label: n.label, onClick: () => this.setState({ tab: n.key }),
@@ -797,6 +1272,150 @@ class Component extends DCLogic {
         onEdit: () => this.openEdit('review', r.id), onDel: () => this.remove('review', r.id), onToggle: () => this.toggleVisible(r.id),
       })),
       reviewCount: st.reviews.length,
+
+      contractTabs: contractsAll.map(c => ({
+        label: (c.signed ? '\u2713 ' : '') + (c.label || 'Untitled'),
+        bg: c.id === cur.id ? '#16130f' : '#fff',
+        color: c.id === cur.id ? '#e8d9b8' : '#6f685b',
+        border: c.id === cur.id ? '#16130f' : '#e2ddd2',
+        onPick: () => this.setState({ selectedContract: c.id })
+      })),
+      addContract: () => this.addContract(),
+      deleteContract: () => this.deleteContract(),
+      canDeleteContract: contractsAll.length > 1,
+      contractLink: this.contractUrl(cur.id),
+      copyLabel: st.copied ? 'COPIED' : 'COPY LINK',
+      copyLink: () => {
+        const url = this.contractUrl(this.currentContract().id);
+        const done = () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1800); };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(done); else done();
+      },
+      cStatusLabel: cur.signed ? 'SIGNED — LOCKED FOR THE CLIENT' : 'OPEN — WAITING FOR SIGNATURE',
+      cStatusDetail: cur.signed
+        ? ('Signed' + (cur.signedBy ? ' by ' + cur.signedBy : '') + (cur.signedAt ? ' on ' + new Date(cur.signedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '') + '. The client now sees a locked page instead of the form.')
+        : 'The client can open this link and sign. It locks itself as soon as they submit.',
+      cStatusBg: cur.signed ? 'rgba(120,150,110,0.12)' : '#fff',
+      cStatusBorder: cur.signed ? 'rgba(120,150,110,0.4)' : '#ebe7dd',
+      cStatusColor: cur.signed ? '#4e6b45' : '#8d8678',
+      cStatusAction: cur.signed ? 'REOPEN FOR CLIENT' : 'LOCK NOW',
+      toggleCSigned: () => {
+        const c = this.currentContract();
+        if (c.signed) {
+          if (!window.confirm('Reopen this contract so the client can view and sign it again?')) return;
+          this.setContractField('signed', false);
+        } else {
+          if (!window.confirm('Lock this contract now? The client will not be able to open the form.')) return;
+          this.setContractField('signed', true);
+        }
+      },
+      pkgTabs: this.filmCats.map(n => ({
+        name: n,
+        bg: n === st.pkgEvent ? '#16130f' : '#fff',
+        color: n === st.pkgEvent ? '#e8d9b8' : '#6f685b',
+        border: n === st.pkgEvent ? '#16130f' : '#e2ddd2',
+        onPick: () => this.setState({ pkgEvent: n })
+      })),
+      pkgEditors: this.pkgTiers.map(t => {
+        const saved = ((st.packages || {})[st.pkgEvent] || {})[t.key] || {};
+        return {
+          title: t.title, hint: t.hint,
+          price: saved.price || '',
+          tagline: saved.tagline || '',
+          items: (typeof saved.itemsText === 'string') ? saved.itemsText : (saved.items || []).join('\n'),
+          onPrice: (e) => this.setPackageField(st.pkgEvent, t.key, 'price', e.target.value),
+          onTagline: (e) => this.setPackageField(st.pkgEvent, t.key, 'tagline', e.target.value),
+          onItems: (e) => this.setPackageField(st.pkgEvent, t.key, 'items', e.target.value)
+        };
+      }),
+      resetPackage: () => this.resetPackageFor(st.pkgEvent),
+      packagesLink: (() => { try { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'packages.html'; } catch (e) { return 'https://kemirasstudioz.com/packages.html'; } })(),
+      copyPkgLabel: st.copiedPkg ? 'COPIED' : 'COPY LINK',
+      copyPackagesLink: () => {
+        const url = location.origin + location.pathname.replace(/[^/]*$/, '') + 'packages.html';
+        const done = () => { this.setState({ copiedPkg: true }); setTimeout(() => this.setState({ copiedPkg: false }), 1800); };
+        if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(done); else done();
+      },
+      cHasBooking: this.bookingEvents(cur).length > 0,
+      cNoBookingYet: !cur.booking && this.bookingEvents(cur).length === 0,
+      cSignedNoData: !!cur.signed && !cur.booking,
+      cBookingName: (cur.booking || {}).name || 'the client',
+      cTeam: cur.team || '',
+      setCTeam: (e) => this.setContractField('team', e.target.value),
+      reminderChips: [
+        { key: 'week', label: '1 week before' },
+        { key: 'day', label: '1 day before' },
+        { key: 'hours', label: '2 hours before' }
+      ].map(r => {
+        const on = ((cur.reminders || {})[r.key]) !== false;
+        return {
+          label: r.label,
+          tick: on ? '\u2713 ' : '',
+          bg: on ? 'rgba(184,146,79,0.14)' : '#fff',
+          color: on ? '#8a6a2f' : '#6f685b',
+          border: on ? '#b8924f' : '#e2ddd2',
+          onToggle: () => {
+            const c = this.currentContract();
+            const rem = Object.assign({ week: true, day: true, hours: true }, c.reminders || {});
+            rem[r.key] = rem[r.key] === false;
+            this.setContractField('reminders', rem);
+          }
+        };
+      }),
+      bookingEventRows: this.bookingEvents(cur).map(ev => ({
+        title: ev.title,
+        when: ev.startText + (ev.place ? '  \u00b7  ' + ev.place : ''),
+        googleUrl: this.googleUrl(cur, ev)
+      })),
+      downloadIcs: () => this.downloadIcs(this.currentContract()),
+      cLabel: cur.label || '',
+      setCLabel: (e) => this.setContractField('label', e.target.value),
+      cPackageTitle: cur.packageTitle || '',
+      cInclusions: (typeof cur.inclusionsText === 'string') ? cur.inclusionsText : (cur.inclusions || []).join('\n'),
+      cTotalFee: cur.totalFee || '',
+      cRetainer: cur.retainer || '',
+      cBalanceDue: cur.balanceDue || '',
+      cNotes: cur.notes || '',
+      setCPackageTitle: (e) => this.setContractField('packageTitle', e.target.value),
+      setCInclusions: (e) => this.setContractField('inclusions', e.target.value),
+      setCTotalFee: (e) => this.setContractField('totalFee', e.target.value),
+      setCRetainer: (e) => this.setContractField('retainer', e.target.value),
+      setCBalanceDue: (e) => this.setContractField('balanceDue', e.target.value),
+      setCNotes: (e) => this.setContractField('notes', e.target.value),
+      ceremonyPresets: this.ceremonyPresetNamesFor(cur.eventType).map(n => ({ name: n, onAdd: () => this.addCeremony(n) })),
+      ceremonyHint: String(cur.eventType || '').trim()
+        ? 'Functions shown are the usual ones for a ' + cur.eventType + '. Use "Other function" for anything else.'
+        : 'Pick an event type above and the usual functions for it appear here. "Other function" always works.',
+      ceremonyRows: (cur.ceremonies || []).map(c => ({
+        name: c.name || '', date: c.date || '', time: c.time || '', endTime: c.endTime || '',
+        onName: (e) => this.updateCeremony(c.id, 'name', e.target.value),
+        onDate: (e) => this.updateCeremony(c.id, 'date', e.target.value),
+        onTime: (e) => this.updateCeremony(c.id, 'time', e.target.value),
+        onEndTime: (e) => this.updateCeremony(c.id, 'endTime', e.target.value),
+        onRemove: () => this.removeCeremony(c.id)
+      })),
+      cEventType: cur.eventType || '',
+      setCEventType: (e) => {
+        const val = e.target.value;
+        const c = this.currentContract();
+        if (val === 'Wedding' && c.secondVenue !== true) {
+          const list = this.contractList().map(x => (x.id === c.id ? { ...x, eventType: val, secondVenue: true } : x));
+          this.setState({ selectedContract: c.id }, () => this.save({ contracts: list, contract: list[0] }));
+        } else {
+          this.setContractField('eventType', val);
+        }
+      },
+      cVenueTick: cur.secondVenue ? '\u2713' : '',
+      cVenueBg: cur.secondVenue ? '#b8924f' : '#fff',
+      cVenueBorder: cur.secondVenue ? '#b8924f' : '#d9d3c6',
+      toggleCSecondVenue: () => this.setContractField('secondVenue', !this.currentContract().secondVenue),
+      cCashTick: cur.allowCash ? '\u2713' : '',
+      cCashBg: cur.allowCash ? '#b8924f' : '#fff',
+      cCashBorder: cur.allowCash ? '#b8924f' : '#d9d3c6',
+      toggleCCash: () => this.setContractField('allowCash', !this.currentContract().allowCash),
+      cInstTick: (cur.allowInstallments !== false) ? '\u2713' : '',
+      cInstBg: (cur.allowInstallments !== false) ? '#b8924f' : '#fff',
+      cInstBorder: (cur.allowInstallments !== false) ? '#b8924f' : '#d9d3c6',
+      toggleCInstallments: () => this.setContractField('allowInstallments', this.currentContract().allowInstallments === false),
 
       modalOpen: !!m, modalIsPhoto: !!m && m.type === 'photo', modalIsFilm: !!m && m.type === 'film', modalIsService: !!m && m.type === 'service', modalIsReview: !!m && m.type === 'review',
       modalTitle: m ? ((m.mode === 'add' ? 'Add ' : 'Edit ') + (m.type === 'photo' ? 'Photo' : m.type === 'film' ? 'Film' : m.type === 'review' ? 'Review' : 'Service')) : '',

@@ -316,7 +316,7 @@
                       </label>
                       <label style="display:flex; flex-direction:column; gap:6px">
                         <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">WHAT IS INCLUDED — ONE PER LINE</span>
-                        <textarea rows="8" value="{{ pe.items }}" onChange="{{ pe.onItems }}" placeholder="Six hours of coverage&#10;One lead photographer" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                        {{ pe.box }}
                       </label>
                     </div>
                   </div>
@@ -468,7 +468,7 @@
 
                 <label style="display:flex; flex-direction:column; gap:7px">
                   <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">WHAT IS INCLUDED — ONE ITEM PER LINE</span>
-                  <textarea rows="9" value="{{ cInclusions }}" onChange="{{ setCInclusions }}" placeholder="Lead photographer for 8 hours&#10;Second shooter&#10;500+ edited images in a private gallery" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                  {{ cInclusionsBox }}
                   <span style="font-size:12px; color:#a39c8d">Each line becomes one bullet on the contract and in the PDF.</span>
                 </label>
 
@@ -489,7 +489,7 @@
 
                 <label style="display:flex; flex-direction:column; gap:7px">
                   <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">ADDITIONAL AGREEMENTS — OPTIONAL</span>
-                  <textarea rows="4" value="{{ cNotes }}" onChange="{{ setCNotes }}" placeholder="Anything agreed specifically with this client — extra hours, drone, travel, second location." style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; line-height:1.65; resize:vertical" style-focus="border-color:#b8924f"></textarea>
+                  {{ cNotesBox }}
                 </label>
               </div>
 
@@ -1049,6 +1049,22 @@ class Component extends DCLogic {
   }
   save(patch) { this.setState(patch, () => this.persist()); }
   // For text typing: update state at once, write to the backend after typing settles.
+  // Uncontrolled textarea: React never rewrites its value, so the caret and the
+  // box's own scroll position stay where the typist left them.
+  textBox(key, text, rows, placeholder, onChange) {
+    return React.createElement('textarea', {
+      key: key,
+      rows: rows,
+      defaultValue: text,
+      placeholder: placeholder,
+      onChange: onChange,
+      style: {
+        border: '1px solid #e2ddd2', borderRadius: '6px', padding: '11px 12px',
+        fontSize: '14px', outline: 'none', lineHeight: 1.65, resize: 'vertical',
+        fontFamily: 'inherit', color: '#201c17', width: '100%', boxSizing: 'border-box'
+      }
+    });
+  }
   saveSoon(patch) {
     this.setState(patch);
     clearTimeout(this._saveTimer);
@@ -1331,6 +1347,13 @@ class Component extends DCLogic {
           price: saved.price || '',
           tagline: saved.tagline || '',
           items: (typeof saved.itemsText === 'string') ? saved.itemsText : (saved.items || []).join('\n'),
+          box: this.textBox(
+            'pkg-' + st.pkgEvent + '-' + t.key,
+            (typeof saved.itemsText === 'string') ? saved.itemsText : (saved.items || []).join('\n'),
+            8,
+            'Six hours of coverage\nOne lead photographer',
+            (e) => this.setPackageField(st.pkgEvent, t.key, 'items', e.target.value)
+          ),
           onPrice: (e) => this.setPackageField(st.pkgEvent, t.key, 'price', e.target.value),
           onTagline: (e) => this.setPackageField(st.pkgEvent, t.key, 'tagline', e.target.value),
           onItems: (e) => this.setPackageField(st.pkgEvent, t.key, 'items', e.target.value)
@@ -1380,6 +1403,20 @@ class Component extends DCLogic {
       setCLabel: (e) => this.setContractField('label', e.target.value),
       cPackageTitle: cur.packageTitle || '',
       cInclusions: (typeof cur.inclusionsText === 'string') ? cur.inclusionsText : (cur.inclusions || []).join('\n'),
+      cInclusionsBox: this.textBox(
+        'inc-' + cur.id,
+        (typeof cur.inclusionsText === 'string') ? cur.inclusionsText : (cur.inclusions || []).join('\n'),
+        9,
+        'Lead photographer for 8 hours\nSecond shooter\n500+ edited images in a private gallery',
+        (e) => this.setContractField('inclusions', e.target.value)
+      ),
+      cNotesBox: this.textBox(
+        'notes-' + cur.id,
+        cur.notes || '',
+        4,
+        'Anything agreed specifically with this client — extra hours, drone, travel, second location.',
+        (e) => this.setContractField('notes', e.target.value)
+      ),
       cTotalFee: cur.totalFee || '',
       cRetainer: cur.retainer || '',
       cBalanceDue: cur.balanceDue || '',

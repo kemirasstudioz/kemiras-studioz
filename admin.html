@@ -776,7 +776,9 @@ class Component extends DCLogic {
       patched[field] = value;
     }
     const next = list.map(c => (c.id === cur.id ? patched : c));
-    this.setState({ selectedContract: cur.id }, () => this.save({ contracts: next, contract: next[0] }));
+    const typed = ['label', 'packageTitle', 'inclusions', 'totalFee', 'retainer', 'balanceDue', 'notes', 'team'];
+    const write = typed.indexOf(field) > -1 ? 'saveSoon' : 'save';
+    this.setState({ selectedContract: cur.id }, () => this[write]({ contracts: next, contract: next[0] }));
   }
   addContract() {
     const list = this.contractList();
@@ -808,7 +810,7 @@ class Component extends DCLogic {
     }
     forEvent[tier] = t;
     all[eventType] = forEvent;
-    this.save({ packages: all });
+    this.saveSoon({ packages: all });
   }
   resetPackageFor(eventType) {
     if (!window.confirm('Reset both packages for ' + eventType + ' back to the suggested wording?')) return;
@@ -1046,6 +1048,12 @@ class Component extends DCLogic {
     this.setState({ savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
   }
   save(patch) { this.setState(patch, () => this.persist()); }
+  // For text typing: update state at once, write to the backend after typing settles.
+  saveSoon(patch) {
+    this.setState(patch);
+    clearTimeout(this._saveTimer);
+    this._saveTimer = setTimeout(() => this.persist(), 900);
+  }
 
   ytId(u) { if (!u) return ''; const m = String(u).match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([\w-]{11})/); if (m) return m[1]; return /^[\w-]{11}$/.test(u) ? u : ''; }
   vimeoId(u) { if (!u) return ''; const m = String(u).match(/vimeo\.com\/(?:video\/)?(\d+)/); return m ? m[1] : ''; }
@@ -1118,7 +1126,8 @@ class Component extends DCLogic {
   toggleFeatured(id) { this.save({ photos: this.state.photos.map(p => p.id === id ? { ...p, featured: !p.featured } : p) }); }
   toggleVisible(id) { this.save({ reviews: this.state.reviews.map(r => r.id === id ? { ...r, visible: !r.visible } : r) }); }
   setServiceField(id, field, value) {
-    this.save({ services: this.state.services.map(s => s.id === id ? { ...s, [field]: field === 'mZoom' ? (Number(value) || 100) : value } : s) });
+    const patch = { services: this.state.services.map(s => s.id === id ? { ...s, [field]: field === 'mZoom' ? (Number(value) || 100) : value } : s) };
+    if (field === 'title' || field === 'desc' || field === 'img') this.saveSoon(patch); else this.save(patch);
   }
   posFromDrag(e) {
     const rect = e.currentTarget.getBoundingClientRect();

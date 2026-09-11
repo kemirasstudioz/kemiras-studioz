@@ -80,10 +80,7 @@
 
   <!-- HERO -->
   <header id="home" style="position:relative; height:100vh; min-height:660px; overflow:hidden; display:flex; align-items:center; justify-content:center">
-    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/22481158/e282baa5efacfc8a1aef61f56275938b-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:-2s"></div>
-    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:7s"></div>
-    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:14s"></div>
-    <div style="position:absolute; inset:0; background-image:url('https://images.pixieset.com/22481158/49c7f2c93fe736293df25684cb5780f7-xxlarge.jpg'); background-size:cover; background-position:center; opacity:0; animation:heroFade 28s infinite; animation-delay:21s"></div>
+    {{ heroLayers }}
     <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(16,14,12,0.62) 0%, rgba(16,14,12,0.30) 38%, rgba(16,14,12,0.55) 72%, rgba(16,14,12,0.96) 100%)"></div>
 
     <div style="position:relative; z-index:2; text-align:center; padding:0 28px; max-width:1000px">
@@ -435,7 +432,20 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Gold&quot;,&quot;Champagne&quot;,&quot;Rose&quot;,&quot;Sage&quot;],&quot;default&quot;:&quot;Sage&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;grain&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;googleWidgetId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;eeae185c-7257-4211-b71f-4232cef8307d&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Reviews&quot;}}">
 class Component extends DCLogic {
-  state = { quote: 0, isMobile: false, menuOpen: false, submitted: false, sending: false, sendError: false, activeVideo: null, filmsFromAdmin: null, reviewsFromAdmin: null, photosFromAdmin: null, servicesFromAdmin: null };
+  state = { quote: 0, isMobile: false, menuOpen: false, submitted: false, sending: false, sendError: false, activeVideo: null, filmsFromAdmin: null, reviewsFromAdmin: null, photosFromAdmin: null, servicesFromAdmin: null, heroFromAdmin: null };
+
+  seedHero = [
+    { url: 'https://images.pixieset.com/22481158/e282baa5efacfc8a1aef61f56275938b-xxlarge.jpg', pos: 'center' },
+    { url: 'https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg', pos: 'center' },
+    { url: 'https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg', pos: 'center' },
+    { url: 'https://images.pixieset.com/22481158/49c7f2c93fe736293df25684cb5780f7-xxlarge.jpg', pos: 'center' }
+  ];
+
+  heroList() {
+    const a = this.state.heroFromAdmin;
+    const list = (Array.isArray(a) && a.length) ? a.filter(s => s && s.url && s.shown !== false) : this.seedHero;
+    return list.length ? list : this.seedHero;
+  }
 
   EMAILJS_SERVICE_ID = 'service_dawkhnl';
   EMAILJS_TEMPLATE_ID = 'template_eiycqgg';
@@ -574,6 +584,7 @@ class Component extends DCLogic {
         if (d && Array.isArray(d.reviews)) this.setState({ reviewsFromAdmin: d.reviews });
         if (d && Array.isArray(d.photos) && d.photos.length) this.setState({ photosFromAdmin: d.photos });
         if (d && Array.isArray(d.services) && d.services.length) this.setState({ servicesFromAdmin: d.services });
+        if (d && Array.isArray(d.hero) && d.hero.length) this.setState({ heroFromAdmin: d.hero });
       };
       if (window.KemData) { window.KemData.load().then(apply).catch(function () {}); }
       else { try { apply(JSON.parse(localStorage.getItem('kemiras_studio_admin_v2') || 'null')); } catch (e) {} }
@@ -674,6 +685,25 @@ class Component extends DCLogic {
           .catch(() => { this.setState({ sending: false, sendError: true }); });
       },
       isDesktop: !this.state.isMobile,
+      heroLayers: (() => {
+        const list = this.heroList();
+        const n = list.length;
+        const dur = Math.max(12, n * 7);
+        const step = dur / n;
+        return list.map((s, i) => React.createElement('div', {
+          key: 'hero' + i + s.url,
+          style: {
+            position: 'absolute', inset: 0,
+            backgroundImage: "url('" + s.url + "')",
+            backgroundSize: (s.zoom && s.zoom !== 100) ? s.zoom + '%' : 'cover',
+            backgroundPosition: s.pos || 'center',
+            backgroundRepeat: 'no-repeat',
+            opacity: 0,
+            animation: 'heroFade ' + dur + 's infinite',
+            animationDelay: (i * step - 2) + 's'
+          }
+        }));
+      })(),
       serviceCards: (this.state.servicesFromAdmin && this.state.servicesFromAdmin.length ? this.state.servicesFromAdmin : this.services).map(s => ({
         num: s.num, title: s.title, desc: s.desc, img: s.img,
         mZoom: (!s.mZoom || s.mZoom === 100) ? 'cover' : (s.mZoom + '%'),

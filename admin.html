@@ -280,6 +280,47 @@
             </div>
           </sc-if>
 
+          <!-- HERO -->
+          <sc-if value="{{ isHero }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:fadeIn .4s ease both; max-width:860px">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px">
+                <p style="font-size:13.5px; color:#6f685b; margin:0; line-height:1.6; flex:1; min-width:240px">The full-screen photographs that fade behind your name at the top of the site. They cycle in this order, about seven seconds each.</p>
+                <button onClick="{{ addHero }}" style="background:#16130f; color:#fff; border:none; padding:11px 20px; border-radius:7px; font-size:12px; letter-spacing:1.5px; cursor:pointer; min-height:44px" style-hover="background:#2c2823">+ Add photo</button>
+              </div>
+              <div style="font-size:12.5px; color:#a39c8d; line-height:1.55; margin-bottom:22px">Landscape photographs work best. Anything hidden stays in the list but is skipped on the site.</div>
+
+              <div style="display:flex; flex-direction:column; gap:14px">
+                <sc-for list="{{ heroRows }}" as="hr" hint-placeholder-count="4">
+                  <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:14px">
+                    <div style="flex:none">
+                      <div onPointerDown="{{ hr.onDragStart }}" onPointerMove="{{ hr.onDragMove }}" style="width:170px; aspect-ratio:16/9; border-radius:6px; background-image:url('{{ hr.url }}'); background-size:{{ hr.previewSize }}; background-position:{{ hr.previewPos }}; background-repeat:no-repeat; background-color:#0c0a09; border:1px solid #e2ddd2; cursor:grab; touch-action:none" style-active="cursor:grabbing"></div>
+                      <div style="font-size:9.5px; color:#a39c8d; text-align:center; margin-top:4px">Drag to reposition</div>
+                    </div>
+
+                    <div style="flex:1; min-width:230px; display:flex; flex-direction:column; gap:12px">
+                      <label style="display:flex; flex-direction:column; gap:6px">
+                        <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">IMAGE URL</span>
+                        <input type="text" value="{{ hr.url }}" onChange="{{ hr.onUrl }}" placeholder="https://…" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:13.5px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                      </label>
+                      <input type="file" accept="image/*" onChange="{{ hr.onUpload }}" style="font-size:12.5px; color:#8d8678">
+
+                      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:center">
+                        <label style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:150px">
+                          <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">ZOOM &nbsp;<span style="color:#b8924f">{{ hr.zoom }}%</span></span>
+                          <input type="range" min="50" max="220" step="5" value="{{ hr.zoom }}" onChange="{{ hr.onZoom }}" style="width:100%">
+                        </label>
+                        <button onClick="{{ hr.onToggle }}" style="border:1px solid {{ hr.shownBorder }}; background:{{ hr.shownBg }}; color:{{ hr.shownColor }}; border-radius:6px; padding:10px 16px; font-size:12px; letter-spacing:1.2px; cursor:pointer; min-height:42px">{{ hr.shownLabel }}</button>
+                        <button onClick="{{ hr.onUp }}" style="border:1px solid #e2ddd2; background:#fff; color:#6f685b; border-radius:6px; padding:10px 14px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">↑</button>
+                        <button onClick="{{ hr.onDown }}" style="border:1px solid #e2ddd2; background:#fff; color:#6f685b; border-radius:6px; padding:10px 14px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">↓</button>
+                        <button onClick="{{ hr.onRemove }}" style="border:1px solid #e2ddd2; background:#fff; color:#a8443a; border-radius:6px; padding:10px 14px; font-size:12px; cursor:pointer; min-height:42px" style-hover="border-color:#a8443a">Remove</button>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
           <!-- PACKAGES -->
           <sc-if value="{{ isPackages }}" hint-placeholder-val="{{ false }}">
             <div style="animation:fadeIn .4s ease both; max-width:900px">
@@ -724,7 +765,7 @@ class Component extends DCLogic {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
-  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], contract: null, contracts: null, selectedContract: null, packages: null, pkgEvent: 'Wedding', copiedPkg: false, copied: false, photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
+  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], contract: null, contracts: null, selectedContract: null, packages: null, hero: null, pkgEvent: 'Wedding', copiedPkg: false, copied: false, photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
 
   seedContract() {
     return {
@@ -1032,7 +1073,7 @@ class Component extends DCLogic {
       if (d && d.photos) {
         const services = migrateServices(d.services || this.seedServices());
         const photos = migratePhotos(d.photos);
-        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews(), contract: d.contract || this.seedContract(), contracts: this.migrateContracts(d), packages: d.packages || {} }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
+        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews(), contract: d.contract || this.seedContract(), contracts: this.migrateContracts(d), packages: d.packages || {}, hero: (Array.isArray(d.hero) && d.hero.length) ? d.hero : this.seedHero() }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
       } else {
         this.setState({ photos: this.seedPhotos(), films: this.seedFilms(), services: this.seedServices(), reviews: this.seedReviews(), contract: this.seedContract(), contracts: [this.seedContract()] }, () => this.persist());
       }
@@ -1042,7 +1083,7 @@ class Component extends DCLogic {
   }
   persist() {
     const contracts = this.contractList();
-    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews, contracts, contract: contracts[0], packages: this.state.packages || {} };
+    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews, contracts, contract: contracts[0], packages: this.state.packages || {}, hero: this.heroList() };
     if (window.KemData) { window.KemData.save(blob); }
     else { try { localStorage.setItem(this.KEY, JSON.stringify(blob)); } catch (e) {} }
     this.setState({ savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
@@ -1145,6 +1186,39 @@ class Component extends DCLogic {
     const patch = { services: this.state.services.map(s => s.id === id ? { ...s, [field]: field === 'mZoom' ? (Number(value) || 100) : value } : s) };
     if (field === 'title' || field === 'desc' || field === 'img') this.saveSoon(patch); else this.save(patch);
   }
+  seedHero() {
+    return [
+      { id: 'h1', url: 'https://images.pixieset.com/22481158/e282baa5efacfc8a1aef61f56275938b-xxlarge.jpg', pos: 'center', zoom: 100, shown: true },
+      { id: 'h2', url: 'https://images.pixieset.com/12573887/39cd998d7dc3d1b336d6f84386e26ca1-xxlarge.jpg', pos: 'center', zoom: 100, shown: true },
+      { id: 'h3', url: 'https://images.pixieset.com/86841987/a0cddc862421fa089eb62a00cebb3df2-xxlarge.jpg', pos: 'center', zoom: 100, shown: true },
+      { id: 'h4', url: 'https://images.pixieset.com/22481158/49c7f2c93fe736293df25684cb5780f7-xxlarge.jpg', pos: 'center', zoom: 100, shown: true }
+    ];
+  }
+  heroList() {
+    const h = this.state.hero;
+    if (Array.isArray(h) && h.length) return h.map((s, i) => ({ ...s, id: s.id || 'h' + (i + 1) }));
+    return this.seedHero();
+  }
+  setHeroField(id, field, value) {
+    const next = this.heroList().map(s => (s.id === id ? { ...s, [field]: value } : s));
+    if (field === 'url') this.saveSoon({ hero: next }); else this.save({ hero: next });
+  }
+  moveHero(i, dir) {
+    const list = this.heroList().slice();
+    const j = i + dir;
+    if (j < 0 || j >= list.length) return;
+    const t = list[i]; list[i] = list[j]; list[j] = t;
+    this.save({ hero: list });
+  }
+  heroUpload(id, e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 3.5 * 1024 * 1024) { window.alert('That image is over 3.5 MB. Please use a smaller file or paste a link instead.'); return; }
+    const r = new FileReader();
+    r.onload = () => this.setHeroField(id, 'url', String(r.result));
+    r.readAsDataURL(f);
+  }
+
   posFromDrag(e) {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
@@ -1237,13 +1311,34 @@ class Component extends DCLogic {
       onLoginKeyDown: (e) => { if (e.key === 'Enter') this.login(); },
       login: () => this.login(), logout: () => this.logout(),
       tab: st.tab,
+      isHero: st.tab === 'hero',
       isPackages: st.tab === 'packages',
+      addHero: () => this.save({ hero: this.heroList().concat([{ id: 'h' + Date.now().toString(36), url: '', pos: 'center', zoom: 100, shown: true }]) }),
+      heroRows: this.heroList().map((s, i, arr) => ({
+        url: s.url || '',
+        zoom: Number(s.zoom) || 100,
+        previewSize: (Number(s.zoom) && Number(s.zoom) !== 100) ? s.zoom + '%' : 'cover',
+        previewPos: s.pos || 'center',
+        shownLabel: s.shown === false ? 'Hidden' : 'Shown',
+        shownBg: s.shown === false ? '#fff' : 'rgba(184,146,79,0.14)',
+        shownBorder: s.shown === false ? '#e2ddd2' : '#b8924f',
+        shownColor: s.shown === false ? '#a39c8d' : '#8a6a2f',
+        onUrl: (e) => this.setHeroField(s.id, 'url', e.target.value),
+        onZoom: (e) => this.setHeroField(s.id, 'zoom', Number(e.target.value) || 100),
+        onToggle: () => this.setHeroField(s.id, 'shown', s.shown === false),
+        onRemove: () => this.save({ hero: this.heroList().filter(x => x.id !== s.id) }),
+        onUp: () => this.moveHero(i, -1),
+        onDown: () => this.moveHero(i, 1),
+        onUpload: (e) => this.heroUpload(s.id, e),
+        onDragStart: (e) => { e.currentTarget.setPointerCapture(e.pointerId); this.setHeroField(s.id, 'pos', this.posFromDrag(e)); },
+        onDragMove: (e) => { if (e.buttons !== 1) return; this.setHeroField(s.id, 'pos', this.posFromDrag(e)); }
+      })),
       isContract: st.tab === 'contract',
       contractCount: contractsAll.length,
       isOverview: st.tab === 'overview', isAnalytics: st.tab === 'analytics', isPhotos: st.tab === 'photos', isFilms: st.tab === 'films', isServices: st.tab === 'services', isReviews: st.tab === 'reviews',
       pageTitle: st.tab.charAt(0).toUpperCase() + st.tab.slice(1),
       savedAt: st.savedAt,
-      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }, { label: 'Packages', key: 'packages' }, { label: 'Contract', key: 'contract' }].map(n => {
+      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }, { label: 'Hero', key: 'hero' }, { label: 'Packages', key: 'packages' }, { label: 'Contract', key: 'contract' }].map(n => {
         const active = st.tab === n.key;
         return {
           label: n.label, onClick: () => this.setState({ tab: n.key }),

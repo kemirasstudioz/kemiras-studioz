@@ -324,7 +324,7 @@
           <!-- PACKAGES -->
           <sc-if value="{{ isPackages }}" hint-placeholder-val="{{ false }}">
             <div style="animation:fadeIn .4s ease both; max-width:900px">
-              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">Two packages per occasion, Basic and Signature. Clients pick an occasion on the packages page and turn the cards over to see what is included.</p>
+              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">Weddings have Basic and Signature; every other occasion has a single Signature package. Clients pick an occasion and turn the card over to see what is included. Start a line with <strong>##</strong> to make it a section heading, like <em>## Deliverables</em>.</p>
 
               <div style="background:rgba(184,146,79,0.12); border:1px solid rgba(184,146,79,0.3); border-radius:8px; padding:14px 16px; margin-bottom:24px">
                 <div style="font-size:11px; letter-spacing:1.4px; color:#8a6a2f; margin-bottom:7px">PACKAGES PAGE LINK</div>
@@ -341,12 +341,25 @@
                 </sc-for>
               </div>
 
+              <sc-if value="{{ pkgIsWedding }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678; margin-bottom:10px">WEDDING STYLE</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px">
+                  <sc-for list="{{ pkgStyleTabs }}" as="ps" hint-placeholder-count="2">
+                    <button onClick="{{ ps.onPick }}" style="background:{{ ps.bg }}; color:{{ ps.color }}; border:1px solid {{ ps.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ ps.name }}</button>
+                  </sc-for>
+                </div>
+              </sc-if>
+
               <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap:18px">
                 <sc-for list="{{ pkgEditors }}" as="pe" hint-placeholder-count="2">
                   <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:18px">
                     <div style="font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:500; margin-bottom:4px">{{ pe.title }}</div>
                     <div style="font-size:12px; color:#a39c8d; margin-bottom:16px">{{ pe.hint }}</div>
                     <div style="display:flex; flex-direction:column; gap:14px">
+                      <label style="display:flex; flex-direction:column; gap:6px">
+                        <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">PACKAGE NAME</span>
+                        <input type="text" value="{{ pe.name }}" onChange="{{ pe.onName }}" placeholder="{{ pe.title }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
+                      </label>
                       <label style="display:flex; flex-direction:column; gap:6px">
                         <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">PRICE</span>
                         <input type="text" value="{{ pe.price }}" onChange="{{ pe.onPrice }}" placeholder="$1,800 or Enquire for pricing" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
@@ -765,7 +778,7 @@ class Component extends DCLogic {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
-  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], contract: null, contracts: null, selectedContract: null, packages: null, hero: null, pkgEvent: 'Wedding', copiedPkg: false, copied: false, photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
+  state = { authed: false, loginError: false, tab: 'overview', photos: [], films: [], services: [], reviews: [], contract: null, contracts: null, selectedContract: null, packages: null, hero: null, pkgEvent: 'Wedding', pkgStyle: 'Indian', copiedPkg: false, copied: false, photoFilter: 'All', modal: null, savedAt: 'just now', analyticsPeriod: 'day' };
 
   seedContract() {
     return {
@@ -839,6 +852,10 @@ class Component extends DCLogic {
     { key: 'basic', title: 'Basic', hint: 'The essential coverage option.' },
     { key: 'signature', title: 'Signature', hint: 'Your full service, photo and film.' }
   ];
+  pkgKey() {
+    const st = this.state;
+    return (st.pkgEvent === 'Wedding' && st.pkgStyle === 'International') ? 'Wedding International' : st.pkgEvent;
+  }
   setPackageField(eventType, tier, field, value) {
     const all = Object.assign({}, this.state.packages || {});
     const forEvent = Object.assign({}, all[eventType] || {});
@@ -1428,33 +1445,43 @@ class Component extends DCLogic {
           this.setContractField('signed', true);
         }
       },
-      pkgTabs: this.filmCats.map(n => ({
+      pkgTabs: this.filmCats.filter(n => n !== 'Maternity Shoot' && n !== 'Reception').map(n => ({
         name: n,
         bg: n === st.pkgEvent ? '#16130f' : '#fff',
         color: n === st.pkgEvent ? '#e8d9b8' : '#6f685b',
         border: n === st.pkgEvent ? '#16130f' : '#e2ddd2',
         onPick: () => this.setState({ pkgEvent: n })
       })),
-      pkgEditors: this.pkgTiers.map(t => {
-        const saved = ((st.packages || {})[st.pkgEvent] || {})[t.key] || {};
+      pkgEditors: this.pkgTiers.filter(t => st.pkgEvent === 'Wedding' || t.key === 'signature').map(t => {
+        const saved = ((st.packages || {})[this.pkgKey()] || {})[t.key] || {};
         return {
-          title: t.title, hint: t.hint,
+          title: saved.name || t.title, hint: t.hint,
+          name: saved.name || '',
+          onName: (e) => this.setPackageField(this.pkgKey(), t.key, 'name', e.target.value),
           price: saved.price || '',
           tagline: saved.tagline || '',
           items: (typeof saved.itemsText === 'string') ? saved.itemsText : (saved.items || []).join('\n'),
           box: this.textBox(
-            'pkg-' + st.pkgEvent + '-' + t.key,
+            'pkg-' + this.pkgKey() + '-' + t.key,
             (typeof saved.itemsText === 'string') ? saved.itemsText : (saved.items || []).join('\n'),
             8,
             'Six hours of coverage\nOne lead photographer',
-            (e) => this.setPackageField(st.pkgEvent, t.key, 'items', e.target.value)
+            (e) => this.setPackageField(this.pkgKey(), t.key, 'items', e.target.value)
           ),
-          onPrice: (e) => this.setPackageField(st.pkgEvent, t.key, 'price', e.target.value),
-          onTagline: (e) => this.setPackageField(st.pkgEvent, t.key, 'tagline', e.target.value),
-          onItems: (e) => this.setPackageField(st.pkgEvent, t.key, 'items', e.target.value)
+          onPrice: (e) => this.setPackageField(this.pkgKey(), t.key, 'price', e.target.value),
+          onTagline: (e) => this.setPackageField(this.pkgKey(), t.key, 'tagline', e.target.value),
+          onItems: (e) => this.setPackageField(this.pkgKey(), t.key, 'items', e.target.value)
         };
       }),
-      resetPackage: () => this.resetPackageFor(st.pkgEvent),
+      resetPackage: () => this.resetPackageFor(this.pkgKey()),
+      pkgIsWedding: st.pkgEvent === 'Wedding',
+      pkgStyleTabs: [{ key: 'Indian', name: 'Indian Wedding' }, { key: 'International', name: 'Classic Wedding' }].map(w => ({
+        name: w.name,
+        bg: (st.pkgStyle || 'Indian') === w.key ? '#16130f' : '#fff',
+        color: (st.pkgStyle || 'Indian') === w.key ? '#e8d9b8' : '#6f685b',
+        border: (st.pkgStyle || 'Indian') === w.key ? '#16130f' : '#e2ddd2',
+        onPick: () => this.setState({ pkgStyle: w.key })
+      })),
       packagesLink: (() => { try { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'packages.html'; } catch (e) { return 'https://kemirasstudioz.com/packages.html'; } })(),
       copyPkgLabel: st.copiedPkg ? 'COPIED' : 'COPY LINK',
       copyPackagesLink: () => {

@@ -442,9 +442,13 @@ class Component extends DCLogic {
         ceremonies: (d.ceremonies || []).map(c => ({ name: c.name, date: c.date, time: c.time, end: c.end, loc: c.loc }))
       }
     };
-    const list = Array.isArray(blob.contracts) && blob.contracts.length ? blob.contracts : (blob.contract ? [blob.contract] : []);
-    const next = list.map(c => (String(c.id) === String(cfg.id) ? { ...c, ...stamp } : c));
-    try { window.KemData.save({ ...blob, contracts: next, contract: next[0] }); } catch (e) {}
+    const write = (b) => {
+      const list = Array.isArray(b.contracts) && b.contracts.length ? b.contracts : (b.contract ? [b.contract] : []);
+      const next = list.map(c => (String(c.id) === String(cfg.id) ? { ...c, ...stamp } : c));
+      try { window.KemData.save({ ...b, contracts: next, contract: next[0] }); } catch (e) {}
+    };
+    // Re-read the latest copy right before saving so nothing newer is overwritten.
+    window.KemData.load().then((fresh) => write(fresh || blob)).catch(() => write(blob));
   }
 
   state = { cfg: null, notFound: false, locked: false, sigEmpty: true, busy: false, done: false, errorMsg: '', doneName: '', doneEmail: '', mailWarning: false, payMode: 'full', payMethod: '', depositMethod: 'transfer', eventDate: '' };

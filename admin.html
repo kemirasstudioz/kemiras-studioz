@@ -84,6 +84,282 @@
 
         <div style="padding:clamp(20px,3vw,36px); flex:1">
 
+          <sc-if value="{{ isLedger }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:fadeIn .4s ease both; display:flex; flex-direction:column; gap:22px">
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                <sc-for list="{{ ledgerTabs }}" as="lt" hint-placeholder-count="3">
+                  <button onClick="{{ lt.onPick }}" style="background:{{ lt.bg }}; color:{{ lt.color }}; border:1px solid {{ lt.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ lt.name }}</button>
+                </sc-for>
+                <label style="margin-left:auto; display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:1.4px; color:#8d8678">YEAR
+                  <select value="{{ ledgerYear }}" onChange="{{ setLedgerYear }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:8px 10px; font-size:13px; background:#fff; min-height:40px">
+                    <sc-for list="{{ ledgerYears }}" as="yr" hint-placeholder-count="1"><option value="{{ yr }}">{{ yr }}</option></sc-for>
+                  </select>
+                </label>
+              </div>
+
+              <sc-if value="{{ isLDash }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; flex-direction:column; gap:22px">
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,170px),1fr)); gap:16px">
+                    <sc-for list="{{ dashStats }}" as="ds" hint-placeholder-count="6">
+                      <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:20px">
+                  <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d">{{ ds.label }}</div>
+                  <div style="font-family:'Cormorant Garamond',serif; font-size:34px; margin-top:6px; color:{{ ds.color }}">{{ ds.value }}</div>
+                  <div style="font-size:12.5px; color:#8d8678">{{ ds.sub }}</div>
+                </div>
+                    </sc-for>
+                  </div>
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:20px 22px; display:flex; flex-direction:column; gap:14px">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+                      <div style="display:flex; flex-direction:column; gap:3px">
+                        <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d">BREAKDOWN · {{ ledgerYear }}</div>
+                        <div style="font-size:12px; color:#8d8678">Counted by event date · booked contracts</div>
+                      </div>
+                      <div style="display:flex; border:1px solid #e2ddd2; border-radius:7px; overflow:hidden">
+                        <sc-for list="{{ periodTabs }}" as="pt" hint-placeholder-count="3">
+                          <button onClick="{{ pt.onPick }}" style="background:{{ pt.bg }}; color:{{ pt.color }}; border:none; padding:9px 14px; font-size:12.5px; cursor:pointer; min-height:40px">{{ pt.name }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <div style="overflow-x:auto">
+                      <div style="min-width:720px; display:flex; flex-direction:column">
+                        <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,0.6fr) repeat(5, minmax(0,1fr)); gap:10px; padding:0 0 10px; border-bottom:1px solid #ebe7dd; font-size:10.5px; letter-spacing:1.3px; color:#a39c8d">
+                          <span>{{ periodHead }}</span><span>EVENTS</span><span>INCOME</span><span>CREW</span><span>OTHER COSTS</span><span>NET PROFIT</span><span>TAX SET-ASIDE</span>
+                        </div>
+                        <sc-for list="{{ periodRows }}" as="pr" hint-placeholder-count="12">
+                          <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,0.6fr) repeat(5, minmax(0,1fr)); gap:10px; padding:11px 0; border-bottom:1px solid #f4f1ea; font-size:13.5px; color:{{ pr.ink }}; background:{{ pr.bg }}">
+                            <span style="font-weight:{{ pr.weight }}">{{ pr.label }}</span>
+                            <span>{{ pr.events }}</span>
+                            <span>{{ pr.income }}</span>
+                            <span>{{ pr.crew }}</span>
+                            <span>{{ pr.other }}</span>
+                            <span style="color:{{ pr.profColor }}; font-weight:500">{{ pr.profit }}</span>
+                            <span style="color:#8a6a32">{{ pr.tax }}</span>
+                          </div>
+                        </sc-for>
+                        <div style="display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,0.6fr) repeat(5, minmax(0,1fr)); gap:10px; padding:12px 0 2px; font-size:13.5px; font-weight:500; color:#201c17">
+                          <span>Total {{ ledgerYear }}</span><span>{{ periodTotal.events }}</span><span>{{ periodTotal.income }}</span><span>{{ periodTotal.crew }}</span><span>{{ periodTotal.other }}</span><span style="color:{{ periodTotal.profColor }}">{{ periodTotal.profit }}</span><span style="color:#8a6a32">{{ periodTotal.tax }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:20px 22px">
+                    <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d; margin-bottom:14px">PROFIT BY BOOKED CONTRACT · {{ ledgerYear }}</div>
+                    <div style="display:flex; flex-direction:column; gap:14px">
+                      <sc-for list="{{ dashRows }}" as="dr" hint-placeholder-count="3">
+                        <div style="display:flex; flex-direction:column; gap:6px">
+                          <div style="display:flex; justify-content:space-between; gap:12px; font-size:13.5px; flex-wrap:wrap">
+                            <span><strong style="font-weight:500">{{ dr.client }}</strong> <span style="color:#8d8678">· {{ dr.eventType }} · {{ dr.date }}</span></span>
+                            <span style="color:{{ dr.profitColor }}; font-weight:500">{{ dr.profitText }} <span style="color:#8d8678; font-weight:400">of {{ dr.price }} · {{ dr.margin }}</span></span>
+                          </div>
+                          <div style="height:8px; background:#f1eee7; border-radius:4px; overflow:hidden; display:flex">
+                            <span style="width:{{ dr.expW }}; background:#d9cdb5"></span>
+                            <span style="width:{{ dr.profW }}; background:#5b8c6e"></span>
+                          </div>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ dashEmpty }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:13.5px; color:#8d8678">No booked contracts for {{ ledgerYear }} yet.</div>
+                      </sc-if>
+                    </div>
+                    <div style="display:flex; gap:18px; margin-top:16px; font-size:12px; color:#8d8678; flex-wrap:wrap">
+                      <span style="display:flex; align-items:center; gap:6px"><span style="width:10px; height:10px; border-radius:2px; background:#d9cdb5"></span>Expenses</span>
+                      <span style="display:flex; align-items:center; gap:6px"><span style="width:10px; height:10px; border-radius:2px; background:#5b8c6e"></span>Profit</span>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isLContracts }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:22px">
+                  <p style="margin:0; font-size:13.5px; line-height:1.6; color:#6f685b; max-width:640px">Every contract you create shows up here. When a client signs, it is marked Signed and the booking changes to Booked. Choose Finances on any row to add its budget and expenses.</p>
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; overflow-x:auto">
+                    <div style="min-width:1100px">
+                      <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.9fr) 96px; gap:12px; padding:14px 20px; border-bottom:1px solid #ebe7dd; font-size:10.5px; letter-spacing:1.4px; color:#a39c8d">
+                        <span>CLIENT / CONTRACT</span><span>EVENT DATE</span><span>CONTRACT</span><span>PRICE</span><span>DEPOSIT</span><span>LEFT TO PAY</span><span>EXPENSES</span><span>PROFIT</span><span>STATUS</span><span></span>
+                      </div>
+                      <sc-for list="{{ ledgerRows }}" as="lr" hint-placeholder-count="3">
+                        <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.8fr) minmax(0,0.9fr) 96px; gap:12px; padding:15px 20px; border-bottom:1px solid #f1eee7; align-items:center; font-size:13.5px; background:{{ lr.rowBg }}">
+                          <div style="display:flex; flex-direction:column; gap:3px; min-width:0">
+                            <span style="font-weight:500; overflow-wrap:anywhere">{{ lr.client }}</span>
+                            <span style="font-size:12px; color:#8d8678; overflow-wrap:anywhere">{{ lr.label }} · {{ lr.eventType }}</span>
+                          </div>
+                          <span style="color:#4a453c">{{ lr.date }}</span>
+                          <div style="display:flex; flex-direction:column; gap:3px">
+                            <span style="color:{{ lr.contractColor }}; font-weight:500">{{ lr.contractStatus }}</span>
+                            <span style="font-size:11.5px; color:#8d8678">{{ lr.signedOn }}</span>
+                          </div>
+                          <span style="font-weight:500">{{ lr.price }}</span>
+                          <span style="color:#4a453c">{{ lr.depositText }}</span>
+                          <span style="font-weight:500; color:{{ lr.leftColor }}">{{ lr.leftText }}</span>
+                          <span style="color:#6f685b">{{ lr.expText }}</span>
+                          <span style="color:{{ lr.profitColor }}; font-weight:500">{{ lr.profitText }}</span>
+                          <span style="justify-self:start; background:{{ lr.statusBg }}; color:{{ lr.statusColor }}; border-radius:20px; padding:5px 12px; font-size:11px; letter-spacing:1.2px; font-weight:500">{{ lr.status }}</span>
+                          <button onClick="{{ lr.onFin }}" style="background:{{ lr.finBg }}; color:{{ lr.finColor }}; border:1px solid #e2ddd2; border-radius:6px; padding:8px 10px; font-size:12px; cursor:pointer; min-height:36px" style-hover="border-color:#b8924f">Finances</button>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ ledgerEmpty }}" hint-placeholder-val="{{ false }}">
+                        <div style="padding:28px 20px; font-size:13.5px; color:#8d8678">No contracts yet. Create one in the Contract tab and it will appear here.</div>
+                      </sc-if>
+                    </div>
+                  </div>
+
+                  <sc-if value="{{ hasLSel }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:clamp(18px,3vw,26px); display:flex; flex-direction:column; gap:22px">
+                      <div style="display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:flex-start">
+                        <div>
+                          <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d">FINANCES</div>
+                          <div style="font-family:'Cormorant Garamond',serif; font-size:28px; margin-top:4px">{{ fsClient }}</div>
+                          <div style="font-size:13px; color:#8d8678">{{ fsLabel }} · {{ fsDate }} · contract price {{ fsPrice }}</div>
+                        </div>
+                        <div style="display:flex; gap:8px">
+                          <button onClick="{{ fsOpenContract }}" style="background:none; border:1px solid #e2ddd2; border-radius:6px; padding:9px 14px; font-size:12.5px; cursor:pointer; min-height:40px" style-hover="border-color:#b8924f">Open contract</button>
+                          <button onClick="{{ fsClose }}" style="background:none; border:1px solid #e2ddd2; border-radius:6px; padding:9px 14px; font-size:12.5px; cursor:pointer; min-height:40px" style-hover="border-color:#b8924f">Close</button>
+                        </div>
+                      </div>
+                      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,200px),1fr)); gap:16px">
+                        <label style="display:flex; flex-direction:column; gap:7px">
+                          <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">DEPOSIT (FROM CONTRACT)</span>
+                          <input type="text" inputmode="decimal" value="{{ fsDeposit }}" onChange="{{ setFsDeposit }}" placeholder="$500" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                        </label>
+                        <label style="display:flex; flex-direction:column; gap:7px">
+                          <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">BUDGET (PLANNED SPEND)</span>
+                          <input type="text" inputmode="decimal" value="{{ fsBudget }}" onChange="{{ setFsBudget }}" placeholder="$1,500" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                        </label>
+                        <label style="display:flex; flex-direction:column; gap:7px">
+                          <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">PAID AFTER DEPOSIT</span>
+                          <input type="text" inputmode="decimal" value="{{ fsReceived }}" onChange="{{ setFsReceived }}" placeholder="$1,000" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                        </label>
+                      </div>
+                      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,150px),1fr)); gap:12px">
+                        <sc-for list="{{ fsStats }}" as="fst" hint-placeholder-count="6">
+                          <div style="background:#faf8f4; border:1px solid #ebe7dd; border-radius:8px; padding:14px 16px">
+                            <div style="font-size:10.5px; letter-spacing:1.4px; color:#a39c8d">{{ fst.label }}</div>
+                            <div style="font-size:20px; margin-top:4px; font-weight:500; color:{{ fst.color }}">{{ fst.value }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex; flex-direction:column; gap:14px">
+                        <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap">
+                          <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d">EXPENSES</div>
+                          <div style="font-size:13px; color:#6f685b">All expenses <strong style="color:#201c17; font-weight:500">{{ fsExpTotal }}</strong></div>
+                        </div>
+                        <div style="display:flex; gap:6px; overflow-x:auto; overflow-y:hidden; border-bottom:1px solid #ebe7dd; padding-bottom:0">
+                          <sc-for list="{{ expTabs }}" as="et" hint-placeholder-count="7">
+                            <button onClick="{{ et.onPick }}" style="flex:none; background:none; border:none; border-bottom:2px solid {{ et.line }}; padding:10px 12px 11px; cursor:pointer; display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-height:44px; margin-bottom:-1px">
+                              <span style="font-size:13px; color:{{ et.color }}; font-weight:{{ et.weight }}">{{ et.name }}</span>
+                              <span style="font-size:11.5px; color:#8d8678">{{ et.sub }}</span>
+                            </button>
+                          </sc-for>
+                        </div>
+
+                        <sc-if value="{{ expIsCrew }}" hint-placeholder-val="{{ true }}">
+                          <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; background:#faf8f4; border:1px solid #ebe7dd; border-radius:8px; padding:12px 14px">
+                            <label style="display:flex; flex-direction:column; gap:6px; width:160px">
+                              <span style="font-size:10.5px; letter-spacing:1.4px; color:#8d8678">FULL-DAY RATE</span>
+                              <input type="text" inputmode="decimal" value="{{ crewFullRate }}" onChange="{{ setCrewFullRate }}" placeholder="$400" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                            </label>
+                            <label style="display:flex; flex-direction:column; gap:6px; width:160px">
+                              <span style="font-size:10.5px; letter-spacing:1.4px; color:#8d8678">HALF-DAY RATE</span>
+                              <input type="text" inputmode="decimal" value="{{ crewHalfRate }}" onChange="{{ setCrewHalfRate }}" placeholder="$225" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                            </label>
+                            <span style="font-size:12.5px; color:#6f685b; flex:1; min-width:200px; padding-bottom:10px">{{ fsCrewSummary }}</span>
+                          </div>
+                        </sc-if>
+
+                        <div style="display:flex; flex-direction:column; gap:10px">
+                          <sc-for list="{{ expRows }}" as="ex" hint-placeholder-count="2">
+                            <div style="display:flex; flex-direction:column; gap:8px; padding:12px 14px; border:1px solid #ebe7dd; border-radius:8px">
+                              <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,140px) 44px; gap:10px; align-items:center">
+                                <input type="text" value="{{ ex.desc }}" onChange="{{ ex.onDesc }}" placeholder="{{ ex.descHint }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                <input type="text" inputmode="decimal" value="{{ ex.amount }}" onChange="{{ ex.onAmount }}" placeholder="$0" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                <button onClick="{{ ex.onRemove }}" title="Remove" style="background:none; border:1px solid #e2ddd2; border-radius:6px; min-height:42px; cursor:pointer; color:#8d8678; font-size:16px" style-hover="border-color:#b05a4a; color:#b05a4a">×</button>
+                              </div>
+                              <sc-if value="{{ ex.isCrew }}" hint-placeholder-val="{{ false }}">
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; align-items:center">
+                                  <select value="{{ ex.role }}" onChange="{{ ex.onRole }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                    <option value="Photographer">Photographer</option>
+                                    <option value="Videographer">Videographer</option>
+                                  </select>
+                                  <select value="{{ ex.level }}" onChange="{{ ex.onLevel }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                    <option value="Lead">Lead</option>
+                                    <option value="Second shooter">Second shooter</option>
+                                  </select>
+                                  <select value="{{ ex.day }}" onChange="{{ ex.onDay }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                    <option value="Full day">Full day</option>
+                                    <option value="Half day">Half day</option>
+                                  </select>
+                                  <input type="date" value="{{ ex.workDate }}" onChange="{{ ex.onWorkDate }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                                </div>
+                              </sc-if>
+                            </div>
+                          </sc-for>
+                          <sc-if value="{{ expEmpty }}" hint-placeholder-val="{{ false }}">
+                            <div style="font-size:13px; color:#8d8678; padding:6px 0">{{ expEmptyText }}</div>
+                          </sc-if>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding-top:12px; border-top:1px solid #f1eee7">
+                          <button onClick="{{ expAdd }}" style="background:#16130f; color:#fff; border:none; border-radius:7px; padding:11px 18px; font-size:12.5px; letter-spacing:0.6px; cursor:pointer; min-height:42px" style-hover="background:#2c2823">+ Add {{ expAddLabel }}</button>
+                          <div style="font-size:13.5px; color:#6f685b">{{ expCatName }} total <strong style="color:#201c17; font-weight:500; font-size:16px; margin-left:6px">{{ expCatTotal }}</strong></div>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isLTaxes }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:22px">
+                  <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end">
+                    <p style="margin:0; font-size:13.5px; line-height:1.6; color:#6f685b; flex:1; min-width:260px; max-width:620px">Income from booked contracts and the expenses you logged, grouped by the IRS estimated-tax quarters. Set the share of profit you put aside for tax. These are estimates to plan with; confirm the final numbers with your accountant.</p>
+                    <label style="display:flex; flex-direction:column; gap:7px; width:200px">
+                      <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">SET ASIDE FOR TAX (%)</span>
+                      <input type="text" inputmode="decimal" value="{{ taxRate }}" onChange="{{ setTaxRate }}" placeholder="25" style="border:1px solid #e2ddd2; border-radius:6px; padding:10px 12px; font-size:14px; outline:none; min-height:42px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                    </label>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,170px),1fr)); gap:16px">
+                    <sc-for list="{{ taxStats }}" as="ts" hint-placeholder-count="4">
+                      <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:20px">
+                  <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d">{{ ts.label }}</div>
+                  <div style="font-family:'Cormorant Garamond',serif; font-size:34px; margin-top:6px; color:{{ ts.color }}">{{ ts.value }}</div>
+                  <div style="font-size:12.5px; color:#8d8678">{{ ts.sub }}</div>
+                </div>
+                    </sc-for>
+                  </div>
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; overflow-x:auto">
+                    <div style="min-width:760px">
+                      <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,0.9fr) 110px; gap:12px; padding:14px 20px; border-bottom:1px solid #ebe7dd; font-size:10.5px; letter-spacing:1.4px; color:#a39c8d">
+                        <span>QUARTER</span><span>PAYMENT DUE</span><span>INCOME</span><span>EXPENSES</span><span>PROFIT</span><span>SET ASIDE</span><span></span>
+                      </div>
+                      <sc-for list="{{ taxQuarters }}" as="tq" hint-placeholder-count="4">
+                        <div style="display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,0.9fr) 110px; gap:12px; padding:15px 20px; border-bottom:1px solid #f1eee7; align-items:center; font-size:13.5px">
+                          <div style="display:flex; flex-direction:column; gap:2px"><span style="font-weight:500">{{ tq.name }}</span><span style="font-size:12px; color:#8d8678">{{ tq.period }}</span></div>
+                          <span style="color:#4a453c">{{ tq.due }}</span>
+                          <span>{{ tq.income }}</span>
+                          <span style="color:#6f685b">{{ tq.expenses }}</span>
+                          <span style="font-weight:500">{{ tq.profit }}</span>
+                          <span style="font-weight:500; color:#8a6a32">{{ tq.tax }}</span>
+                          <button onClick="{{ tq.onToggle }}" style="background:{{ tq.paidBg }}; color:{{ tq.paidColor }}; border:1px solid {{ tq.paidBorder }}; border-radius:20px; padding:6px 12px; font-size:11.5px; letter-spacing:0.8px; cursor:pointer; min-height:34px">{{ tq.paidLabel }}</button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:20px 22px">
+                    <div style="font-size:11px; letter-spacing:1.5px; color:#a39c8d; margin-bottom:12px">EXPENSES BY CATEGORY · {{ ledgerYear }}</div>
+                    <div style="display:flex; flex-direction:column">
+                      <sc-for list="{{ taxCats }}" as="tc" hint-placeholder-count="4">
+                        <div style="display:flex; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid #f1eee7; font-size:13.5px"><span>{{ tc.name }}</span><span style="font-weight:500">{{ tc.total }}</span></div>
+                      </sc-for>
+                      <sc-if value="{{ taxCatsEmpty }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-size:13.5px; color:#8d8678">No expenses logged for {{ ledgerYear }}.</div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
           <!-- OVERVIEW -->
           <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
             <div style="animation:fadeIn .4s ease both">
@@ -802,6 +1078,253 @@ class Component extends DCLogic {
       label: 'Contract 1'
     };
   }
+  financeCats = ['Crew', 'Travel', 'Equipment rental', 'Editing', 'Album & prints', 'Software & gear', 'Other'];
+  finFor(id) {
+    const f = (this.state.finance || {})[id] || {};
+    return { budget: f.budget || '', received: f.received || '', expenses: Array.isArray(f.expenses) ? f.expenses : [] };
+  }
+  setFin(id, patch, soon) {
+    const all = { ...(this.state.finance || {}) };
+    all[id] = { ...this.finFor(id), ...patch };
+    this[soon ? 'saveSoon' : 'save']({ finance: all });
+  }
+  setExpense(id, eid, field, val) {
+    const f = this.finFor(id);
+    const patch = (x) => { const n = { ...x, [field]: val }; if (field === 'cat' && val === 'Crew' && !n.day) { n.day = 'Full day'; n.role = n.role || 'Photographer'; n.level = n.level || 'Lead'; if (!n.amount) n.amount = this.crewRate('Full day'); } return n; };
+    this.setFin(id, { expenses: f.expenses.map(x => (x.id === eid ? patch(x) : x)) }, ['cat', 'workDate', 'role', 'level'].indexOf(field) < 0);
+  }
+  crewRate(day) {
+    const t = this.state.taxes || {};
+    const v = day === 'Half day' ? t.crewHalf : t.crewFull;
+    return (v && String(v).trim()) ? String(v).trim() : '';
+  }
+  addExpense(id, cat) {
+    const f = this.finFor(id);
+    const row = { id: 'e' + Date.now().toString(36), cat, desc: '', amount: '' };
+    if (cat === 'Crew') { row.day = 'Full day'; row.role = 'Photographer'; row.level = 'Lead'; row.amount = this.crewRate('Full day'); }
+    this.setFin(id, { expenses: [...f.expenses, row] });
+  }
+  setCrewDay(id, eid, day) {
+    const f = this.finFor(id);
+    const rate = this.crewRate(day);
+    this.setFin(id, { expenses: f.expenses.map(x => (x.id === eid ? { ...x, day, amount: rate || x.amount } : x)) });
+  }
+  removeExpense(id, eid) {
+    const f = this.finFor(id);
+    this.setFin(id, { expenses: f.expenses.filter(x => x.id !== eid) });
+  }
+  setTax(patch, soon) { this[soon ? 'saveSoon' : 'save']({ taxes: { ...(this.state.taxes || {}), ...patch } }); }
+
+  ledgerVals(list) {
+    const st = this.state;
+    const num = (v) => { const n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.\-]/g, '')); return isNaN(n) ? 0 : n; };
+    const money = (n) => (n < 0 ? '-$' : '$') + Math.abs(Math.round(n)).toLocaleString('en-US');
+    const toDate = (s) => { if (!s) return null; const d = new Date(String(s).length <= 10 ? s + 'T12:00:00' : s); return isNaN(d) ? null : d; };
+    const fmt = (d) => d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+    const pct = (a, b) => b ? Math.round((a / b) * 100) + '%' : '—';
+    const taxes = st.taxes || {};
+    const rate = (taxes.rate === undefined || taxes.rate === null) ? 25 : num(taxes.rate);
+    const today = new Date();
+    const rows = (list || []).map(c => {
+      const b = c.booking || {};
+      const cer = (b.ceremonies || c.ceremonies || []).find(x => x && x.date);
+      const evDate = toDate(b.date || (cer && cer.date));
+      const when = evDate || toDate(c.signedAt) || today;
+      const signed = !!c.signed;
+      const fin = this.finFor(c.id);
+      const exp = fin.expenses.reduce((t, x) => t + num(x.amount), 0);
+      const price = num(c.totalFee);
+      const profit = price - exp;
+      const deposit = num(c.retainer);
+      const paid = (signed ? deposit : 0) + num(fin.received);
+      const left = Math.max(0, price - paid);
+      return { c, fin, signed, price, exp, profit, when, evDate, deposit, paid, left,
+        client: b.name || c.signedBy || (signed ? (c.label || 'Client') : 'Client not signed yet'),
+        label: c.label || 'Contract', eventType: b.eventType || c.eventType || '—', date: fmt(evDate) };
+    });
+    const nowY = today.getFullYear();
+    const years = Array.from(new Set([nowY, ...rows.map(r => r.when.getFullYear())])).sort((a, b) => b - a);
+    const year = Number(st.ledgerYear || nowY);
+    const inYear = rows.filter(r => r.when.getFullYear() === year);
+    const booked = inYear.filter(r => r.signed), pending = inYear.filter(r => !r.signed);
+    const sum = (arr, k) => arr.reduce((t, r) => t + r[k], 0);
+    const rev = sum(booked, 'price'), exp = sum(booked, 'exp'), prof = rev - exp;
+    const received = booked.reduce((t, r) => t + r.paid, 0);
+    const ltab = st.ledgerTab || 'dash';
+    const sel = rows.find(r => r.c.id === st.ledgerSel);
+    const maxP = Math.max(1, ...booked.map(r => r.price));
+    const qDefs = [['Q1', 'Jan – Mar', 0, 2, 'Apr 15, ' + year], ['Q2', 'Apr – May', 3, 4, 'Jun 15, ' + year], ['Q3', 'Jun – Aug', 5, 7, 'Sep 15, ' + year], ['Q4', 'Sep – Dec', 8, 11, 'Jan 15, ' + (year + 1)]];
+    const paid = taxes.paid || {};
+    const catTotals = {};
+    booked.forEach(r => r.fin.expenses.forEach(x => { const k = x.cat || 'Other'; catTotals[k] = (catTotals[k] || 0) + num(x.amount); }));
+    const catList = Object.keys(catTotals).filter(k => catTotals[k]).sort((a, b) => catTotals[b] - catTotals[a]);
+    const hints = { 'Crew': 'Crew member name', 'Travel': 'Mileage, tolls, parking', 'Equipment rental': 'What you rented', 'Editing': 'Editor or outsourced work', 'Album & prints': 'Album, frames, USB', 'Software & gear': 'Item', 'Other': 'Description' };
+    const pmode = st.ledgerPeriod || 'month';
+    const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const pd = (r) => r.evDate || r.when;
+    let buckets = [];
+    if (pmode === 'month') buckets = MN.map((m, i) => ({ label: m + ' ' + year, test: (d) => d.getMonth() === i, cur: today.getFullYear() === year && today.getMonth() === i }));
+    else if (pmode === 'quarter') buckets = [0,1,2,3].map(q => ({ label: 'Q' + (q + 1) + ' · ' + MN[q*3] + ' – ' + MN[q*3+2], test: (d) => Math.floor(d.getMonth() / 3) === q, cur: today.getFullYear() === year && Math.floor(today.getMonth() / 3) === q }));
+    else {
+      const start = new Date(year, 0, 1); start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+      for (let s = new Date(start); s.getFullYear() <= year; s.setDate(s.getDate() + 7)) {
+        const a = new Date(s), b = new Date(s); b.setDate(b.getDate() + 6); b.setHours(23,59,59);
+        if (b.getFullYear() < year) continue;
+        const cur = today >= a && today <= b;
+        buckets.push({ label: MN[a.getMonth()] + ' ' + a.getDate() + ' – ' + MN[b.getMonth()] + ' ' + b.getDate(), test: (d) => d >= a && d <= b, cur, weekly: true });
+      }
+    }
+    const crewOf = (r) => r.fin.expenses.filter(x => x.cat === 'Crew').reduce((t, x) => t + num(x.amount), 0);
+    const agg = (list) => { const inc = sum(list, 'price'), cr = list.reduce((t, r) => t + crewOf(r), 0), ex = sum(list, 'exp'), p = inc - ex; return { n: list.length, inc, cr, oth: ex - cr, p, tax: Math.max(0, p) * rate / 100 }; };
+    const pRows = buckets.map(bk => { const list = booked.filter(r => { const d = pd(r); return d.getFullYear() === year && bk.test(d) || (bk.weekly && bk.test(d)); }); return { bk, a: agg(list) }; })
+      .filter(x => !x.bk.weekly || x.a.n > 0 || x.bk.cur);
+    const pTot = agg(booked);
+    const cell = (v) => v ? money(v) : '—';
+    const out = {
+      periodTabs: [['week', 'Weekly'], ['month', 'Monthly'], ['quarter', 'Quarterly']].map(p => ({ name: p[1], onPick: () => this.setState({ ledgerPeriod: p[0] }),
+        bg: pmode === p[0] ? '#16130f' : '#fff', color: pmode === p[0] ? '#e8d9b8' : '#6f685b' })),
+      periodHead: pmode === 'week' ? 'WEEK' : pmode === 'quarter' ? 'QUARTER' : 'MONTH',
+      periodRows: pRows.map(({ bk, a }) => ({ label: bk.label + (bk.cur ? ' · now' : ''), events: a.n, income: cell(a.inc), crew: cell(a.cr), other: cell(a.oth),
+        profit: a.n ? money(a.p) : '—', tax: cell(a.tax), profColor: a.p < 0 ? '#b05a4a' : '#3f6e52',
+        ink: a.n ? '#201c17' : '#a39c8d', weight: bk.cur ? 500 : 400, bg: bk.cur ? '#faf6ec' : 'transparent' })),
+      periodTotal: { events: pTot.n, income: money(pTot.inc), crew: money(pTot.cr), other: money(pTot.oth), profit: money(pTot.p), tax: money(pTot.tax), profColor: pTot.p < 0 ? '#b05a4a' : '#3f6e52' },
+      ledgerTabs: [['dash', 'Dashboard'], ['contracts', 'Contracts'], ['taxes', 'Taxes & income']].map(p => ({
+        name: p[1], onPick: () => this.setState({ ledgerTab: p[0] }),
+        bg: ltab === p[0] ? '#16130f' : '#fff', color: ltab === p[0] ? '#e8d9b8' : '#6f685b', border: ltab === p[0] ? '#16130f' : '#e2ddd2'
+      })),
+      isLDash: ltab === 'dash', isLContracts: ltab === 'contracts', isLTaxes: ltab === 'taxes',
+      ledgerYears: years.map(String), ledgerYear: String(year),
+      setLedgerYear: (e) => this.setState({ ledgerYear: e.target.value }),
+      financeCats: this.financeCats,
+      dashStats: [
+        { label: 'BOOKED REVENUE', value: money(rev), sub: booked.length + ' booked contract' + (booked.length === 1 ? '' : 's'), color: '#201c17' },
+        { label: 'EXPENSES', value: money(exp), sub: 'Crew, travel, rentals and more', color: '#6f685b' },
+        { label: 'NET PROFIT', value: money(prof), sub: 'Margin ' + pct(prof, rev), color: prof < 0 ? '#b05a4a' : '#5b8c6e' },
+        { label: 'RECEIVED', value: money(received), sub: money(rev - received) + ' still to collect', color: '#201c17' },
+        { label: 'TAX SET-ASIDE', value: money(Math.max(0, prof) * rate / 100), sub: rate + '% of profit', color: '#8a6a32' },
+        { label: 'PIPELINE', value: money(sum(pending, 'price')), sub: pending.length + ' awaiting signature', color: '#b8924f' }
+      ],
+      dashRows: booked.slice().sort((a, b) => b.profit - a.profit).map(r => ({
+        client: r.client, eventType: r.eventType, date: r.date, price: money(r.price),
+        profitText: money(r.profit) + ' profit', profitColor: r.profit < 0 ? '#b05a4a' : '#3f6e52', margin: pct(r.profit, r.price) + ' margin',
+        expW: Math.min(100, (Math.min(r.exp, r.price) / maxP) * 100) + '%', profW: Math.max(0, (r.profit / maxP) * 100) + '%'
+      })),
+      dashEmpty: booked.length === 0,
+      ledgerRows: inYear.slice().sort((a, b) => (b.signed - a.signed) || (a.when - b.when)).map(r => ({
+        client: r.client, label: r.label, eventType: r.eventType, date: r.date,
+        price: r.price ? money(r.price) : '—',
+        depositText: r.deposit ? money(r.deposit) + (r.signed ? ' paid' : '') : '—',
+        leftText: r.price ? money(r.left) : '—', leftColor: r.left > 0 ? '#8a6a32' : '#3f6e52',
+        expText: r.exp ? money(r.exp) : '—',
+        profitText: r.price ? money(r.profit) : '—', profitColor: r.profit < 0 ? '#b05a4a' : '#3f6e52',
+        contractStatus: r.signed ? 'Signed' : 'Sent', contractColor: r.signed ? '#5b8c6e' : '#8d8678',
+        signedOn: r.signed ? (r.c.signedAt ? 'on ' + fmt(toDate(r.c.signedAt)) : 'Locked in admin') : 'Awaiting signature',
+        status: r.signed ? 'BOOKED' : 'PENDING',
+        statusBg: r.signed ? 'rgba(91,140,110,0.14)' : 'rgba(184,146,79,0.14)', statusColor: r.signed ? '#3f6e52' : '#8a6a32',
+        rowBg: sel && sel.c.id === r.c.id ? '#faf6ee' : 'transparent',
+        finBg: sel && sel.c.id === r.c.id ? '#16130f' : '#fff', finColor: sel && sel.c.id === r.c.id ? '#e8d9b8' : '#4a453c',
+        onFin: () => this.setState({ ledgerSel: r.c.id })
+      })),
+      ledgerEmpty: inYear.length === 0,
+      hasLSel: !!sel,
+      taxRate: (taxes.rate === undefined || taxes.rate === null) ? '25' : String(taxes.rate),
+      setTaxRate: (e) => this.setTax({ rate: e.target.value }, true),
+      taxStats: [
+        { label: 'GROSS INCOME', value: money(rev), sub: 'Booked contracts in ' + year, color: '#201c17' },
+        { label: 'BUSINESS EXPENSES', value: money(exp), sub: 'Logged against those contracts', color: '#6f685b' },
+        { label: 'NET PROFIT', value: money(prof), sub: 'Income minus expenses', color: prof < 0 ? '#b05a4a' : '#5b8c6e' },
+        { label: 'ESTIMATED TAX', value: money(Math.max(0, prof) * rate / 100), sub: 'At ' + rate + '% set-aside', color: '#8a6a32' }
+      ],
+      taxQuarters: qDefs.map(q => {
+        const qr = booked.filter(r => { const m = r.when.getMonth(); return m >= q[2] && m <= q[3]; });
+        const inc = sum(qr, 'price'), ex = sum(qr, 'exp'), pr = inc - ex;
+        const key = year + '-' + q[0];
+        const isPaid = !!paid[key];
+        return {
+          name: q[0] + ' ' + year, period: q[1], due: q[4], income: money(inc), expenses: money(ex), profit: money(pr),
+          tax: money(Math.max(0, pr) * rate / 100),
+          paidLabel: isPaid ? 'PAID' : 'Mark paid', paidBg: isPaid ? 'rgba(91,140,110,0.14)' : '#fff',
+          paidColor: isPaid ? '#3f6e52' : '#6f685b', paidBorder: isPaid ? 'rgba(91,140,110,0.4)' : '#e2ddd2',
+          onToggle: () => this.setTax({ paid: { ...paid, [key]: !isPaid } })
+        };
+      }),
+      taxCats: catList.map(k => ({ name: k, total: money(catTotals[k]) })),
+      taxCatsEmpty: catList.length === 0
+    };
+    if (sel) {
+      const id = sel.c.id, budget = num(sel.fin.budget);
+      const crew = sel.fin.expenses.filter(x => x.cat === 'Crew');
+      const fullN = crew.filter(x => (x.day || 'Full day') === 'Full day').length, halfN = crew.filter(x => x.day === 'Half day').length;
+      const crewCost = crew.reduce((t, x) => t + num(x.amount), 0);
+      const roleN = (role, lvl) => crew.filter(x => (x.role || 'Photographer') === role && (x.level || 'Lead') === lvl).length;
+      const roleParts = [['Photographer', 'Lead', 'lead photographer'], ['Photographer', 'Second shooter', 'second photographer'], ['Videographer', 'Lead', 'lead videographer'], ['Videographer', 'Second shooter', 'second videographer']]
+        .map(p => { const n = roleN(p[0], p[1]); return n ? n + ' ' + p[2] + (n === 1 ? '' : 's') : ''; }).filter(Boolean);
+      Object.assign(out, {
+        fsClient: sel.client, fsLabel: sel.label, fsDate: sel.date, fsPrice: sel.price ? money(sel.price) : 'not set',
+        fsBudget: sel.fin.budget, fsReceived: sel.fin.received,
+        fsDeposit: sel.c.retainer && sel.c.retainer !== 'TBD' ? sel.c.retainer : '',
+        setFsDeposit: (e) => { const v = e.target.value; this.setState({ selectedContract: id }, () => this.setContractField('retainer', v)); },
+        crewFullRate: (taxes.crewFull || ''), crewHalfRate: (taxes.crewHalf || ''),
+        setCrewFullRate: (e) => this.setTax({ crewFull: e.target.value }, true),
+        setCrewHalfRate: (e) => this.setTax({ crewHalf: e.target.value }, true),
+        fsCrewSummary: crew.length ? ('Crew paid: ' + fullN + ' full day' + (fullN === 1 ? '' : 's') + ', ' + halfN + ' half day' + (halfN === 1 ? '' : 's') + ' · ' + money(crewCost) + (roleParts.length ? ' · ' + roleParts.join(', ') : '')) : 'Set your usual rates, then add Crew. Picking full or half day fills in the pay.',
+        setFsBudget: (e) => this.setFin(id, { budget: e.target.value }, true),
+        setFsReceived: (e) => this.setFin(id, { received: e.target.value }, true),
+        fsOpenContract: () => this.setState({ tab: 'contract', selectedContract: id }),
+        fsClose: () => this.setState({ ledgerSel: null }),
+        fsStats: [
+          { label: 'CONTRACT PRICE', value: money(sel.price), color: '#201c17' },
+          { label: 'EXPENSES', value: money(sel.exp), color: '#6f685b' },
+          { label: 'BUDGET LEFT', value: budget ? money(budget - sel.exp) : '—', color: budget && budget - sel.exp < 0 ? '#b05a4a' : '#201c17' },
+          { label: 'PROFIT', value: money(sel.profit) + ' · ' + pct(sel.profit, sel.price), color: sel.profit < 0 ? '#b05a4a' : '#3f6e52' },
+          { label: 'DEPOSIT', value: money(sel.deposit) + (sel.signed && sel.deposit ? ' paid' : ''), color: '#201c17' },
+          { label: 'LEFT TO PAY', value: money(sel.left), color: sel.left > 0 ? '#8a6a32' : '#3f6e52' },
+          { label: 'TAX SET-ASIDE', value: money(Math.max(0, sel.profit) * rate / 100), color: '#8a6a32' }
+        ],
+        fsExpenses: sel.fin.expenses.map(x => ({ id: x.id,
+          cat: x.cat || 'Other', desc: x.desc || '', amount: x.amount || '', descHint: hints[x.cat] || 'Description',
+          onCat: (e) => this.setExpense(id, x.id, 'cat', e.target.value),
+          onDesc: (e) => this.setExpense(id, x.id, 'desc', e.target.value),
+          onAmount: (e) => this.setExpense(id, x.id, 'amount', e.target.value),
+          onRemove: () => this.removeExpense(id, x.id),
+          isCrew: x.cat === 'Crew', day: x.day || 'Full day', workDate: x.workDate || '',
+          onDay: (e) => this.setCrewDay(id, x.id, e.target.value),
+          onWorkDate: (e) => this.setExpense(id, x.id, 'workDate', e.target.value),
+          role: x.role || 'Photographer', level: x.level || 'Lead',
+          onRole: (e) => this.setExpense(id, x.id, 'role', e.target.value),
+          onLevel: (e) => this.setExpense(id, x.id, 'level', e.target.value),
+          dayNote: (x.level || 'Lead') + ' ' + String(x.role || 'Photographer').toLowerCase() + ' · ' + (x.day || 'Full day') + (x.workDate ? ' on ' + fmt(toDate(x.workDate)) : ' · pick the day worked')
+        })),
+        fsNoExpenses: sel.fin.expenses.length === 0,
+        ...(() => {
+          const cat = this.financeCats.indexOf(st.expCat) > -1 ? st.expCat : 'Crew';
+          const inCat = (k) => sel.fin.expenses.filter(x => (x.cat || 'Other') === k);
+          const tot = (arr) => arr.reduce((t, x) => t + num(x.amount), 0);
+          const rows = inCat(cat);
+          const addLabel = { 'Crew': 'crew member', 'Travel': 'travel cost', 'Equipment rental': 'rental', 'Editing': 'editing cost', 'Album & prints': 'album or print', 'Software & gear': 'item', 'Other': 'expense' };
+          return {
+            fsExpTotal: money(sel.exp),
+            expTabs: this.financeCats.map(k => {
+              const list = inCat(k), on = k === cat;
+              return { name: k, sub: list.length ? money(tot(list)) + ' · ' + list.length : '—', onPick: () => this.setState({ expCat: k }),
+                line: on ? '#b8924f' : 'transparent', color: on ? '#201c17' : '#6f685b', weight: on ? 500 : 400 };
+            }),
+            expIsCrew: cat === 'Crew',
+            expRowIds: rows.map(x => x.id),
+            expCatName: cat, expCatTotal: money(tot(rows)),
+            expAddLabel: addLabel[cat] || 'expense',
+            expAdd: () => this.addExpense(id, cat),
+            expEmpty: rows.length === 0,
+            expEmptyText: 'Nothing added under ' + cat + ' yet.'
+          };
+        })(),
+        fsAddBtns: this.financeCats.map(n => ({ name: n, onAdd: () => this.addExpense(id, n) }))
+      });
+      out.expRows = out.fsExpenses.filter(x => out.expRowIds.indexOf(x.id) > -1);
+    }
+    return out;
+  }
+
   migrateContracts(d) {
     if (d && Array.isArray(d.contracts) && d.contracts.length) {
       return d.contracts.map((c, i) => ({ ...c, id: c.id || 'c' + (i + 1), label: c.label || 'Contract ' + (i + 1) }));
@@ -828,6 +1351,7 @@ class Component extends DCLogic {
       patched.inclusions = value.split('\n').map(s => s.trim()).filter(Boolean);
     } else {
       patched[field] = value;
+      if (field === 'signed' && value === false) patched.reopenedAt = new Date().toISOString();
     }
     const next = list.map(c => (c.id === cur.id ? patched : c));
     const typed = ['label', 'packageTitle', 'inclusions', 'totalFee', 'retainer', 'balanceDue', 'notes', 'team'];
@@ -1090,22 +1614,53 @@ class Component extends DCLogic {
       if (d && d.photos) {
         const services = migrateServices(d.services || this.seedServices());
         const photos = migratePhotos(d.photos);
-        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews(), contract: d.contract || this.seedContract(), contracts: this.migrateContracts(d), packages: d.packages || {}, hero: (Array.isArray(d.hero) && d.hero.length) ? d.hero : this.seedHero() }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
+        this.setState({ photos, films: d.films || this.seedFilms(), services, reviews: d.reviews || this.seedReviews(), contract: d.contract || this.seedContract(), contracts: this.migrateContracts(d), packages: d.packages || {}, finance: d.finance || {}, taxes: d.taxes || {}, hero: (Array.isArray(d.hero) && d.hero.length) ? d.hero : this.seedHero() }, () => { if (services !== d.services || photos !== d.photos) this.persist(); });
       } else {
         this.setState({ photos: this.seedPhotos(), films: this.seedFilms(), services: this.seedServices(), reviews: this.seedReviews(), contract: this.seedContract(), contracts: [this.seedContract()] }, () => this.persist());
       }
     };
     if (window.KemData) { window.KemData.load().then(apply); }
     else { let d = null; try { d = JSON.parse(localStorage.getItem(this.KEY) || 'null'); } catch (e) {} apply(d); }
+    this._onFocusSig = () => this.pullSignatures();
+    window.addEventListener('focus', this._onFocusSig);
+    this._sigPoll = setInterval(() => this.pullSignatures(), 30000);
   }
   persist() {
     const contracts = this.contractList();
-    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews, contracts, contract: contracts[0], packages: this.state.packages || {}, hero: this.heroList() };
-    if (window.KemData) { window.KemData.save(blob); }
+    const blob = { photos: this.state.photos, films: this.state.films, services: this.state.services, reviews: this.state.reviews, contracts, contract: contracts[0], packages: this.state.packages || {}, finance: this.state.finance || {}, taxes: this.state.taxes || {}, hero: this.heroList() };
+    if (window.KemData) {
+      // Re-read the live copy first so a client signature made on another device is never overwritten.
+      window.KemData.load().then((remote) => {
+        const merged = this.mergeSignatures(blob.contracts, remote);
+        if (merged.changed) this.setState({ contracts: merged.list });
+        window.KemData.save({ ...blob, contracts: merged.list, contract: merged.list[0] });
+      }).catch(() => window.KemData.save(blob));
+    }
     else { try { localStorage.setItem(this.KEY, JSON.stringify(blob)); } catch (e) {} }
     this.setState({ savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
   }
   save(patch) { this.setState(patch, () => this.persist()); }
+  mergeSignatures(local, remote) {
+    const rl = remote && Array.isArray(remote.contracts) ? remote.contracts : [];
+    let changed = false;
+    const list = (local || []).map(c => {
+      const r = rl.find(x => String(x.id) === String(c.id));
+      if (!r || !r.signed || c.signed) return c;
+      const signedT = Date.parse(r.signedAt || '') || 0, reopenT = Date.parse(c.reopenedAt || '') || 0;
+      if (signedT <= reopenT) return c;
+      changed = true;
+      return { ...c, signed: true, signedAt: r.signedAt, signedBy: r.signedBy, booking: r.booking || c.booking };
+    });
+    return { list, changed };
+  }
+  pullSignatures() {
+    if (!window.KemData || !this.state.contracts) return;
+    window.KemData.load().then((remote) => {
+      const merged = this.mergeSignatures(this.contractList(), remote);
+      if (merged.changed) this.setState({ contracts: merged.list });
+    }).catch(() => {});
+  }
+  componentWillUnmount() { clearInterval(this._sigPoll); window.removeEventListener('focus', this._onFocusSig); }
   // For text typing: update state at once, write to the backend after typing settles.
   // Uncontrolled textarea: React never rewrites its value, so the caret and the
   // box's own scroll position stay where the typist left them.
@@ -1352,10 +1907,12 @@ class Component extends DCLogic {
       })),
       isContract: st.tab === 'contract',
       contractCount: contractsAll.length,
+      ...this.ledgerVals(contractsAll),
       isOverview: st.tab === 'overview', isAnalytics: st.tab === 'analytics', isPhotos: st.tab === 'photos', isFilms: st.tab === 'films', isServices: st.tab === 'services', isReviews: st.tab === 'reviews',
-      pageTitle: st.tab.charAt(0).toUpperCase() + st.tab.slice(1),
+      isLedger: st.tab === 'ledger',
+      pageTitle: st.tab === 'ledger' ? 'Contract Ledger' : st.tab.charAt(0).toUpperCase() + st.tab.slice(1),
       savedAt: st.savedAt,
-      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }, { label: 'Hero', key: 'hero' }, { label: 'Packages', key: 'packages' }, { label: 'Contract', key: 'contract' }].map(n => {
+      navItems: [{ label: 'Overview', key: 'overview' }, { label: 'Analytics', key: 'analytics' }, { label: 'Photos', key: 'photos' }, { label: 'Films', key: 'films' }, { label: 'Services', key: 'services' }, { label: 'Reviews', key: 'reviews' }, { label: 'Hero', key: 'hero' }, { label: 'Packages', key: 'packages' }, { label: 'Contract', key: 'contract' }, { label: 'Contract Ledger', key: 'ledger' }].map(n => {
         const active = st.tab === n.key;
         return {
           label: n.label, onClick: () => this.setState({ tab: n.key }),

@@ -86,13 +86,14 @@
       if (ENABLED) {
         try {
           var h = headers(); h["Prefer"] = "resolution=merge-duplicates";
-          fetch(SUPABASE_URL + "/rest/v1/site_content?on_conflict=id", {
+          return fetch(SUPABASE_URL + "/rest/v1/site_content?on_conflict=id", {
             method: "POST",
             headers: h,
             body: JSON.stringify([{ id: 1, data: state }])
           });
-        } catch (e) {}
+        } catch (e) { return Promise.resolve(); }
       }
+      return Promise.resolve();
     }
   };
 })();

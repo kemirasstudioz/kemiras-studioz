@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="kem-data.js"></script>
+<script src="contract-terms.js"></script>
 <style>
   *{box-sizing:border-box}
   body{margin:0;background:#f4f2ec;color:#2c2823;font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased}
@@ -363,14 +364,7 @@
           <!-- OVERVIEW -->
           <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
             <div style="animation:fadeIn .4s ease both">
-              <div style="background:rgba(184,146,79,0.12); border:1px solid rgba(184,146,79,0.3); border-radius:10px; padding:20px 24px; display:flex; gap:14px; align-items:flex-start">
-                <span style="font-size:20px">✦</span>
-                <div>
-                  <div style="font-weight:500; font-size:15px; margin-bottom:4px">This is your content manager (prototype)</div>
-                  <p style="margin:0; font-size:13.5px; line-height:1.6; color:#6f685b">Add, remove, reorder and re-crop your photos &amp; films here. Changes save in this browser so you can try it out. The final step is connecting a backend (Airtable or Supabase) so edits publish to the live site.</p>
-                </div>
-              </div>
-
+              
               <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%,170px),1fr)); gap:16px; margin-top:24px">
                 <div style="background:#fff; border:1px solid #ebe7dd; border-radius:10px; padding:22px">
                   <div style="font-size:12px; letter-spacing:1.5px; color:#a39c8d">PHOTOS</div>
@@ -600,7 +594,7 @@
           <!-- PACKAGES -->
           <sc-if value="{{ isPackages }}" hint-placeholder-val="{{ false }}">
             <div style="animation:fadeIn .4s ease both; max-width:900px">
-              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">Weddings have Basic and Signature; every other occasion has a single Signature package. Clients pick an occasion and turn the card over to see what is included. Start a line with <strong>##</strong> to make it a section heading, like <em>## Deliverables</em>.</p>
+              <p style="font-size:13.5px; color:#6f685b; margin:0 0 18px; line-height:1.6">Every occasion has a Basic and a Signature package. Clients pick an occasion and turn the card over to see what is included. Start a line with <strong>##</strong> to make it a section heading, like <em>## Deliverables</em>.</p>
 
               <div style="background:rgba(184,146,79,0.12); border:1px solid rgba(184,146,79,0.3); border-radius:8px; padding:14px 16px; margin-bottom:24px">
                 <div style="font-size:11px; letter-spacing:1.4px; color:#8a6a2f; margin-bottom:7px">PACKAGES PAGE LINK</div>
@@ -623,6 +617,16 @@
                   <sc-for list="{{ pkgStyleTabs }}" as="ps" hint-placeholder-count="2">
                     <button onClick="{{ ps.onPick }}" style="background:{{ ps.bg }}; color:{{ ps.color }}; border:1px solid {{ ps.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ ps.name }}</button>
                   </sc-for>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap:14px; background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px; margin:-8px 0 24px">
+                  <label style="display:flex; flex-direction:column; gap:6px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">STYLE TITLE</span>
+                    <input type="text" value="{{ pkgStyleTitle }}" onChange="{{ onPkgStyleTitle }}" placeholder="{{ pkgStyleTitlePh }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                  </label>
+                  <label style="display:flex; flex-direction:column; gap:6px">
+                    <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">STYLE DESCRIPTION</span>
+                    <input type="text" value="{{ pkgStyleSub }}" onChange="{{ onPkgStyleSub }}" placeholder="{{ pkgStyleSubPh }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:11px 12px; font-size:14px; outline:none; min-height:44px; background:#fff; color:#201c17; font-family:inherit; width:100%; box-sizing:border-box">
+                  </label>
                 </div>
               </sc-if>
 
@@ -770,6 +774,48 @@
                       <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Retainer on signing, then two payments worked out from the event date. Untick to require payment in full.</span>
                     </span>
                   </button>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px; display:flex; flex-direction:column; gap:12px">
+                  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap">
+                    <div style="display:flex; flex-direction:column; gap:4px">
+                      <div style="font-size:11px; letter-spacing:1.4px; color:#8d8678">TERMS & CONDITIONS</div>
+                      <div style="font-size:12.5px; color:#a39c8d; line-height:1.55">{{ termsNote }}</div>
+                    </div>
+                    <button onClick="{{ toggleTermsView }}" style="background:#fff; border:1px solid #d9d3c6; border-radius:6px; padding:10px 16px; font-size:12.5px; color:#201c17; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ termsBtn }}</button>
+                  </div>
+                  <sc-if value="{{ termsOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; flex-direction:column; gap:12px">
+                        <div style="display:{{ termsTabsDisplay }}; border:1px solid #e2ddd2; border-radius:7px; overflow:hidden; align-self:flex-start; flex-wrap:wrap">
+                          <sc-for list="{{ termsTabs }}" as="tt" hint-placeholder-count="2">
+                            <button onClick="{{ tt.onPick }}" style="background:{{ tt.bg }}; color:{{ tt.color }}; border:none; padding:9px 14px; font-size:12.5px; cursor:pointer; min-height:40px">{{ tt.name }}</button>
+                          </sc-for>
+                        </div>
+                        <div style="display:{{ termsCustomDisplay }}; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; background:#faf6ec; border:1px solid #efe4cc; border-radius:6px; padding:10px 14px">
+                          <span style="font-size:12.5px; color:#8a6a2f">{{ termsCustomNote }}</span>
+                          <button onClick="{{ resetTerms }}" style="background:#fff; border:1px solid #d9d3c6; border-radius:6px; padding:8px 14px; font-size:12px; color:#201c17; cursor:pointer; min-height:38px" style-hover="border-color:#b05a4a; color:#b05a4a">Reset to default terms</button>
+                        </div>
+                      <div style="font-size:12px; color:#a39c8d; line-height:1.55">Untick a clause to leave it out of this contract. Edit any title or wording here; changes apply to this client's contract and PDF only.</div>
+                      <div style="max-height:560px; overflow-y:auto; border:1px solid #f1eee7; border-radius:6px; padding:4px 16px; background:#fcfbf8">
+                        <sc-for list="{{ termsShown }}" as="tm" hint-placeholder-count="6">
+                          <div style="padding:14px 0; border-bottom:1px solid #f1eee7; display:flex; gap:12px; align-items:flex-start; opacity:{{ tm.op }}">
+                            <button onClick="{{ tm.onToggle }}" title="Include this clause" style="width:22px; height:22px; border-radius:4px; border:1px solid {{ tm.tickBorder }}; background:{{ tm.tickBg }}; color:#fff; font-size:13px; line-height:20px; text-align:center; padding:0; cursor:pointer; flex:none; margin-top:9px">{{ tm.tick }}</button>
+                            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:8px">
+                              <div style="display:flex; gap:8px; align-items:center">
+                                <span style="font-size:13px; color:#8d8678; flex:none; width:22px">{{ tm.n }}.</span>
+                                <div style="flex:1; min-width:0">{{ tm.titleBox }}</div>
+                                <button onClick="{{ tm.onRemove }}" title="Delete clause" style="width:36px; height:36px; border:1px solid #e2ddd2; border-radius:6px; background:#fff; color:#8d8678; cursor:pointer; flex:none; font-size:15px" style-hover="border-color:#b05a4a; color:#b05a4a">×</button>
+                              </div>
+                              {{ tm.bodyBox }}
+                            </div>
+                          </div>
+                        </sc-for>
+                        <div style="padding:14px 0">
+                          <button onClick="{{ addTerm }}" style="background:#fff; border:1px dashed #cfc7b6; border-radius:6px; padding:10px 16px; font-size:12.5px; color:#6f685b; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f; color:#201c17">+ Add clause</button>
+                        </div>
+                      </div>
+                    </div>
+                  </sc-if>
                 </div>
 
                 <div style="background:#fff; border:1px solid #ebe7dd; border-radius:8px; padding:16px 18px">
@@ -1351,6 +1397,7 @@ class Component extends DCLogic {
       patched.inclusions = value.split('\n').map(s => s.trim()).filter(Boolean);
     } else {
       patched[field] = value;
+      if (field === 'terms' && value === null) patched.termsRev = (cur.termsRev || 0) + 1;
       if (field === 'signed' && value === false) patched.reopenedAt = new Date().toISOString();
       if (field === 'signed' && value === true && !cur.signedAt) patched.signedAt = new Date().toISOString();
     }
@@ -1597,6 +1644,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
+    if (!window.KemTerms) { const tk = setInterval(() => { if (window.KemTerms) { clearInterval(tk); this.forceUpdate(); } }, 150); setTimeout(() => clearInterval(tk), 15000); }
     try { if (sessionStorage.getItem('kem_admin_authed') === '1') this.setState({ authed: true }); } catch (e) {}
     const OLD_SERVICE_TITLES = ['Baby Showers', 'Engagement & Wedding', 'Maternity & Newborn', 'Family Portraits', 'Candid Moments', 'Anniversaries & Events'];
     const migrateServices = (services) => {
@@ -1993,6 +2041,43 @@ class Component extends DCLogic {
       cStatusBorder: cur.signed ? 'rgba(120,150,110,0.4)' : '#ebe7dd',
       cStatusColor: cur.signed ? '#4e6b45' : '#8d8678',
       cStatusAction: cur.signed ? 'REOPEN FOR CLIENT' : 'LOCK NOW',
+      ...(() => {
+        const cc = this.currentContract() || {};
+        const ev = String(cc.eventType || '').trim();
+        const auto = (!ev || /wedding/i.test(ev)) ? 'wedding' : 'other';
+        const tab = this.state.termsTab || auto;
+        const KT = window.KemTerms || { wedding: [], other: [] };
+        const custom = Array.isArray(cc.terms) ? cc.terms : null;
+        const base = custom || ((tab === 'wedding' ? KT.wedding : KT.other) || []).map((t, i) => ({ id: tab + i, h: t.h, b: t.b, on: true }));
+        const write = (fn) => { const arr = base.map(x => ({ ...x })); fn(arr); this.setContractField('terms', arr); };
+        const kp = 't-' + cc.id + '-' + (cc.termsRev || 0) + '-';
+        const onCount = base.filter(t => t.on !== false).length;
+        return {
+          termsTabsDisplay: custom ? 'none' : 'flex', termsCustomDisplay: custom ? 'flex' : 'none',
+          termsCustomNote: 'Customized for this contract · ' + onCount + ' of ' + base.length + ' clauses included',
+          resetTerms: () => { if (window.confirm('Go back to the default terms for this contract? Your edits here will be removed.')) this.setContractField('terms', null); },
+          addTerm: () => write(arr => arr.push({ id: 'n' + Date.now().toString(36), h: '', b: '', on: true })),
+          termsOpen: !!this.state.termsOpen,
+          termsBtn: this.state.termsOpen ? 'Hide terms' : 'View terms',
+          toggleTermsView: () => this.setState(s => ({ termsOpen: !s.termsOpen, termsTab: null })),
+          termsNote: ev ? ('This ' + ev + ' contract uses the ' + (auto === 'wedding' ? 'full wedding terms (' + (KT.wedding || []).length + ' clauses).' : 'short event terms (' + (KT.other || []).length + ' clauses).')) : 'No event type set: the client sees wedding terms until they pick a smaller event.',
+          termsTabs: [['wedding', 'Wedding terms'], ['other', 'Other events']].map(p => ({ name: p[1] + (p[0] === auto ? ' · this contract' : ''), onPick: () => this.setState({ termsTab: p[0] }),
+            bg: tab === p[0] ? '#16130f' : '#fff', color: tab === p[0] ? '#e8d9b8' : '#6f685b' })),
+          termsShown: base.map((t, i) => {
+            const on = t.on !== false;
+            return {
+              n: i + 1, op: on ? 1 : 0.5, tick: on ? '✓' : '',
+              tickBg: on ? '#16130f' : '#fff', tickBorder: on ? '#16130f' : '#cfc7b6',
+              onToggle: () => write(arr => { arr[i].on = !on; }),
+              onRemove: () => { if (window.confirm('Delete this clause from this contract?')) write(arr => { arr.splice(i, 1); }); },
+              titleBox: React.createElement('input', { key: kp + 'h-' + t.id, type: 'text', defaultValue: t.h, placeholder: 'Clause title',
+                onChange: (e) => { const v = e.target.value; write(arr => { arr[i].h = v; }); },
+                style: { border: '1px solid #e2ddd2', borderRadius: '6px', padding: '8px 11px', fontSize: '14px', fontWeight: 500, outline: 'none', minHeight: '38px', fontFamily: 'inherit', color: '#201c17', width: '100%', boxSizing: 'border-box', background: '#fff' } }),
+              bodyBox: this.textBox(kp + 'b-' + t.id, t.b, 4, 'Clause wording', (e) => { const v = e.target.value; write(arr => { arr[i].b = v; }); })
+            };
+          })
+        };
+      })(),
       toggleCSigned: () => {
         const c = this.currentContract();
         if (c.signed) {
@@ -2010,7 +2095,7 @@ class Component extends DCLogic {
         border: n === st.pkgEvent ? '#16130f' : '#e2ddd2',
         onPick: () => this.setState({ pkgEvent: n })
       })),
-      pkgEditors: this.pkgTiers.filter(t => st.pkgEvent === 'Wedding' || t.key === 'signature').map(t => {
+      pkgEditors: this.pkgTiers.map(t => {
         const saved = ((st.packages || {})[this.pkgKey()] || {})[t.key] || {};
         return {
           title: saved.name || t.title, hint: t.hint,
@@ -2033,8 +2118,26 @@ class Component extends DCLogic {
       }),
       resetPackage: () => this.resetPackageFor(this.pkgKey()),
       pkgIsWedding: st.pkgEvent === 'Wedding',
+      ...(() => {
+        const k = st.pkgStyle || 'Indian';
+        const defs = { Indian: { title: 'Indian Wedding', sub: 'Haldi, Mehndi, Sangeet, Baraat and the ceremony' }, International: { title: 'Classic Wedding', sub: 'Ceremony and reception in one day, whatever your tradition' } };
+        const saved = ((st.packages || {})._styles || {})[k] || {};
+        const setStyle = (field, v) => {
+          const all = Object.assign({}, st.packages || {});
+          const styles = Object.assign({}, all._styles || {});
+          styles[k] = Object.assign({}, styles[k] || {}, { [field]: v });
+          all._styles = styles;
+          this.saveSoon({ packages: all });
+        };
+        return {
+          pkgStyleTitle: saved.title || '', pkgStyleSub: saved.sub || '',
+          pkgStyleTitlePh: defs[k].title, pkgStyleSubPh: defs[k].sub,
+          onPkgStyleTitle: (e) => setStyle('title', e.target.value),
+          onPkgStyleSub: (e) => setStyle('sub', e.target.value)
+        };
+      })(),
       pkgStyleTabs: [{ key: 'Indian', name: 'Indian Wedding' }, { key: 'International', name: 'Classic Wedding' }].map(w => ({
-        name: w.name,
+        name: (((st.packages || {})._styles || {})[w.key] || {}).title || w.name,
         bg: (st.pkgStyle || 'Indian') === w.key ? '#16130f' : '#fff',
         color: (st.pkgStyle || 'Indian') === w.key ? '#e8d9b8' : '#6f685b',
         border: (st.pkgStyle || 'Indian') === w.key ? '#16130f' : '#e2ddd2',

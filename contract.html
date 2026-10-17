@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="./kem-data.js"></script>
+<script src="./contract-terms.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -74,7 +75,7 @@
           <sc-if value="{{ eventTypeOpen }}" hint-placeholder-val="{{ true }}">
             <label style="display:flex; flex-direction:column; gap:7px">
               <span style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">EVENT TYPE *</span>
-              <select ref="{{ rEvent }}" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; cursor:pointer; transition:border-color .2s" style-focus="border-color:#b8924f">
+              <select ref="{{ rEvent }}" onChange="{{ onEventPick }}" style="border:none; border-bottom:1px solid #d9d3c6; background:transparent; padding:9px 2px; font-size:15px; color:#201c17; outline:none; min-height:44px; cursor:pointer; transition:border-color .2s" style-focus="border-color:#b8924f">
                 <option value="">Select</option>
                 <sc-for list="{{ eventTypes }}" as="et" hint-placeholder-count="8"><option value="{{ et }}">{{ et }}</option></sc-for>
               </select>
@@ -405,30 +406,21 @@ class Component extends DCLogic {
     allowInstallments: true
   };
 
-  terms = [
-    { n: 0, h: 'Booking and deposit', b: 'Your date is reserved once you sign this agreement and we receive your deposit. The deposit counts toward your total fee and is not refundable, because we turn away other bookings to hold your date for you. Until both of those things happen, the date stays open to other enquiries.' },
-    { n: 0, h: 'Payment schedule and late payment', b: 'You pay the balance on the schedule you selected above. Where you chose installments, each payment is due on or before the date shown.\n\nIf a payment is more than seven days late, we may pause editing and delivery until it is settled, and your delivery dates move back by the length of the delay. Coverage of your event will not be cancelled for a late balance, but files stay with us until payment is complete.' },
-    { n: 0, h: 'How to pay', b: 'We accept bank transfer and Zelle, and cash where this agreement allows it. Your deposit must come by bank transfer or Zelle so that your booking is on record; cash is accepted for later payments only. When you pay in cash we will confirm it by text or email, so both of us have a record of what has been paid. Please include your name and event date with every electronic payment. Any fees your bank charges are yours to cover.' },
-    { n: 0, h: 'Coverage hours and extra time', b: 'We arrive and finish at the times recorded above, and we ask that you build a little slack into the schedule so a late start elsewhere does not eat into your coverage. If you would like us to stay longer and we are able to, extra time is agreed with you on the day, billed in one-hour blocks at our current hourly rate, and payable before we deliver your files.' },
-    { n: 0, h: 'Locations, travel and venue costs', b: 'Where this agreement records two locations, the time we spend traveling between them counts toward your coverage hours unless we have agreed otherwise in writing. Any location added after you sign is quoted separately.\n\nTravel is included in your fee where we discussed it beforehand. Parking and venue entry fees, where they apply, are yours to cover.' },
-    { n: 0, h: 'If you need to cancel or move your date', b: 'Please tell us in writing as soon as you know. Your deposit is not refundable, and anything you have paid beyond the deposit is returned to you in full.\n\nYou may move your booking once to another date within twelve months at no extra charge, as long as we are free that day and your new date is at least thirty days away. Your deposit moves with you. Any change after that first one is treated as a new booking at our rates at the time.' },
-    { n: 0, h: 'If we have to cancel', b: 'If serious illness, injury, an accident, a family emergency, or anything else genuinely outside our control stops us from covering your event, we will tell you the moment we know and do our best to arrange a photographer or videographer of comparable standard, at no extra cost to you.\n\nIf no replacement can be found, we refund everything you have paid us, including your deposit. That refund is the full extent of what we owe you in those circumstances.' },
-    { n: 0, h: 'When you receive your files', b: 'Edited photographs reach you within four to six weeks of your event. Films and highlight edits take eight to twelve weeks. Delivery can run longer during peak season, and we will tell you in advance if that affects your booking. Files are delivered through a private online gallery, and we will let you know when it is ready.' },
-    { n: 0, h: 'Editing and creative direction', b: 'We edit every image and film in our own style, which is the style you saw when you booked us. Color grading, which frames we retouch, and the final cut are our creative decisions.\n\nWe do not hand over raw or unedited files. If you would like substantial re-edits beyond what we deliver, we are glad to quote for them separately.' },
-    { n: 0, h: 'Copyright and how you may use your images', b: 'Kemiras Studioz keeps the copyright in all images and footage. You receive a permanent, non-exclusive license for you and your immediate family to use them personally, print them, and share them online, for as long as you like, at no further cost.\n\nPlease credit us where it is natural to do so, and please do not crop out or remove our watermark where one appears. Selling the images on, entering them in competitions, or licensing them to a business needs our written permission first. Your license cannot be transferred to anyone else.' },
-    { n: 0, h: 'Showing your images in our portfolio', b: 'We may show selected images and footage in our portfolio, on our website, and on social media, and you agree to that by signing this agreement. We will never sell your images to a third party or use them in paid advertising without asking you first.\n\nIf you would rather we kept everything private, just tell us in writing before your event date and we will. If something is already published when you ask, we will take it down from anywhere we control within a reasonable time.' },
-    { n: 0, h: 'What we need from you on the day', b: 'Please give us a schedule in advance, one person we can reach on the day, and reasonable access to every venue listed above, including any permission the venue requires for photography, filming, or lighting.\n\nWe are not responsible for moments we miss because of venue restrictions, house rules on where we may stand, power or lighting limits, delays outside our control, or guests blocking our view. Where a venue restricts us, we will get the best result the setting allows.' },
-    { n: 0, h: 'Group photographs and who gathers people', b: 'Your event coordinator, planner, or main point of contact is responsible for organizing, gathering, and managing everyone needed for group photographs and portraits. We need that active support during these sessions so nobody important is missed.\n\nWe will make every effort to capture every grouping on the shot list you give us. However, if someone is missing from a photograph and was not named on that list, or is not there when we take it, we are not responsible for their absence. Making sure everyone needed is present at the agreed time and place stays with your coordinator or representative.' },
-    { n: 0, h: 'Drone coverage', b: 'Where your package includes drone coverage, we fly only when the weather, the airspace, and the site allow a safe and lawful take-off and flight, and where the venue permits it. Please tell us in advance of any restriction you know about.\n\nIf conditions on the day are unsafe, we are not responsible for unstable footage or for the drone portion being dropped, and we will tell you at the time. If the drone was priced as a separate line in your package and we cannot fly at all, that part of the fee is refunded.' },
-    { n: 0, h: 'A safe and respectful working environment', b: 'Please help us work safely. We may pause or stop coverage, without refund, if our crew faces threatening or abusive behavior, unsafe conditions, or is asked to work somewhere that puts them or the equipment at real risk. We would far rather talk it through with your point of contact first, and stopping is always our last resort.' },
-    { n: 0, h: 'Breaks and meals', b: 'On coverage running longer than three hours our crew takes short staggered breaks, so at least one of us is always covering your event, and they arrange their own meals unless you would like to offer otherwise.' },
-    { n: 0, h: 'Equipment failure and data loss', b: 'We take real care with your photographs and footage. We carry backup bodies and cards, and we copy everything to two separate places as soon as we return from your event. Even so, if a mechanical breakdown, technical malfunction, memory card corruption, camera failure, or any other unforeseen equipment failure occurs, we are not liable for data that is lost, damaged, or cannot be recovered.\n\nIf that happens, we refund what you have paid under this agreement, in proportion to the work we could not deliver. That refund is the full extent of what we owe you for it.' },
-    { n: 0, h: 'Backups and how long we keep your files', b: 'We keep your files backed up in two locations and archived for ninety days after we deliver them. Please download and store your own copies within that window, as we cannot guarantee they will be available afterwards. If you ask us to retrieve files after that period and we still hold them, a small recovery fee applies.' },
-    { n: 0, h: 'The limit of what we owe you', b: 'We will always try to put things right first, and we ask that you raise any concern with us within thirty days of delivery so we have the chance to.\n\nIf something does go wrong, our total liability to you under this agreement, whatever the cause, will not exceed the total amount you have paid us. We are not liable for indirect or knock-on losses, such as the cost of re-staging an event, travel, venue hire, or lost earnings. Nothing in this agreement limits liability for anything that cannot lawfully be limited.' },
-    { n: 0, h: 'This is the whole agreement', b: 'This document, together with the coverage and payment details above, is the entire agreement between us and replaces any earlier discussion, quote, or message about the same booking. Any change to it needs to be agreed in writing by both you and Kemiras Studioz.\n\nIf any single clause turns out to be unenforceable, the rest of the agreement still stands. Your signature confirms you have read this agreement, that the details above are correct, and that you agree to it.' }
-  ];
+  get terms() { return (window.KemTerms && window.KemTerms.wedding) || []; }
 
-  termList() { return this.terms.map((t, i) => ({ n: i + 1, h: t.h, b: t.b })); }
+  get shortTerms() { return (window.KemTerms && window.KemTerms.other) || []; }
+
+  currentEventType() {
+    const preset = String(this.cfgVal('eventType') || '').trim();
+    return preset || this.state.evPick || '';
+  }
+  termList() {
+    const ct = this.state.cfg && this.state.cfg.terms;
+    if (Array.isArray(ct)) return ct.filter(t => t && t.on !== false && (String(t.h || '').trim() || String(t.b || '').trim())).map((t, i) => ({ n: i + 1, h: t.h || '', b: t.b || '' }));
+    const ev = this.currentEventType();
+    const list = (!ev || /wedding/i.test(ev)) ? this.terms : this.shortTerms;
+    return list.map((t, i) => ({ n: i + 1, h: t.h, b: t.b }));
+  }
 
   markSigned(d) {
     const cfg = this.state.cfg;
@@ -473,6 +465,7 @@ class Component extends DCLogic {
   state = { cfg: null, notFound: false, locked: false, sigEmpty: true, busy: false, done: false, errorMsg: '', doneName: '', doneEmail: '', mailWarning: false, payMode: 'full', payMethod: '', depositMethod: 'transfer', eventDate: '' };
 
   componentDidMount() {
+    if (!window.KemTerms) { const t = setInterval(() => { if (window.KemTerms) { clearInterval(t); this.forceUpdate(); } }, 150); setTimeout(() => clearInterval(t), 15000); }
     if (window.emailjs) { try { window.emailjs.init({ publicKey: this.EMAILJS_PUBLIC_KEY }); } catch (e) {} }
     if (window.KemData) window.KemData.load().then((d) => {
       if (!d) return;
@@ -1020,6 +1013,7 @@ class Component extends DCLogic {
         };
       }),
       eventTypes: this.eventTypes,
+      onEventPick: (e) => this.setState({ evPick: e.target.value }),
       eventTypeFixed: !!preset,
       eventTypeOpen: !preset,
       presetEventType: preset,

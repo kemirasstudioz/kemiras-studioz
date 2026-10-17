@@ -169,6 +169,10 @@ class Component extends DCLogic {
     { key: 'Indian', title: 'Indian Wedding', sub: 'Haldi, Mehndi, Sangeet, Baraat and the ceremony' },
     { key: 'International', title: 'Classic Wedding', sub: 'Ceremony and reception in one day, whatever your tradition' }
   ];
+  styleText(w, field) {
+    const s = ((this.state.pkgs || {})._styles || {})[w.key] || {};
+    return (s[field] && String(s[field]).trim()) ? s[field] : w[field];
+  }
   pkgKey() {
     return (this.state.selected === 'Wedding' && this.state.style === 'International') ? 'Wedding International' : this.state.selected;
   }
@@ -263,7 +267,7 @@ class Component extends DCLogic {
       })),
       isWedding: sel === 'Wedding',
       styleChips: this.weddingStyles.map(w => ({
-        title: w.title, sub: w.sub,
+        title: this.styleText(w, 'title'), sub: this.styleText(w, 'sub'),
         bg: st.style === w.key ? 'rgba(201,169,106,0.10)' : 'transparent',
         border: st.style === w.key ? th.accent : th.chip,
         color: st.style === w.key ? th.text : th.muted,
@@ -271,10 +275,10 @@ class Component extends DCLogic {
       })),
       noneChosen: !sel,
       chosen: !!sel,
-      selectedUpper: (sel === 'Wedding' ? (st.style === 'International' ? 'CLASSIC WEDDING' : 'INDIAN WEDDING') : String(sel || '').toUpperCase()),
+      selectedUpper: (sel === 'Wedding' ? this.styleText(this.weddingStyles.find(w => w.key === (st.style || 'Indian')) || this.weddingStyles[0], 'title').toUpperCase() : String(sel || '').toUpperCase()),
       enquireHref: this.ENQUIRE_URL,
       footNote: 'Every package can be shaped around your day — extra hours, a second shooter, albums, or a second location. Tell us what you have in mind and we will put it in writing.',
-      cardsMax: (sel && sel !== 'Wedding') ? '520px' : 'none',
+      cardsMax: 'none',
       cards: (sel ? [
         build('basic', 'Basic', 'ESSENTIAL COVERAGE', th.card, th.card, th.edge, th.muted,
           led ? { scale: 'scale(0.965)' } : {}),
@@ -282,7 +286,7 @@ class Component extends DCLogic {
           'linear-gradient(160deg, ' + th.sigCard + ' 0%, ' + th.card + ' 62%)', th.sigCard,
           led ? th.accent : th.line, th.accent,
           (led && sel === 'Wedding') ? { scale: 'scale(1.02)', shadow: '0 26px 60px rgba(0,0,0,0.32)', badge: 'MOST BOOKED' } : {})
-      ] : []).filter(c => sel === 'Wedding' || c.tierKey !== 'basic')
+      ] : [])
     };
   }
 }

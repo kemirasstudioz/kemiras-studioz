@@ -236,6 +236,7 @@
           </div>
         </sc-if>
 
+        <sc-if value="{{ hasDeposit }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px">
           <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">DEPOSIT TO SECURE THE DATE *</div>
           <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,22px); font-weight:500">{{ depositAmount }}</div>
@@ -249,9 +250,10 @@
             </button>
           </sc-for>
         </div>
+        </sc-if>
 
         <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:10px">
-          <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">REMAINING BALANCE *</div>
+          <div style="font-size:10.5px; letter-spacing:1.6px; color:#8d8678">{{ balanceHeading }}</div>
           <div style="font-family:'Cormorant Garamond',serif; font-size:clamp(18px,3vw,22px); font-weight:500">{{ balanceAmount }}</div>
         </div>
         <div style="font-size:12.5px; color:#6f685b; line-height:1.6; margin-bottom:11px; text-wrap:pretty">{{ balanceNote }}</div>
@@ -408,8 +410,10 @@ class Component extends DCLogic {
     notes: '',
     eventType: '',
     secondVenue: false,
-    allowInstallments: true
+    allowInstallments: true,
+    requireDeposit: true
   };
+  hasDeposit() { return this.cfgVal('requireDeposit') !== false; }
 
   get terms() { return (window.KemTerms && window.KemTerms.wedding) || []; }
 
@@ -550,7 +554,7 @@ class Component extends DCLogic {
 
   // ---------- payment plan ----------
   plan() {
-    const mode = this.state.payMode;
+    const mode = this.hasDeposit() ? this.state.payMode : 'full';
     const total = this.totalNum;
     const totalLabel = total == null ? String(this.cfgVal('totalFee')) : this.money(total);
     const event = this.parseDate(this.state.eventDate);
@@ -621,6 +625,7 @@ class Component extends DCLogic {
   depositLabel(key) { return key === 'zelle' ? 'Zelle' : 'Bank transfer'; }
   methodLabel() {
     if (!this.state.payMethod) return '';
+    if (!this.hasDeposit()) return 'Paid in full by ' + this.methodLabelPlain().toLowerCase();
     return 'Deposit by ' + this.depositLabel(this.state.depositMethod).toLowerCase() + ', balance by ' + this.methodLabelPlain().toLowerCase();
   }
   methodBlurb(key) {
@@ -628,6 +633,10 @@ class Component extends DCLogic {
     return 'The studio will email you its bank transfer details within one business day. Reference your name and event date on every transfer so it can be matched to your booking.';
   }
   methodHelp() {
+    if (!this.hasDeposit()) {
+      if (this.state.payMethod === 'cash') return 'The full fee is paid in cash, in person. We will confirm the payment by text or email so you have a record of it.';
+      return 'The full fee is paid by ' + this.methodLabelPlain().toLowerCase() + '. ' + this.methodBlurb(this.state.payMethod);
+    }
     const dep = this.depositLabel(this.state.depositMethod);
     const first = 'Deposit by ' + dep.toLowerCase() + '. ' + this.methodBlurb(this.state.depositMethod);
     if (this.state.payMethod === 'cash') {
@@ -785,8 +794,8 @@ class Component extends DCLogic {
     heading('Payment');
     pair('Total fee', this.totalNum == null ? String(this.cfgVal('totalFee')) : this.money(this.totalNum));
     pair('Selected plan', plan.mode === 'full' ? 'Paying in full' : 'Paying in three installments');
-    pair('Deposit method', this.depositLabel(this.state.depositMethod));
-    pair('Balance method', this.methodLabelPlain());
+    if (this.hasDeposit()) { pair('Deposit method', this.depositLabel(this.state.depositMethod)); pair('Balance method', this.methodLabelPlain()); }
+    else pair('Payment method', this.methodLabelPlain());
     y += 4;
     plan.rows.forEach((r) => {
       ensure(34);
@@ -979,7 +988,7 @@ class Component extends DCLogic {
     if (this.twoVenues() && !d.venue2) missing.push('the second location');
     if (missing.length) { this.setState({ errorMsg: 'Please add ' + missing.join(', ') + '.' }); return; }
     if (d.email.indexOf('@') < 1) { this.setState({ errorMsg: 'That email address does not look right.' }); return; }
-    if (!this.state.depositMethod) { this.setState({ errorMsg: 'Please choose how you will send the deposit.' }); return; }
+    if (this.hasDeposit() && !this.state.depositMethod) { this.setState({ errorMsg: 'Please choose how you will send the deposit.' }); return; }
     if (!this.state.payMethod) { this.setState({ errorMsg: 'Please choose how you will pay the remaining balance.' }); return; }
     if (!this._agree || !this._agree.checked) { this.setState({ errorMsg: 'Please tick the box to confirm you agree to the terms.' }); return; }
     if (this.state.sigEmpty) { this.setState({ errorMsg: 'Please draw your signature before submitting.' }); return; }
@@ -1023,7 +1032,7 @@ class Component extends DCLogic {
     const st = this.state;
     const plan = this.plan();
     const preset = String(this.cfgVal('eventType') || '').trim();
-    const allowInst = this.cfgVal('allowInstallments') !== false;
+    const allowInst = this.cfgVal('allowInstallments') !== false && this.hasDeposit();
     const gold = '#b8924f';
 
     const modeDefs = [{ key: 'full', title: 'Pay in full', sub: 'One payment covering the whole fee.' }];
@@ -1097,16 +1106,18 @@ class Component extends DCLogic {
         .map(m => Object.assign({
           title: m.title, onPick: () => this.setState({ payMethod: m.key, errorMsg: '' })
         }, radio(st.payMethod === m.key))),
+      hasDeposit: this.hasDeposit(),
+      balanceHeading: this.hasDeposit() ? 'REMAINING BALANCE *' : 'PAYMENT *',
       depositAmount: (() => {
         const r = this.retainerNum;
         return r == null ? String(this.cfgVal('retainer')) : this.money(r);
       })(),
       balanceAmount: (() => {
-        const t = this.totalNum, r = this.retainerNum;
-        if (t == null) return String(this.cfgVal('balanceDue'));
+        const t = this.totalNum, r = this.hasDeposit() ? this.retainerNum : null;
+        if (t == null) return this.hasDeposit() ? String(this.cfgVal('balanceDue')) : String(this.cfgVal('totalFee'));
         return this.money(r == null ? t : t - r);
       })(),
-      balanceNote: st.payMode === 'installments'
+      balanceNote: !this.hasDeposit() ? 'The full fee, paid as one payment on the date shown above. Choose how you will pay.' : st.payMode === 'installments'
         ? 'Paid across the two installments shown above.'
         : 'Paid as a single payment on the date shown above.',
       depositMethods: [{ key: 'transfer', title: 'Bank transfer' }, { key: 'zelle', title: 'Zelle' }].map(m => Object.assign({

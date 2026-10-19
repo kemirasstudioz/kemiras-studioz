@@ -765,6 +765,13 @@
                       <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Adds a second address field, and lets the client say which location each function is at. Ticked automatically when you pick Wedding — untick it if the wedding is at one venue.</span>
                     </span>
                   </button>
+                  <button onClick="{{ toggleCDeposit }}" style="display:flex; align-items:flex-start; gap:12px; background:transparent; border:none; padding:0; text-align:left; cursor:pointer; min-height:44px">
+                    <span style="width:19px; height:19px; border-radius:4px; border:1px solid {{ cDepBorder }}; background:{{ cDepBg }}; color:#fff; font-size:12px; line-height:17px; text-align:center; flex:none; margin-top:1px">{{ cDepTick }}</span>
+                    <span>
+                      <span style="display:block; font-size:14px; color:#201c17">Require a deposit</span>
+                      <span style="display:block; font-size:12.5px; color:#8d8678; line-height:1.55; margin-top:3px">Turn off when there is no deposit. The client then pays the full fee in one payment and picks bank transfer, Zelle or cash (if cash is allowed).</span>
+                    </span>
+                  </button>
                   <button onClick="{{ toggleCCash }}" style="display:flex; align-items:flex-start; gap:12px; background:transparent; border:none; padding:0; text-align:left; cursor:pointer; min-height:44px">
                     <span style="width:19px; height:19px; border-radius:4px; border:1px solid {{ cCashBorder }}; background:{{ cCashBg }}; color:#fff; font-size:12px; line-height:17px; text-align:center; flex:none; margin-top:1px">{{ cCashTick }}</span>
                     <span>
@@ -2246,6 +2253,10 @@ class Component extends DCLogic {
       cVenueBg: cur.secondVenue ? '#b8924f' : '#fff',
       cVenueBorder: cur.secondVenue ? '#b8924f' : '#d9d3c6',
       toggleCSecondVenue: () => this.setContractField('secondVenue', !this.currentContract().secondVenue),
+      cDepTick: cur.requireDeposit !== false ? '\u2713' : '',
+      cDepBg: cur.requireDeposit !== false ? '#b8924f' : '#fff',
+      cDepBorder: cur.requireDeposit !== false ? '#b8924f' : '#d9d3c6',
+      toggleCDeposit: () => this.setContractField('requireDeposit', this.currentContract().requireDeposit === false),
       cCashTick: cur.allowCash ? '\u2713' : '',
       cCashBg: cur.allowCash ? '#b8924f' : '#fff',
       cCashBorder: cur.allowCash ? '#b8924f' : '#d9d3c6',

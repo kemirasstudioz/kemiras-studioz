@@ -359,11 +359,16 @@
           </div>
 
           <div style="text-align:center">
-            <button onClick="{{ downloadAgain }}" style="background:transparent; border:1px solid #d9d3c6; border-radius:4px; padding:14px 26px; font-size:11.5px; letter-spacing:1.6px; color:#6f685b; cursor:pointer; min-height:46px" style-hover="border-color:#b8924f; color:#8a6a2f">DOWNLOAD PDF AGAIN</button>
+            <button onClick="{{ downloadAgain }}" style="background:transparent; border:1px solid #d9d3c6; border-radius:4px; padding:14px 26px; font-size:11.5px; letter-spacing:1.6px; color:#6f685b; cursor:pointer; min-height:46px" style-hover="border-color:#b8924f; color:#8a6a2f">DOWNLOAD YOUR SIGNED PDF</button>
           </div>
+          <sc-if value="{{ canShare }}" hint-placeholder-val="{{ false }}">
+            <div style="text-align:center; margin-top:12px">
+              <button onClick="{{ sharePdf }}" style="background:#201c17; border:1px solid #201c17; border-radius:4px; padding:14px 26px; font-size:11.5px; letter-spacing:1.6px; color:#fff; cursor:pointer; min-height:46px">SHARE PDF (WHATSAPP, EMAIL…)</button>
+            </div>
+          </sc-if>
           <sc-if value="{{ mailWarning }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:clamp(20px,3.5vw,28px); display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center">
-              <div style="font-size:13px; color:#a8443a; line-height:1.6; max-width:440px">We could not confirm your signature with our studio from this browser. Please send us the downloaded PDF on WhatsApp so your date is secured.</div>
+              <div style="font-size:13px; color:#a8443a; line-height:1.6; max-width:440px">We could not confirm your signature with our studio from this browser. Please download the PDF above and send it to us on WhatsApp so your date is secured.</div>
               <a href="{{ waLink }}" target="_blank" rel="noopener" style="text-decoration:none; background:#16130f; color:#e8d9b8; border-radius:4px; padding:14px 26px; font-size:11.5px; letter-spacing:1.6px; min-height:44px; display:flex; align-items:center; box-sizing:border-box">SEND ON WHATSAPP</a>
             </div>
           </sc-if>
@@ -422,10 +427,10 @@ class Component extends DCLogic {
     return list.map((t, i) => ({ n: i + 1, h: t.h, b: t.b }));
   }
 
-  markSigned(d) {
+  markSigned(d, stampIn) {
     const cfg = this.state.cfg;
     if (!cfg || !window.KemData) return Promise.resolve(false);
-    const stamp = {
+    const stamp = stampIn || {
       signed: true,
       signedAt: new Date().toISOString(),
       signedBy: d.name,
@@ -449,7 +454,11 @@ class Component extends DCLogic {
       if (isSaved(check)) return true;
       throw new Error('not saved');
     }).catch(() => (n < 4 ? wait(1500 * n).then(() => attempt(n + 1)) : false));
-    return attempt(1);
+    // Fast path: one small row. Falls back to the full save if the server refuses it.
+    const quick = (n) => window.KemData.saveSignature
+      ? window.KemData.saveSignature(cfg.id, stamp).then(ok => (ok ? true : (n < 3 ? wait(1200 * n).then(() => quick(n + 1)) : false)))
+      : Promise.resolve(false);
+    return quick(1).then(ok => (ok ? true : attempt(1)));
   }
   ensureEmail() {
     if (window.emailjs) return Promise.resolve(window.emailjs);
@@ -467,6 +476,8 @@ class Component extends DCLogic {
   componentDidMount() {
     if (!window.KemTerms) { const t = setInterval(() => { if (window.KemTerms) { clearInterval(t); this.forceUpdate(); } }, 150); setTimeout(() => clearInterval(t), 15000); }
     if (window.emailjs) { try { window.emailjs.init({ publicKey: this.EMAILJS_PUBLIC_KEY }); } catch (e) {} }
+    setTimeout(() => this.retryPending(), 1500);
+    this._shareOk = this.canSharePdf();
     if (window.KemData) window.KemData.load().then((d) => {
       if (!d) return;
       this._blob = d;
@@ -476,7 +487,9 @@ class Component extends DCLogic {
       if (!list.length) return;
       const match = want ? list.find(c => String(c.id) === want) : null;
       const cfg = match || list[0];
-      this.setState({ cfg, notFound: !!want && !match, locked: cfg.signed === true });
+      this.setState({ cfg, notFound: !!want && !match, locked: cfg.signed === true, eventDate: cfg.eventDate || '' }, () => {
+        if (cfg.eventDate && this._date && !this._date.value) this._date.value = cfg.eventDate;
+      });
     }).catch(() => {});
     this._onResize = () => this.sizeCanvas(true);
     window.addEventListener('resize', this._onResize);
@@ -874,9 +887,8 @@ class Component extends DCLogic {
     ].filter(l => l !== '').join('\n');
   }
 
-  sendMail(d, plan, base64, pdfLink) {
-    if (!window.emailjs) return Promise.reject(new Error('no emailjs'));
-    const params = {
+  mailParams(d, plan, pdfLink) {
+    return {
       pdfLink: pdfLink || '',
       name: d.name, email: d.email, phone: d.phone,
       bookingDate: this.fmtDate(d.date),
@@ -902,15 +914,50 @@ class Component extends DCLogic {
       signedOn: this.todayStr(),
       pdfNote: pdfLink ? pdfLink : 'The signed PDF was downloaded to the client\u2019s device.'
     };
+  }
+  sendParams(params, clientEmail) {
     const once = (addr) => this.ensureEmail().then(() => window.emailjs.send(
       this.EMAILJS_SERVICE_ID,
       this.STUDIO_TEMPLATE_ID,
-      Object.assign({}, params, { to_email: addr, reply_to: d.email }),
+      Object.assign({}, params, { to_email: addr, reply_to: clientEmail }),
       { publicKey: this.EMAILJS_PUBLIC_KEY }
     ));
     const sendTo = (addr) => once(addr).catch(() => new Promise(res => setTimeout(res, 2500)).then(() => once(addr)));
     return sendTo(this.STUDIO_EMAIL)
-      .then(() => sendTo(d.email).catch(() => null));
+      .then(() => sendTo(clientEmail).catch(() => null));
+  }
+  // A signing that has not fully reached the studio is kept on the client's device and retried on the next visit.
+  pending(patch) {
+    const K = 'kem_pending_signature';
+    try {
+      if (patch === null) { localStorage.removeItem(K); return null; }
+      const cur = JSON.parse(localStorage.getItem(K) || 'null');
+      if (patch === undefined) return cur;
+      const next = Object.assign({}, cur || {}, patch);
+      if (next.saved && next.mailed) { localStorage.removeItem(K); return null; }
+      localStorage.setItem(K, JSON.stringify(next)); return next;
+    } catch (e) { return null; }
+  }
+  retryPending() {
+    const p = this.pending();
+    if (!p) return;
+    if (Date.now() - (p.t || 0) > 30 * 86400000) { this.pending(null); return; }
+    if (!p.saved && window.KemData && window.KemData.saveSignature) {
+      window.KemData.saveSignature(p.contractId, p.stamp).then(ok => { if (ok) this.pending({ saved: true }); });
+    }
+    if (!p.mailed && p.params) {
+      this.sendParams(p.params, p.clientEmail).then(() => this.pending({ mailed: true })).catch(() => {});
+    }
+  }
+  sharePdf() {
+    const doc = this._doc; if (!doc) return;
+    try {
+      const file = new File([doc.output('blob')], this.pdfName(this._data || {}), { type: 'application/pdf' });
+      navigator.share({ files: [file], title: 'Signed contract — Kemiras Studioz', text: 'My signed contract for Kemiras Studioz.' }).catch(() => {});
+    } catch (e) {}
+  }
+  canSharePdf() {
+    try { return !!(navigator.canShare && navigator.canShare({ files: [new File(['x'], 'a.pdf', { type: 'application/pdf' })] })); } catch (e) { return false; }
   }
 
   submit() {
@@ -938,23 +985,37 @@ class Component extends DCLogic {
     if (this.state.sigEmpty) { this.setState({ errorMsg: 'Please draw your signature before submitting.' }); return; }
 
     this.setState({ busy: true, errorMsg: '' });
+    this._leaveGuard = (ev) => { ev.preventDefault(); ev.returnValue = ''; };
+    window.addEventListener('beforeunload', this._leaveGuard);
     const plan = this.plan();
     const doc = this.buildPdf(d, plan);
     if (!doc) { this.setState({ busy: false, errorMsg: 'The PDF tool did not load. Please refresh the page and try again.' }); return; }
     this._doc = doc; this._data = d;
-    try { doc.save(this.pdfName(d)); } catch (e) {}
     let base64 = '';
     try { base64 = String(doc.output('datauristring')).split(',')[1] || ''; } catch (e) {}
 
-    const saved = this.markSigned(d);
-    const finish = (warn) => this.setState({
+    const cfg0 = this.state.cfg || {};
+    const stamp = {
+      signed: true, signedAt: new Date().toISOString(), signedBy: d.name,
+      booking: {
+        name: d.name, email: d.email, phone: d.phone,
+        eventType: d.eventType, date: d.date, start: d.start, end: d.end,
+        venue: d.venue, venue2: d.venue2,
+        ceremonies: (d.ceremonies || []).map(c => ({ name: c.name, date: c.date, time: c.time, end: c.end, loc: c.loc }))
+      }
+    };
+    const baseParams = this.mailParams(d, plan, '');
+    this.pending({ contractId: cfg0.id, stamp, params: baseParams, clientEmail: d.email, saved: false, mailed: false, t: Date.now() });
+    const saved = this.markSigned(d, stamp).then(ok => { if (ok) this.pending({ saved: true }); return ok; });
+    const finish = (warn) => { window.removeEventListener('beforeunload', this._leaveGuard); this.setState({
       busy: false, done: true, mailWarning: !!warn,
       doneName: (d.name.split(' ')[0] || d.name), doneEmail: d.email
-    });
+    }); };
     const upload = (window.KemData && window.KemData.uploadContract)
-      ? window.KemData.uploadContract(base64, this.pdfName(d)).catch(() => null)
+      ? Promise.race([window.KemData.uploadContract(base64, this.pdfName(d)).catch(() => null), new Promise(res => setTimeout(() => res(null), 8000))])
       : Promise.resolve(null);
-    const mailed = upload.then((link) => this.sendMail(d, plan, base64, link)).then(() => true).catch(() => false);
+    const mailed = upload.then((link) => this.sendParams(link ? this.mailParams(d, plan, link) : baseParams, d.email))
+      .then(() => { this.pending({ mailed: true }); return true; }).catch(() => false);
     Promise.all([saved, mailed]).then(([s, m]) => finish(!(s && m))).catch(() => finish(true));
   }
 
@@ -1068,7 +1129,7 @@ class Component extends DCLogic {
       sigEmpty: st.sigEmpty,
       busy: st.busy,
       busyOpacity: st.busy ? 0.6 : 1,
-      submitLabel: st.busy ? 'SENDING\u2026' : 'SIGN AND SUBMIT CONTRACT',
+      submitLabel: st.busy ? 'SAVING \u2014 PLEASE KEEP THIS PAGE OPEN\u2026' : 'SIGN AND SUBMIT CONTRACT',
       hasError: !!st.errorMsg,
       errorMsg: st.errorMsg,
 
@@ -1080,6 +1141,8 @@ class Component extends DCLogic {
         this._date = el;
         if (el && !el._kemBound) {
           el._kemBound = true;
+          const pre = this.state.cfg && this.state.cfg.eventDate;
+          if (pre && !el.value) { el.value = pre; setTimeout(() => this.setState({ eventDate: pre }), 0); }
           const sync = () => this.setState({ eventDate: el.value });
           el.addEventListener('change', sync);
           el.addEventListener('input', sync);
@@ -1098,6 +1161,8 @@ class Component extends DCLogic {
       sigUp: () => this.sigUp(),
       clearSig: () => this.clearSig(),
       submit: () => this.submit(),
+      canShare: !!this._shareOk,
+      sharePdf: () => this.sharePdf(),
       downloadAgain: () => { if (this._doc) { try { this._doc.save(this.pdfName(this._data || {})); } catch (e) {} } }
     };
   }

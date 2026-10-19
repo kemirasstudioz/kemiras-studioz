@@ -671,7 +671,7 @@
 
               <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:18px">
                 <sc-for list="{{ contractTabs }}" as="ct" hint-placeholder-count="1">
-                  <button onClick="{{ ct.onPick }}" style="background:{{ ct.bg }}; color:{{ ct.color }}; border:1px solid {{ ct.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">{{ ct.label }}</button>
+                  <button onClick="{{ ct.onPick }}" style="background:{{ ct.bg }}; color:{{ ct.color }}; border:1px solid {{ ct.border }}; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f"><span style="display:flex; flex-direction:column; align-items:flex-start; gap:2px; line-height:1.25"><span>{{ ct.label }}</span><span style="font-size:11px; opacity:0.7">{{ ct.dateText }}</span></span></button>
                 </sc-for>
                 <button onClick="{{ addContract }}" style="background:transparent; color:#8a6a2f; border:1px dashed #c9bfa5; border-radius:7px; padding:10px 16px; font-size:13px; cursor:pointer; min-height:42px" style-hover="border-color:#b8924f">+ New contract</button>
               </div>
@@ -735,6 +735,11 @@
                   <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">CLIENT NAME — FOR YOUR REFERENCE ONLY</span>
                   <input type="text" value="{{ cLabel }}" onChange="{{ setCLabel }}" placeholder="e.g. Patel wedding — Nov 14" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:44px" style-focus="border-color:#b8924f">
                   <span style="font-size:12px; color:#a39c8d">Names the tab above. The client never sees this.</span>
+                </label>
+                <label style="display:flex; flex-direction:column; gap:7px; max-width:280px">
+                  <span style="font-size:11px; letter-spacing:1.4px; color:#8d8678">EVENT DATE</span>
+                  <input type="date" value="{{ cEventDate }}" onChange="{{ setCEventDate }}" style="border:1px solid #e2ddd2; border-radius:6px; padding:12px 13px; font-size:14px; outline:none; min-height:46px; background:#fff; color:#201c17; font-family:inherit">
+                  <span style="font-size:12px; color:#a39c8d">{{ cEventDateNote }}</span>
                 </label>
 
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:16px">
@@ -2018,6 +2023,7 @@ class Component extends DCLogic {
 
       contractTabs: contractsAll.map(c => ({
         label: (c.signed ? '\u2713 ' : '') + (c.label || 'Untitled'),
+        dateText: (() => { const v = (c.booking && c.booking.date) || c.eventDate; if (!v) return 'No event date'; const t = new Date(v + 'T12:00:00'); return isNaN(t) ? v : t.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); })(),
         bg: c.id === cur.id ? '#16130f' : '#fff',
         color: c.id === cur.id ? '#e8d9b8' : '#6f685b',
         border: c.id === cur.id ? '#16130f' : '#e2ddd2',
@@ -2184,6 +2190,9 @@ class Component extends DCLogic {
       downloadIcs: () => this.downloadIcs(this.currentContract()),
       cLabel: cur.label || '',
       setCLabel: (e) => this.setContractField('label', e.target.value),
+      cEventDate: (cur.booking && cur.booking.date) || cur.eventDate || '',
+      cEventDateNote: (cur.booking && cur.booking.date && cur.booking.date !== cur.eventDate) ? 'Date the client entered when signing. Changing it here updates the booking.' : 'Filled in on the client\u2019s form. They can still change it if it\u2019s wrong.',
+      setCEventDate: (e) => { const v = e.target.value; this.setContractField('eventDate', v); if (cur.booking) { this.setState({ selectedContract: cur.id }, () => this.setContractField('booking', Object.assign({}, cur.booking, { date: v }))); } },
       cPackageTitle: cur.packageTitle || '',
       cInclusions: (typeof cur.inclusionsText === 'string') ? cur.inclusionsText : (cur.inclusions || []).join('\n'),
       cInclusionsBox: this.textBox(

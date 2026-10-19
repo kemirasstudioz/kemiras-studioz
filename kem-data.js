@@ -36,6 +36,34 @@
     };
   }
 
+  // Client signatures are stored as their own small rows (id > 1) so a phone never has to
+  // upload the whole site. load() folds them into the matching contracts.
+  function applySigs(data, rows) {
+    if (!data || !rows || !rows.length) return data;
+    var list = Array.isArray(data.contracts) && data.contracts.length ? data.contracts : (data.contract ? [data.contract] : []);
+    if (!list.length) return data;
+    var changed = false;
+    var next = list.map(function (c) {
+      var best = null;
+      rows.forEach(function (r) {
+        var s = r && r.data;
+        if (!s || s.kind !== "signature" || String(s.contractId) !== String(c.id)) return;
+        if (!best || (Date.parse(s.signedAt) || 0) > (Date.parse(best.signedAt) || 0)) best = s;
+      });
+      if (!best) return c;
+      var sT = Date.parse(best.signedAt) || 0, rT = Date.parse(c.reopenedAt || "") || 0, cT = Date.parse(c.signedAt || "") || 0;
+      if (sT <= rT || (c.signed && cT >= sT)) return c;
+      changed = true;
+      var o = {}; for (var key in c) o[key] = c[key];
+      o.signed = true; o.signedAt = best.signedAt; o.signedBy = best.signedBy; o.booking = best.booking || c.booking;
+      return o;
+    });
+    if (!changed) return data;
+    var out = {}; for (var kk in data) out[kk] = data[kk];
+    out.contracts = next; out.contract = next[0];
+    return out;
+  }
+
   window.KemData = {
     enabled: ENABLED,
     LS_KEY: LS_KEY,
@@ -43,10 +71,14 @@
     // Returns { photos, films, services, reviews } (or null). Async.
     load: function () {
       if (ENABLED) {
-        return fetch(SUPABASE_URL + "/rest/v1/site_content?id=eq.1&select=data", { headers: headers() })
-          .then(function (res) { return res.ok ? res.json() : null; })
-          .then(function (rows) {
-            if (rows && rows[0] && rows[0].data) { lsSave(rows[0].data); return rows[0].data; }
+        var main = fetch(SUPABASE_URL + "/rest/v1/site_content?id=eq.1&select=data", { headers: headers(), cache: "no-store" })
+          .then(function (res) { return res.ok ? res.json() : null; });
+        var sigs = fetch(SUPABASE_URL + "/rest/v1/site_content?id=gt.1&select=data", { headers: headers(), cache: "no-store" })
+          .then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; });
+        return Promise.all([main, sigs])
+          .then(function (out) {
+            var rows = out[0];
+            if (rows && rows[0] && rows[0].data) { var d = applySigs(rows[0].data, out[1]); lsSave(d); return d; }
             return lsLoad();
           })
           .catch(function () { return lsLoad(); });
@@ -78,6 +110,17 @@
         if (!res.ok) return null;
         return SUPABASE_URL + "/storage/v1/object/public/contracts/" + encodeURIComponent(path);
       }).catch(function () { return null; });
+    },
+
+    // Saves one client signature as its own row. Resolves true only if the server accepted it.
+    saveSignature: function (contractId, stamp) {
+      if (!ENABLED) return Promise.resolve(false);
+      var data = { kind: "signature", contractId: String(contractId), signedAt: stamp.signedAt, signedBy: stamp.signedBy, booking: stamp.booking };
+      var id = 1000 + Math.floor(Math.random() * 2000000000);
+      return fetch(SUPABASE_URL + "/rest/v1/site_content", {
+        method: "POST", headers: headers(), keepalive: true,
+        body: JSON.stringify([{ id: id, data: data }])
+      }).then(function (res) { return !!res.ok; }).catch(function () { return false; });
     },
 
     // Persists the whole content object. Always keeps a local copy too.
